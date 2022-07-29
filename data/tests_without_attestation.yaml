@@ -4,19 +4,18 @@ default_input_args:
   runtime_variables: n
   signing_key_path :
 
-test_redis:
-  docker_image: redis/redis:7.0.0
+test_redis_test_option:
+  docker_image: redis/redis:latest
+  test_option: y
 
 test_redis_with_sign_key:
-  docker_image: redis/redis:7.0.0
-  input_args:
-    signing_key_path :
+  docker_image: redis/redis:latest
+  signing_key_path : test_config/enclave-key.pem
 
 test_redis_with_runtime_variables:
-  docker_image: redis/redis:7.0.0
-  input_args:
-    signing_key_path:
-    runtime_variables: y
-    runtime_variable_list: name="curator_app",version="1.2"
+  docker_image: redis/redis:latest
+  signing_key_path:
+  runtime_variables: y
+  runtime_variable_list: name="curator_app",version="1.2"
 
 

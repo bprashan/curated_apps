@@ -5,6 +5,9 @@ default_input_args:
   signing_key_path :
   create_local_image: n
 
+test_redis_default:
+  docker_image: redis/redis:latest
+
 test_redis_test_option:
   docker_image: redis/redis:latest
   test_option: y
@@ -24,4 +27,14 @@ test_redis_with_local_docker_image:
   create_local_image: y
   test_option: y
 
+test_pytorch_default:
+  docker_image: pytorch/pytorch-plain:latest
 
+test_pytorch_test_option:
+  docker_image: pytorch/pytorch-plain:latest
+  test_option: y
+
+test_pytorch_with_local_docker_image:
+  docker_image: pytorch/pytorch-plain:latest
+  create_local_image: y
+  test_option: y

@@ -37,19 +37,20 @@ def generate_local_image(workload_image):
     if "redis" in workload_image:
         os.system("docker pull redis:latest")
     elif "pytorch" in workload_image:
-        output_filename = CURATED_APPS_PATH + "pytorch/pytorch_with_plain_text_files/plaintext/alexnet-pretrained.pt"
+        output_filename = CURATED_APPS_PATH + "/pytorch/pytorch_with_plain_text_files/plaintext/alexnet-pretrained.pt"
         alexnet = models.alexnet(pretrained=True)
         torch.save(alexnet, output_filename)
         print("Pre-trained model was saved in \"%s\"" % output_filename)
+        os.chdir(CURATED_APPS_PATH + "/pytorch/pytorch_with_plain_text_files")
         os.system("docker build -t pytorch-plain .")
 
 def run_curated_app(test_config_dict, run_with_test_option):
-    os.chdir(CURATED_APPS_PATH)
-
     workload_image = test_config_dict["docker_image"]
 
     if test_config_dict.get("create_local_image") == "y":
         generate_local_image(workload_image)
+    
+    os.chdir(CURATED_APPS_PATH)
 
     if run_with_test_option:
         curation_cmd = 'python3 curation_app.py ' + workload_image + ' test'

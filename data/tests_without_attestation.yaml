@@ -3,6 +3,7 @@ default_input_args:
   attestation: n
   runtime_variables: n
   signing_key_path :
+  create_local_image: n
 
 test_redis_test_option:
   docker_image: redis/redis:latest
@@ -17,5 +18,10 @@ test_redis_with_runtime_variables:
   signing_key_path:
   runtime_variables: y
   runtime_variable_list: name="curator_app",version="1.2"
+
+test_redis_with_local_docker_image:
+  docker_image: redis/redis:latest
+  create_local_image: y
+  test_option: y
 
 

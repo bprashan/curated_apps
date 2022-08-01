@@ -4,6 +4,8 @@ import sys
 import yaml
 import os
 import shutil
+from torchvision import models
+import torch
 
 CURATED_APPS_PATH = os.getenv('CURATED_APPS_PATH', "")
 
@@ -31,13 +33,28 @@ def create_input_file(input_str):
         f.write(input_str)
         f.close()
 
+def generate_local_image(workload_image):
+    if "redis" in workload_image:
+        os.system("docker pull redis:latest")
+    elif "pytorch" in workload_image:
+        output_filename = CURATED_APPS_PATH + "pytorch/pytorch_with_plain_text_files/plaintext/alexnet-pretrained.pt"
+        alexnet = models.alexnet(pretrained=True)
+        torch.save(alexnet, output_filename)
+        print("Pre-trained model was saved in \"%s\"" % output_filename)
+        os.system("docker build -t pytorch-plain .")
 
-def run_curated_app(base_os, run_with_test_option):
+def run_curated_app(test_config_dict, run_with_test_option):
     os.chdir(CURATED_APPS_PATH)
+
+    workload_image = test_config_dict["docker_image"]
+
+    if test_config_dict.get("create_local_image") == "y":
+        generate_local_image(workload_image)
+
     if run_with_test_option:
-        curation_cmd = 'python3 curation_app.py ' + base_os + ' test'
+        curation_cmd = 'python3 curation_app.py ' + workload_image + ' test'
     else:
-        curation_cmd = 'python3 curation_app.py ' + base_os + ' < input.txt'
+        curation_cmd = 'python3 curation_app.py ' + workload_image + ' < input.txt'
     print("Curation cmd ", curation_cmd)
     process = subprocess.Popen(curation_cmd, stdout=sys.stdout,
                         stderr=sys.stderr, shell=True)
@@ -59,15 +76,10 @@ def run_test(test_instance, test_yaml_file):
     test_name = inspect.stack()[1].function
     print(f"\n********** Executing {test_name} **********\n")
     test_config_dict = read_config_yaml(test_yaml_file, test_name)
-    #print(test_config_dict)
-    docker_base_os = test_config_dict["docker_image"]
-    print(docker_base_os)
     if test_config_dict.get("test_option"):
         run_with_test_option = True
-        return run_curated_app(docker_base_os, run_with_test_option)
+        return run_curated_app(test_config_dict, run_with_test_option)
     sorted_dict = pre_actions(test_config_dict)
-    print(sorted_dict)
     input_str = get_inputs_from_dict(sorted_dict)
-    #print(input_str)
     create_input_file(input_str)
-    return run_curated_app(docker_base_os, run_with_test_option)
+    return run_curated_app(test_config_dict, run_with_test_option)

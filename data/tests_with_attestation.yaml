@@ -1,19 +1,46 @@
 ---
-Default:
-  signing_key: n
+default_input_args:
+  signing_key_path :
   attestation: y
-  cert_file: n
-  cert_file_path: verifier_image/ca.crt
   runtime_variables: n
+  cert_file : n
+  ca_cert_file_path: verifier_image/ca.crt
+  encrypted_files : n
 
 test_redis_with_attestation:
-  workload_option: 1
-  base_image: redis
+  docker_image: redis/redis:latest
+
+test_redis_with_sign_key_with_attestation:
+  docker_image: redis/redis:latest
+  signing_key_path : test_config/enclave-key.pem
+
+test_redis_with_attestation_cert_file:
+  docker_image: redis/redis:latest
+  cert_file : y
+  ssl_path : /home/intel/ssl
+
+test_redis_with_attestation_cert_file_runtime_variables:
+  docker_image: redis/redis:latest
+  cert_file : y
+  ssl_path : /home/intel/ssl
+  runtime_variables: y
+  runtime_variable_list: name="curator_app",version="1.2"
+
+test_redis_with_local_docker_image_with_attestation:
+  docker_image: redis/redis:latest
+  create_local_image: y
+
+test_redis_with_attestation_end_test_ssl_path:
+  docker_image: redis/redis:latest
+  cert_file : y
+  ssl_path : /home/intel/ssl
+  runtime_variables: y
+  runtime_variable_list: name="curator_app",version="1.2"
+  end_test: ssl_path
 
 test_pytorch_with_attestation:
-  workload_option: 2
-  base_image: inteltestuser94/pytorch-encrypted
-  encrypted_files: classes.txt;input.jpg;alexnet-pretrained.pt;app/result.txt
+  docker_image: pytorch/pytorch-plain:latest
 
-
-  
+test_pytorch_with_local_docker_image_with_attestation:
+  docker_image: pytorch/pytorch-plain:latest
+  create_local_image: y

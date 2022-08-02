@@ -4,6 +4,7 @@ default_input_args:
   runtime_variables: n
   signing_key_path :
   create_local_image: n
+  end_test : n
 
 test_redis_default:
   docker_image: redis/redis:latest
@@ -38,3 +39,9 @@ test_pytorch_with_local_docker_image:
   docker_image: pytorch/pytorch-plain:latest
   create_local_image: y
   test_option: y
+
+test_redis_empty_test_key:
+  docker_image: redis/redis:latest
+  signing_key_path : test_config/empty-key
+  end_test: signing_key_path
+  expected_output: "test_config/empty-key file does not exist."

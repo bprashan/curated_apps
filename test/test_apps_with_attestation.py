@@ -14,3 +14,20 @@ class TestClass:
     def test_pytorch_with_attestation(self):
         test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
+
+    def test_redis_with_attestation_cert_file(self):
+        test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    def test_redis_with_attestation_cert_file_runtime_variables(self):
+        test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    def test_redis_with_attestation_end_test_ssl_path(self):
+        test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+    
+    def test_redis_with_attestation_sign_key(self):
+        test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+    

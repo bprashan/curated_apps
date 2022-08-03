@@ -94,17 +94,26 @@ def generate_curated_image(test_config_dict, run_with_test_option):
                 curation_output = output.strip()
     return curation_output
 
+def kill(proc_pid):
+    process = psutil.Process(proc_pid)
+    for proc in process.children(recursive=True):
+        proc.kill()
+    process.kill()
+
 def run_curated_image(gsc_docker_command):
-    process = subprocess.Popen("exec " + gsc_docker_command, stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE, shell=True, encoding='utf-8')
+    gsc_docker_command = gsc_docker_command.replace("-it", "-t")
+    process = subprocess.Popen(gsc_docker_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE, shell=True, encoding='ascii')
     while True:
-        output = process.stdout.readline()
-        if process.poll() is not None and output == '':
+        nextline = process.stdout.readline()
+        print(nextline.strip())
+        if nextline == '' and process.poll() is not None:
             break
-        if output:
-            print(output.strip())
-            if "Ready to accept connections" in output:
-                process.wait()
+        if "Ready to accept connections" in nextline:
+            process.stdout.close()
+            kill(process.pid)
+            sys.stdout.flush()
+            break
 
 def update_verifier_service_call(filepath, old_args):
     with open(filepath, 'r+') as f:
@@ -154,7 +163,7 @@ def run_test(test_instance, test_yaml_file):
         else:
             return 0
 
-    #workload_output = run_curated_image(curation_output)
+    workload_output = run_curated_image(curation_output)
     return 1
     
     

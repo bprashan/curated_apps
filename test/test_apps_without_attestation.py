@@ -39,7 +39,35 @@ class TestClass:
     def test_pytorch_with_local_docker_image(self):
         test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
+    
+    def test_redis_unknown_docker_image(self):
+        test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
 
     def test_redis_empty_test_key(self):
+        test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+    
+    def test_redis_wrong_key_path(self):
+        test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+        
+    def test_redis_ra_wrong_option(self):
+        test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    def test_redis_ev_wrong_option(self):
+        test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+    
+    def test_redis_ev_invalid_input_1(self):
+        test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    def test_redis_ev_dict(self):
+        test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+    
+    def test_redis_ev_invalid_input_2(self):
         test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result

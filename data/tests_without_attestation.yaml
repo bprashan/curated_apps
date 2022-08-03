@@ -9,6 +9,10 @@ default_input_args:
 test_redis_default:
   docker_image: redis/redis:latest
 
+test_redis_unknown_docker_image:
+  docker_image: redis/redis:unknown_version
+  test_option: y
+
 test_redis_test_option:
   docker_image: redis/redis:latest
   test_option: y
@@ -24,7 +28,7 @@ test_redis_with_runtime_variables:
   runtime_variable_list: name="curator_app",version="1.2"
 
 test_redis_with_local_docker_image:
-  docker_image: redis/redis:latest
+  docker_image: local/redis_test_image
   create_local_image: y
   test_option: y
 
@@ -45,3 +49,33 @@ test_redis_empty_test_key:
   signing_key_path : test_config/empty-key
   end_test: signing_key_path
   expected_output: "test_config/empty-key file does not exist."
+
+test_redis_wrong_key_path:
+  docker_image: redis/redis:latest
+  signing_key_path : no_test_key
+  end_test: signing_key_path
+
+test_redis_ra_wrong_option:
+  docker_image: redis/redis:latest
+  attestation: k
+  end_test: attestation
+
+test_redis_ev_wrong_option:
+  docker_image: redis/redis:latest
+  runtime_variables: k
+  end_test: runtime_variables
+
+test_redis_ev_invalid_input_1:
+  docker_image: redis/redis:latest
+  runtime_variables: name="Xyz",,age="20"
+  end_test: runtime_variables
+
+test_redis_ev_dict:
+  docker_image: redis/redis:latest
+  runtime_variables: {name="Xyz",age="20"}
+  end_test: signing_key_path
+
+test_redis_ev_invalid_input_2:
+  docker_image: redis/redis:latest
+  runtime_variables: name="Xyz",age=
+

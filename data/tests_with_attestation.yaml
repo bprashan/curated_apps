@@ -4,7 +4,7 @@ default_input_args:
   runtime_variables: n
   cert_file : n
   ca_cert_file_path: verifier_image/ca.crt
-  encrypted_files : n
+  encrypted : n
   create_local_image: n
   end_test : n
 
@@ -39,9 +39,84 @@ test_redis_with_attestation_end_test_ssl_path:
   runtime_variable_list: name="curator_app",version="1.2"
   end_test: ssl_path
 
-test_pytorch_with_attestation:
-  docker_image: pytorch/pytorch-plain:latest
-
 test_pytorch_with_local_docker_image_with_attestation:
   docker_image: pytorch/pytorch-plain:latest
   create_local_image: y
+  encrypted: y
+  files: classes.txt;input.jpg;alexnet-pretrained.pt;app/result.txt
+
+test_redis_with_attestation_test_option:
+  docker_image: redis/redis:latest
+  test_option: y
+
+test_pytorch_with_attestation:
+  docker_image: pytorch/pytorch-plain:latest
+  create_local_image: y
+  encrypted: y
+  encrypted_files: classes.txt;input.jpg;alexnet-pretrained.pt;app/result.txt
+
+test_redis_with_attestation_invalid_cert_option:
+  docker_image: redis/redis:latest
+  cert_file: s
+
+test_redis_with_attestation_and_empty_ssl:
+  docker_image: redis/redis:latest
+  cert_file: y
+  ssl_path: test_config/empty_ssl_folder
+
+test_redis_with_attestation_ssl_ca_crt:
+  docker_image: redis/redis:latest
+  cert_available: y
+  ssl_path: test_config/ca_cert_folder
+
+test_redis_with_attestation_wo_ssl:
+  docker_image: redis/redis:latest
+  cert_available: y
+  ssl_path: 
+  end_test: ssl_path
+
+test_redis_with_attestation_default_cert:
+  docker_image: redis/redis:latest
+  cert_available: n
+
+test_pytorch_with_attestation_invalid_encrypted_option:
+  docker_image: pytorch/pytorch-plain:latest
+  create_local_image: y
+  cert_available: n
+  encrypted: s
+
+test_pytorch_with_attestation_no_encrypted_files:
+  docker_image: pytorch/pytorch-plain:latest
+  create_local_image: y
+  encrypted: n
+
+test_pytorch_with_attestation_invalid_encrypted_files:
+  docker_image: pytorch/pytorch-plain:latest
+  create_local_image: y
+  encrypted: y
+  encrypted_files: test_config/text-file
+
+test_pytorch_with_attestation_encrypted_file_fullpath:
+  docker_image: pytorch/pytorch-plain:latest
+  create_local_image: y
+  encrypted: y
+  encrypted_files: /tmp/test_config/text-file
+
+test_pytorch_with_attestation_encrypted_file_invalid_format:
+  docker_image: pytorch/pytorch-plain:latest
+  create_local_image: y
+  encrypted: y
+  encrypted_files: classes.txt:input.jpg:alexnet-pretrained.pt:app/result.txt
+
+test_redis_with_attestation_client_conn:
+  docker_image: redis/redis:latest
+  cert_available: y
+  verifier: y
+  client: y
+
+test_redis_with_attestation_verifier_kill:
+  docker_image: redis/redis:latest
+  cert_available: y
+  verifier: y
+  client: y
+  end_test: verifier_after_client

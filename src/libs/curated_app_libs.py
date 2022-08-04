@@ -53,12 +53,14 @@ def pre_actions(test_config_dict):
     end_key = test_config_dict.get("end_test")
     if os.path.isdir(CURATED_APPS_PATH+"/test_config"):
         shutil.rmtree(CURATED_APPS_PATH+"/test_config")
+    else:
+        os.mkdir(CURATED_APPS_PATH+"/test_config")
     shutil.copytree("test_config", CURATED_APPS_PATH+"/test_config")
 
     pre_actions_for_verifier_image(test_config_dict, end_key)
 
-    input_ord_list = ['signing_key_path', 'attestation', 'cert_file', 'ssl_path', 'ca_cert_file_path',
-                      'runtime_variables', 'runtime_variable_list', 'encrypted_files', 'encrypted_files_path']
+    input_ord_list = ['signing_key_path', 'runtime_variables', 'runtime_variable_list', 'attestation', 
+                      'cert_file', 'ssl_path', 'ca_cert_file_path', 'encrypted_files', 'encrypted_files_path']
     invalid_keys = ["cert_file", "ssl_path"]
     # sort dictionary based on input order list
     
@@ -103,6 +105,8 @@ def kill(proc_pid):
     process.kill()
 
 def run_curated_image(gsc_docker_command):
+    result = False
+    pytorch_result = ["Result", "Labrador retriever", "golden retriever", "Saluki, gazelle hound", "whippet", "Ibizan hound, Ibizan Podenco"]
     gsc_docker_command = gsc_docker_command.replace("-it", "-t")
     process = subprocess.Popen(gsc_docker_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE, shell=True, encoding='ascii')
@@ -111,11 +115,13 @@ def run_curated_image(gsc_docker_command):
         print(nextline.strip())
         if nextline == '' and process.poll() is not None:
             break
-        if "Ready to accept connections" in nextline:
+        if "Ready to accept connections" in nextline or all(x in nextline for x in pytorch_result):
             process.stdout.close()
             kill(process.pid)
             sys.stdout.flush()
+            result = True
             break
+    return result
 
 def update_verifier_service_call(filepath, old_args):
     with open(filepath, 'r+') as f:
@@ -159,14 +165,15 @@ def run_test(test_instance, test_yaml_file):
         create_input_file(CURATED_APPS_PATH, input_str)
     
     curation_output = generate_curated_image(test_config_dict, run_with_test_option)
-    if test_config_dict.get("end_test") != "n":
+    if "expected_output" in test_config_dict.keys():
         if test_config_dict.get("expected_output") in curation_output:
-            return 1
+            return True
         else:
-            return 0
+            return False
 
-    workload_output = run_curated_image(curation_output)
-    return 1
+    result = run_curated_image(curation_output)
+
+    return result
     
     
 

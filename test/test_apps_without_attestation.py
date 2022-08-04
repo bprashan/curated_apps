@@ -68,6 +68,6 @@ class TestClass:
         test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
     
-    def test_redis_ev_invalid_input_2(self):
+    def test_redis_ev_valid_input(self):
         test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result

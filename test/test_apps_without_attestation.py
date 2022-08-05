@@ -36,10 +36,6 @@ class TestClass:
         test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
     
-    def test_pytorch_with_local_docker_image(self):
-        test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-    
     def test_redis_unknown_docker_image(self):
         test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result

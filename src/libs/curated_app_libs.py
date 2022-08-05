@@ -6,12 +6,10 @@ import os
 import shutil
 from torchvision import models
 import torch
-import signal
 import psutil
+from data.constants import *
+from src.libs import utils
 import time
-
-CURATED_APPS_PATH = os.getenv('CURATED_APPS_PATH', "")
-VERIFIER_SERVICE_PATH = CURATED_APPS_PATH + "/verifier_image"
 
 def read_config_yaml(config_file_path, test_name):
     yaml_file = open(config_file_path, "r")
@@ -37,7 +35,12 @@ def create_input_file(path, input_str):
         f.write(input_str)
         f.close()
 
-def generate_local_image(workload_image):
+def generate_encrypted_files(path, filename):
+    output_path = os.path.join(path, "encrypted", "alexnet-pretrained.pt")
+    encrypt_cmd = "gramine-sgx-pf-crypt encrypt -w wrap-key -i {} -o {}".format(filename, output_path)
+    utils.run_subprocess(encrypt_cmd, path)
+
+def generate_local_image(workload_image, encryption=None):
     if "redis" in workload_image:
         os.system("docker pull redis:latest")
     elif "pytorch" in workload_image:
@@ -45,27 +48,34 @@ def generate_local_image(workload_image):
         alexnet = models.alexnet(pretrained=True)
         torch.save(alexnet, output_filename)
         print("Pre-trained model was saved in \"%s\"" % output_filename)
-        os.chdir(CURATED_APPS_PATH + "/pytorch/pytorch_with_plain_text_files")
-        os.system("docker build -t pytorch-plain .")
+
+        if encryption == "y":
+            docker_path = CURATED_APPS_PATH + "/pytorch/pytorch_with_encrypted_files"
+            docker_build_cmd = "docker build -t pytorch_encrypted ."
+            generate_encrypted_files(docker_path, output_filename)
+        else:
+            docker_path = CURATED_APPS_PATH + "/pytorch/pytorch_with_plain_text_files"
+            docker_build_cmd = "docker build -t pytorch_plain ."
+
+        output = utils.run_subprocess(docker_build_cmd, docker_path)
+        print(output)
 
 def pre_actions(test_config_dict):
     ordered_test_config = {}
     end_key = test_config_dict.get("end_test")
-    if os.path.isdir(CURATED_APPS_PATH+"/test_config"):
-        shutil.rmtree(CURATED_APPS_PATH+"/test_config")
+    if os.path.isdir(CURATED_APPS_PATH + "/test_config"):
+        shutil.rmtree(CURATED_APPS_PATH + "/test_config")
     else:
         os.mkdir(CURATED_APPS_PATH+"/test_config")
-    shutil.copytree("test_config", CURATED_APPS_PATH+"/test_config")
+    utils.run_subprocess("cp -rf test_config {}".format(CURATED_APPS_PATH+"/test_config"))
 
     pre_actions_for_verifier_image(test_config_dict, end_key)
 
     input_ord_list = ['signing_key_path', 'runtime_variables', 'runtime_variable_list', 'attestation', 
-                      'cert_file', 'ssl_path', 'ca_cert_file_path', 'encrypted_files', 'encrypted_files_path']
-    invalid_keys = ["cert_file", "ssl_path"]
-    # sort dictionary based on input order list
-    
+                      'encrypted_files', 'encrypted_files_path', 'cert_file', 'ssl_path']
+
     for key in input_ord_list:
-        if key in test_config_dict and key not in invalid_keys:
+        if key in test_config_dict:
             ordered_test_config[key] = test_config_dict.get(key)
             if key == end_key:
                 break
@@ -76,17 +86,15 @@ def generate_curated_image(test_config_dict, run_with_test_option):
     workload_image = test_config_dict["docker_image"]
 
     if test_config_dict.get("create_local_image") == "y":
-        generate_local_image(workload_image)
-    
-    os.chdir(CURATED_APPS_PATH)
+        generate_local_image(workload_image, test_config_dict.get("encrypted_files"))
 
     if run_with_test_option:
         curation_cmd = 'python3 curation_app.py ' + workload_image + ' test'
     else:
         curation_cmd = 'python3 curation_app.py ' + workload_image + ' < input.txt'
     print("Curation cmd ", curation_cmd)
-    process = subprocess.Popen(curation_cmd, stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE, shell=True, encoding='utf-8')
+    process = utils.popen_subprocess(curation_cmd, CURATED_APPS_PATH)
+
     while True:
         output = process.stdout.readline()
         if process.poll() is not None and output == '':
@@ -95,7 +103,8 @@ def generate_curated_image(test_config_dict, run_with_test_option):
             print(output.strip())
             curation_output += output
             if "docker run" in output:
-                curation_output = output.strip()
+                curation_output = True
+                break
     return curation_output
 
 def kill(proc_pid):
@@ -104,12 +113,35 @@ def kill(proc_pid):
         proc.kill()
     process.kill()
 
-def run_curated_image(gsc_docker_command):
+def kill_process_by_name(processName):
+    procs = [p.pid for p in psutil.process_iter() for c in p.cmdline() if "/gramine/app_files/apploader.sh" in c]
+    for process in procs:
+        try:
+            utils.run_subprocess("sudo kill -9 {}".format(process))
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+
+def cleanup_after_test(workload):
+    try:
+        utils.run_subprocess("docker rmi verifier_image:latest -f")
+        utils.run_subprocess('sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"')
+        utils.run_subprocess("docker rmi gsc-{}-wrapper -f".format(workload))
+        utils.run_subprocess("docker rmi gsc-{}-wrapper-unsigned -f".format(workload))
+        utils.run_subprocess("docker rmi {}-wrapper -f".format(workload))
+        kill_process_by_name("/gramine/app_files/apploader.sh")
+        kill_process_by_name("/gramine/app_files/entrypoint")
+    except Exception as e:
+        pass
+
+def run_curated_image(docker_command, attestation=None):
     result = False
     pytorch_result = ["Result", "Labrador retriever", "golden retriever", "Saluki, gazelle hound", "whippet", "Ibizan hound, Ibizan Podenco"]
-    gsc_docker_command = gsc_docker_command.replace("-it", "-t")
-    process = subprocess.Popen(gsc_docker_command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE, shell=True, encoding='ascii')
+    gsc_docker_command = docker_command[-1]
+    if attestation == 'y':
+        verifier_process = utils.popen_subprocess(docker_command[0])
+        time.sleep(10)
+
+    process = utils.popen_subprocess(gsc_docker_command)
     while True:
         nextline = process.stdout.readline()
         print(nextline.strip())
@@ -117,43 +149,43 @@ def run_curated_image(gsc_docker_command):
             break
         if "Ready to accept connections" in nextline or all(x in nextline for x in pytorch_result):
             process.stdout.close()
+            if attestation == 'y': kill(verifier_process.pid)
             kill(process.pid)
             sys.stdout.flush()
             result = True
             break
     return result
 
-def update_verifier_service_call(filepath, old_args):
-    with open(filepath, 'r+') as f:
-        lines = f.readlines()
-        f.seek(0)
-        f.truncate()
-        for line in lines:
-            if old_args in line:
-                print('line found in the curation_app.py -> ' + line)
-                line = line.rstrip().rstrip("'") + " < input.txt'\n"
-                print('the above line shall be updated as -> ' + line)
-            f.write(line)
-        f.close()
-
-
 def pre_actions_for_verifier_image(test_config_dict, end_test_key_str):
     if test_config_dict["attestation"] == "y" and end_test_key_str != "attestation":
-        # set up the input arguments for verifier service and copy the ssl path if provided
-        input_for_verifier_service = test_config_dict["cert_file"] + "\n"
         if test_config_dict["cert_file"] == "y" and end_test_key_str != "cert_file":
             input_for_verifier_service += "\n"
             # copy the verifier_image ssl folder
             if os.path.isdir(VERIFIER_SERVICE_PATH + "/ssl"):
                 shutil.rmtree(VERIFIER_SERVICE_PATH + "/ssl")
             shutil.copytree(test_config_dict["ssl_path"], VERIFIER_SERVICE_PATH + "/ssl")
-        # update curation_app.py to call verifier_helper_script.sh with user inputs
-        old_verifier_args = "args_verifier ='./verifier_helper_script.sh'"
-        update_verifier_service_call(CURATED_APPS_PATH + "/curation_app.py", old_verifier_args)
-        create_input_file(VERIFIER_SERVICE_PATH, input_for_verifier_service)
+        else:
+            test_config_dict['cert_file'] = "\n"
+
+def get_docker_run_command(attestation, workload_name):
+    output = []
+    wrapper_image = "gsc-{}-wrapper".format(workload_name)
+    if attestation == 'y':
+        verifier_cmd  = "docker run  --net=host  --device=/dev/sgx/enclave  -t verifier_image:latest"
+        gsc_workload = "docker run --net=host --device=/dev/sgx/enclave -e SECRET_PROVISION_SERVERS=\"localhost:4433\" \
+            -v /var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket -t {}".format(wrapper_image)
+        output.append(verifier_cmd)
+    else:
+        gsc_workload = "docker run  --device=/dev/sgx/enclave -t {}".format(wrapper_image)
+    output.append(gsc_workload)
+    return output
+
+def get_workload_name(docker_image):
+    return docker_image.split("/")[1]
 
 def run_test(test_instance, test_yaml_file):
     run_with_test_option = False
+    result = False
     test_name = inspect.stack()[1].function
     print(f"\n********** Executing {test_name} **********\n")
     test_config_dict = read_config_yaml(test_yaml_file, test_name)
@@ -163,16 +195,20 @@ def run_test(test_instance, test_yaml_file):
         sorted_dict = pre_actions(test_config_dict)
         input_str = get_inputs_from_dict(sorted_dict)
         create_input_file(CURATED_APPS_PATH, input_str)
-    
-    curation_output = generate_curated_image(test_config_dict, run_with_test_option)
-    if "expected_output" in test_config_dict.keys():
-        if test_config_dict.get("expected_output") in curation_output:
-            return True
-        else:
-            return False
-
-    result = run_curated_image(curation_output)
-
+    try:
+        workload_name = get_workload_name(test_config_dict['docker_image'])
+        curation_output = generate_curated_image(test_config_dict, run_with_test_option)
+        if "expected_output" in test_config_dict.keys():
+            cleanup_after_test(workload_name)
+            if test_config_dict.get("expected_output") in curation_output:
+                return True
+            else:
+                return False
+        if curation_output:
+            docker_run = get_docker_run_command(test_config_dict['attestation'], workload_name)
+            result = run_curated_image(docker_run, test_config_dict['attestation'])
+    finally:
+        cleanup_after_test(workload_name)
     return result
     
     

@@ -1,6 +1,7 @@
 .cache
 /build
 /install
+*contrib_repo
 
 # No editor backup files.
 *.sw*

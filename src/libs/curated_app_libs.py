@@ -67,11 +67,11 @@ def pre_actions(test_config_dict):
         shutil.rmtree(CURATED_APPS_PATH + "/test_config")
     else:
         os.mkdir(CURATED_APPS_PATH+"/test_config")
-    utils.run_subprocess("cp -rf test_config {}".format(CURATED_APPS_PATH+"/test_config"))
+    utils.run_subprocess("cp -rf test_config/* {}".format(CURATED_APPS_PATH+"/test_config"))
 
     pre_actions_for_verifier_image(test_config_dict, end_key)
 
-    input_ord_list = ['signing_key_path', 'runtime_variables', 'runtime_variable_list', 'attestation', 
+    input_ord_list = ['signing_key_path', 'runtime_args', 'runtime_variables', 'runtime_variable_list', 'attestation', 
                       'encrypted_files', 'encrypted_files_path', 'cert_file', 'ssl_path']
 
     for key in input_ord_list:
@@ -169,7 +169,7 @@ def pre_actions_for_verifier_image(test_config_dict, end_test_key_str):
 
 def get_docker_run_command(attestation, workload_name):
     output = []
-    wrapper_image = "gsc-{}-wrapper".format(workload_name)
+    wrapper_image = "gsc-{}x".format(workload_name)
     if attestation == 'y':
         verifier_cmd  = "docker run  --net=host  --device=/dev/sgx/enclave  -t verifier_image:latest"
         gsc_workload = "docker run --net=host --device=/dev/sgx/enclave -e SECRET_PROVISION_SERVERS=\"localhost:4433\" \
@@ -198,16 +198,28 @@ def run_test(test_instance, test_yaml_file):
     try:
         workload_name = get_workload_name(test_config_dict['docker_image'])
         curation_output = generate_curated_image(test_config_dict, run_with_test_option)
-        if "expected_output" in test_config_dict.keys():
+        if "expected_output_infile" in test_config_dict.keys():
             cleanup_after_test(workload_name)
-            if test_config_dict.get("expected_output") in curation_output:
-                return True
+            with open(os.path.join(CURATED_APPS_PATH, test_config_dict.get("docker_image")+".log"), "r") as logfile:
+                for line in logfile.readlines():
+                    print(line)
+                    if test_config_dict.get("expected_output_infile") in line:
+                        result = True
+                return result
+        
+        if "expected_output_console" in test_config_dict.keys():
+            cleanup_after_test(workload_name)
+            if test_config_dict.get("expected_output_console") in curation_output:
+                result = True
             else:
-                return False
+                result = False
+            return result
+
         if curation_output:
             docker_run = get_docker_run_command(test_config_dict['attestation'], workload_name)
             result = run_curated_image(docker_run, test_config_dict['attestation'])
     finally:
+        print("Docker images cleanup")
         cleanup_after_test(workload_name)
     return result
     

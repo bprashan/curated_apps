@@ -5,7 +5,8 @@ import src.libs.curated_app_libs
 yaml_file_name = "tests_without_attestation.yaml"
 tests_yaml_path = os.path.join(os.getcwd(), 'data', yaml_file_name)
 
-
+@pytest.mark.usefixtures("copy_repo")
+@pytest.mark.usefixtures("curated_setup")
 class TestClass:
 
     def test_redis_default(self):
@@ -64,6 +65,6 @@ class TestClass:
         test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
     
-    def test_redis_ev_valid_input(self):
+    def test_redis_ev_invalid_input_2(self):
         test_result = src.libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result

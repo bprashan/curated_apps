@@ -7,10 +7,13 @@ import re
 
 @pytest.fixture(scope="session")
 def curated_setup():
+    print("Cleaning old contrib repo")
+    rm_cmd = "rm -rf {}".format(ORIG_CURATED_PATH)
+    utils.run_subprocess(rm_cmd)
     print("Cloning and checking out Contrib Git Repo")
     utils.run_subprocess(CONTRIB_GIT_CMD)
     utils.run_subprocess(GIT_CHECKOUT_CMD, ORIG_CURATED_PATH)
-    dcap_setup()
+    #dcap_setup()
 
 @pytest.fixture()
 def copy_repo():

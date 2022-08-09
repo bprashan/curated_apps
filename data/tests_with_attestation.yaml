@@ -1,8 +1,9 @@
 default_input_args:
   signing_key_path :
   attestation: y
+  runtime_args: n
   runtime_variables: n
-  cert_file : 
+  cert_file :
   encrypted_files : n
   create_local_image: n
   end_test : n
@@ -65,23 +66,18 @@ test_redis_with_attestation_and_empty_ssl:
 
 test_redis_with_attestation_ssl_ca_crt:
   docker_image: redis/redis:latest
-  cert_available: y
+  cert_file: y
   ssl_path: test_config/ca_cert_folder
 
 test_redis_with_attestation_wo_ssl:
   docker_image: redis/redis:latest
-  cert_available: y
+  cert_file: y
   ssl_path: 
   end_test: ssl_path
-
-test_redis_with_attestation_default_cert:
-  docker_image: redis/redis:latest
-  cert_available: n
 
 test_pytorch_with_attestation_invalid_encrypted_option:
   docker_image: pytorch/pytorch-plain:latest
   create_local_image: y
-  cert_available: n
   encrypted_files: s
 
 test_pytorch_with_attestation_no_encrypted_files:

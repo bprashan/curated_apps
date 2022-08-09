@@ -28,6 +28,8 @@ def get_inputs_from_dict(test_config_dict):
             input_str += str(value).strip() + "\n"
         else:
             input_str += "\n"
+    # Curator app expects ANY key press as the last input, after copying ssl certificates.
+    input_str += "\n"
     return input_str
 
 def create_input_file(path, input_str):
@@ -65,14 +67,12 @@ def pre_actions(test_config_dict):
     end_key = test_config_dict.get("end_test")
     if os.path.isdir(CURATED_APPS_PATH + "/test_config"):
         shutil.rmtree(CURATED_APPS_PATH + "/test_config")
-    else:
-        os.mkdir(CURATED_APPS_PATH+"/test_config")
-    utils.run_subprocess("cp -rf test_config/* {}".format(CURATED_APPS_PATH+"/test_config"))
+    shutil.copytree("test_config", CURATED_APPS_PATH + "/test_config")
 
     pre_actions_for_verifier_image(test_config_dict, end_key)
 
-    input_ord_list = ['signing_key_path', 'runtime_args', 'runtime_variables', 'runtime_variable_list', 'attestation', 
-                      'encrypted_files', 'encrypted_files_path', 'cert_file', 'ssl_path']
+    input_ord_list = ['signing_key_path', 'runtime_args', 'runtime_variables', 'runtime_variable_list',
+                      'attestation', 'encrypted_files', 'encrypted_files_path', 'cert_file']
 
     for key in input_ord_list:
         if key in test_config_dict:
@@ -102,9 +102,9 @@ def generate_curated_image(test_config_dict, run_with_test_option):
         if output:
             print(output.strip())
             curation_output += output
-            if "docker run" in output:
-                curation_output = True
-                break
+            # if "docker run" in output:
+            #     curation_output = True
+            #     break
     return curation_output
 
 def kill(proc_pid):
@@ -159,13 +159,10 @@ def run_curated_image(docker_command, attestation=None):
 def pre_actions_for_verifier_image(test_config_dict, end_test_key_str):
     if test_config_dict["attestation"] == "y" and end_test_key_str != "attestation":
         if test_config_dict["cert_file"] == "y" and end_test_key_str != "cert_file":
-            input_for_verifier_service += "\n"
             # copy the verifier_image ssl folder
             if os.path.isdir(VERIFIER_SERVICE_PATH + "/ssl"):
                 shutil.rmtree(VERIFIER_SERVICE_PATH + "/ssl")
             shutil.copytree(test_config_dict["ssl_path"], VERIFIER_SERVICE_PATH + "/ssl")
-        else:
-            test_config_dict['cert_file'] = "\n"
 
 def get_docker_run_command(attestation, workload_name):
     output = []
@@ -179,6 +176,7 @@ def get_docker_run_command(attestation, workload_name):
         gsc_workload = "docker run  --device=/dev/sgx/enclave -t {}".format(wrapper_image)
     output.append(gsc_workload)
     return output
+
 
 def get_workload_name(docker_image):
     return docker_image.split("/")[1]
@@ -199,7 +197,6 @@ def run_test(test_instance, test_yaml_file):
         workload_name = get_workload_name(test_config_dict['docker_image'])
         curation_output = generate_curated_image(test_config_dict, run_with_test_option)
         if "expected_output_infile" in test_config_dict.keys():
-            cleanup_after_test(workload_name)
             with open(os.path.join(CURATED_APPS_PATH, test_config_dict.get("docker_image")+".log"), "r") as logfile:
                 for line in logfile.readlines():
                     print(line)
@@ -208,7 +205,6 @@ def run_test(test_instance, test_yaml_file):
                 return result
         
         if "expected_output_console" in test_config_dict.keys():
-            cleanup_after_test(workload_name)
             if test_config_dict.get("expected_output_console") in curation_output:
                 result = True
             else:

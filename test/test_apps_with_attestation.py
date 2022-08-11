@@ -89,10 +89,6 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    def test_redis_with_attestation_client_conn(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
     def test_redis_with_attestation_verifier_kill(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result

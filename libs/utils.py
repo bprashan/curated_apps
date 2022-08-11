@@ -8,7 +8,7 @@ def run_subprocess(command, dest_dir=None):
     if dest_dir:
         os.chdir(dest_dir)
 
-    print("Starting Process ", command)
+    print("Starting Process %s from %s" %(command, os.getcwd()))
     process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                     universal_newlines=True, shell=True)
     if process.returncode != 0:

@@ -7,6 +7,7 @@ import torch
 from data.constants import *
 from libs import config_parser
 from libs import utils
+from libs import workload
 import time
 
 def generate_encrypted_files(path, filename):
@@ -129,6 +130,8 @@ def run_test(test_instance, test_yaml_file):
         if curation_output:
             docker_run = get_docker_run_command(test_config_dict['attestation'], workload_name)
             result = run_curated_image(docker_run, test_config_dict['attestation'])
+            if "redis" in test_name:
+                result = workload.run_redis_client()
     finally:
         print("Docker images cleanup")
         utils.cleanup_after_test(workload_name)

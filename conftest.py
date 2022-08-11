@@ -1,7 +1,7 @@
 import pytest
 import os
 from data.constants import *
-from src.libs import utils
+from libs import utils
 import re
 
 

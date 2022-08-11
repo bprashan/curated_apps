@@ -1,115 +1,146 @@
 default_input_args:
-  signing_key_path :
+  signing_key_path:
   attestation: y
-  runtime_args: n
   runtime_variables: n
-  cert_file :
-  encrypted_files : n
+  runtime_args: n
+  cert_file:
+  encrypted_files: n
   create_local_image: n
-  end_test : n
+  end_test: n
 
 test_redis_with_attestation:
   docker_image: redis/redis:latest
 
-test_redis_with_attestation_sign_key:
-  docker_image: redis/redis:latest
-  signing_key_path : test_config/enclave-key.pem
-
-test_redis_with_attestation_cert_file:
-  docker_image: redis/redis:latest
-  cert_file : y
-  ssl_path : test_config/ssl
-
 test_redis_with_attestation_cert_file_runtime_variables:
   docker_image: redis/redis:latest
-  cert_file : y
-  ssl_path : test_config/ssl
+  cert_file: y
+  ssl_path: test_config/ssl
   runtime_variables: y
   runtime_variable_list: name="curator_app",version="1.2"
-
-test_redis_with_local_docker_image_with_attestation:
-  docker_image: redis/redis:latest
-  create_local_image: y
 
 test_redis_with_attestation_end_test_ssl_path:
   docker_image: redis/redis:latest
-  cert_file : y
-  ssl_path : ssl
+  cert_file: y
+  ssl_path: test_config/empty_ssl_folder
   runtime_variables: y
   runtime_variable_list: name="curator_app",version="1.2"
+  expected_output_console: "Error: verifier_image/ssl/ca.crt file does not exist."
   end_test: ssl_path
-
-test_pytorch_with_local_docker_image_with_attestation:
-  docker_image: pytorch/pytorch-plain:latest
-  create_local_image: y
-  encrypted_files: y
-  files: classes.txt:input.jpg:alexnet-pretrained.pt:app/result.txt
-
-test_redis_with_attestation_test_option:
-  docker_image: redis/redis:latest
-  test_option: y
-
-test_pytorch_with_attestation:
-  docker_image: pytorch/pytorch-encrypted:latest
-  create_local_image: y
-  encrypted_files: y
-  encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:app/result.txt
 
 test_redis_with_attestation_invalid_cert_option:
   docker_image: redis/redis:latest
   cert_file: s
+  expected_output_console: "You have entered a wrong option"
+  end_test: cert_file
 
-test_redis_with_attestation_and_empty_ssl:
-  docker_image: redis/redis:latest
-  cert_file: y
-  ssl_path: test_config/empty_ssl_folder
-
-test_redis_with_attestation_ssl_ca_crt:
+test_redis_with_attestation_ssl_server_crt:
   docker_image: redis/redis:latest
   cert_file: y
   ssl_path: test_config/ca_cert_folder
+  end_test: ssl_path
+  expected_output_console: "Error: verifier_image/ssl/server.crt file does not exist."
+
+test_redis_with_attestation_ssl_server_key:
+  docker_image: redis/redis:latest
+  cert_file: y
+  ssl_path: test_config/wo_server_key
+  end_test: ssl_path
+  expected_output_console: "Error: verifier_image/ssl/server.key file does not exist."
 
 test_redis_with_attestation_wo_ssl:
   docker_image: redis/redis:latest
   cert_file: y
-  ssl_path: 
+  ssl_path: ''
   end_test: ssl_path
+  expected_output_console: "Error: verifier_image/ssl/ca.crt file does not exist."
 
 test_pytorch_with_attestation_invalid_encrypted_option:
   docker_image: pytorch/pytorch-plain:latest
   create_local_image: y
   encrypted_files: s
+  end_test: encrypted_files
+  expected_output_console: "You have entered a wrong option"
+
+test_pytorch_with_attestation_no_encryption_key:
+  docker_image: pytorch/pytorch-encrypted:latest
+  create_local_image: y
+  encrypted_files: y
+  encryption_key: ''
+  encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:app/result.txt
+  cert_file: y
+  ssl_path: test_config/ssl
+  expected_output_console: "Error:  file does not exist."
+  end_test: encryption_key
 
 test_pytorch_with_attestation_no_encrypted_files:
   docker_image: pytorch/pytorch-plain:latest
   create_local_image: y
   encrypted_files: n
+  cert_file: y
+  ssl_path: test_config/ssl
+
+test_pytorch_with_attestation_encrypted_image:
+  docker_image: pytorch/pytorch-encrypted:latest
+  create_local_image: y
+  encrypted_files: y
+  encryption_key: pytorch/pytorch_with_encrypted_files/wrap-key
+  encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:app/result.txt
+  cert_file: y
+  ssl_path: test_config/ssl
+
+test_pytorch_with_attestation_wrong_encrypted_list:
+  docker_image: pytorch/pytorch-encrypted:latest
+  create_local_image: y
+  encrypted_files: y
+  encryption_key: pytorch/pytorch_with_encrypted_files/wrap-key
+  encrypted_files_path: input.jpg:alexnet-pretrained.pt:app/result.txt
+  cert_file: y
+  ssl_path: test_config/ssl
 
 test_pytorch_with_attestation_invalid_encrypted_files:
-  docker_image: pytorch/pytorch-plain:latest
+  docker_image: pytorch/pytorch-encrypted:latest
   create_local_image: y
   encrypted_files: y
-  encrypted_files_path: test_config/text-file
+  encryption_key: pytorch/pytorch_with_encrypted_files/wrap-key
+  encrypted_files_path: text-file
+  cert_file: y
+  ssl_path: test_config/ssl 
 
 test_pytorch_with_attestation_encrypted_file_fullpath:
-  docker_image: pytorch/pytorch-plain:latest
+  docker_image: pytorch/pytorch-encrypted:latest
   create_local_image: y
   encrypted_files: y
-  encrypted_files_path: /tmp/test_config/text-file
+  encryption_key: pytorch/pytorch_with_encrypted_files/wrap-key
+  encrypted_files_path: pytorchexample.py
+  cert_file: y
+  ssl_path: test_config/ssl
 
 test_pytorch_with_attestation_encrypted_file_invalid_format:
-  docker_image: pytorch/pytorch-plain:latest
+  docker_image: pytorch/pytorch-encrypted:latest
   create_local_image: y
   encrypted_files: y
+  encryption_key: pytorch/pytorch_with_encrypted_files/wrap-key
+  encrypted_files_path: classes.txt;input.jpg;alexnet-pretrained.pt;app/result.txt
+  cert_file: y
+  ssl_path: test_config/ssl 
+
+test_pytorch_with_attestation_invalid_encryption_key:
+  docker_image: pytorch/pytorch-encrypted:latest
+  create_local_image: y
+  encrypted_files: y
+  encryption_key: test_config/invalid_wrap-key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:app/result.txt
+  cert_file: y
+  ssl_path: test_config/ssl
+  expected_output_console: "`gsc-pytorch-encrypted:latestx` creation failed"
 
 test_redis_with_attestation_client_conn:
   docker_image: redis/redis:latest
-  cert_available: y
+  cert_file: y
   client: y
 
 test_redis_with_attestation_verifier_kill:
   docker_image: redis/redis:latest
-  cert_available: y
+  cert_file: y
   client: y
   end_test: verifier_after_client

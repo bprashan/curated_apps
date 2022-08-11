@@ -7,6 +7,11 @@ default_input_args:
   create_local_image: n
   end_test: n
 
+test_curated_app_usage:
+  docker_image: redis:latest
+  end_test: signing_key_path
+  expected_output_console: "Usage: curation_app.py <redis/redis:7.0.0>"
+
 test_redis_default:
   docker_image: redis/redis:latest
 

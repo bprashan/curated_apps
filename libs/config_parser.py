@@ -40,7 +40,7 @@ def data_pre_processing(test_config_dict):
     data_pre_processing_for_verifier_image(test_config_dict, end_key)
 
     input_ord_list = ['signing_key_path', 'runtime_args', 'runtime_variables', 'runtime_variable_list',
-                      'attestation', 'encrypted_files', 'encrypted_files_path', 'cert_file']
+                      'attestation', 'encrypted_files', 'encrypted_files_path', 'encryption_key', 'cert_file']
 
     for key in input_ord_list:
         if key in test_config_dict:
@@ -55,4 +55,5 @@ def data_pre_processing_for_verifier_image(test_config_dict, end_test_key_str):
             # copy the verifier_image ssl folder
             if os.path.isdir(VERIFIER_SERVICE_PATH + "/ssl"):
                 shutil.rmtree(VERIFIER_SERVICE_PATH + "/ssl")
-            shutil.copytree(test_config_dict["ssl_path"], VERIFIER_SERVICE_PATH + "/ssl")
+            if test_config_dict['ssl_path']:
+                shutil.copytree(test_config_dict["ssl_path"], VERIFIER_SERVICE_PATH + "/ssl")

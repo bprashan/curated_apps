@@ -12,6 +12,7 @@ def run_subprocess(command, dest_dir=None):
     process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                     universal_newlines=True, shell=True)
     if process.returncode != 0:
+        print(process.stderr.strip())
         raise Exception("Failed to run command {}".format(command))
     
     if dest_dir: os.chdir(cwd)
@@ -62,3 +63,16 @@ def get_workload_name(docker_image):
         return docker_image.split("/")[1]
     except Exception as e:
         return ''
+
+def check_machine():
+    service_cmd = "sudo systemctl --type=service --state=running"
+    service_output = run_subprocess(service_cmd)
+    if "walinuxagent.service" in service_output:
+        print("Running on Azure Linux Agent")
+        return "Azure Linux Agent"
+    elif "pccs.service" in service_output:
+        print("Running on DCAP client")
+        return "DCAP client"
+    else:
+        print("No Provisioning service found, cannot run tests with attestation.")
+        return "No Provisioning enabled"

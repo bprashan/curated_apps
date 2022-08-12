@@ -13,7 +13,9 @@ def curated_setup():
     print("Cloning and checking out Contrib Git Repo")
     utils.run_subprocess(CONTRIB_GIT_CMD)
     utils.run_subprocess(GIT_CHECKOUT_CMD, ORIG_CURATED_PATH)
-    #dcap_setup()
+    if utils.check_machine() == "DCAP client":
+        print("Configuring the contrib repo to setup DCAP client")
+        dcap_setup()
 
 @pytest.fixture()
 def copy_repo():

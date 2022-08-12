@@ -13,14 +13,6 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    def test_pytorch_with_attestation(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
-    def test_redis_with_attestation_cert_file(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
     def test_redis_with_attestation_cert_file_runtime_variables(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
@@ -29,35 +21,15 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    def test_redis_with_attestation_sign_key(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
-    def test_redis_with_local_docker_image_with_attestation(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
-    def test_redis_with_attestation_end_test_ssl_path(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
-    def test_pytorch_with_local_docker_image_with_attestation(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
-    def test_redis_with_attestation_test_option(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
     def test_redis_with_attestation_invalid_cert_option(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    def test_redis_with_attestation_and_empty_ssl(self):
+    def test_redis_with_attestation_ssl_server_crt(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    def test_redis_with_attestation_ssl_ca_crt(self):
+    def test_redis_with_attestation_ssl_server_key(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
@@ -65,15 +37,23 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    def test_redis_with_attestation_default_cert(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
     def test_pytorch_with_attestation_invalid_encrypted_option(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
+    def test_pytorch_with_attestation_no_encryption_key(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
     def test_pytorch_with_attestation_no_encrypted_files(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    def test_pytorch_with_attestation_encrypted_image(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    def test_pytorch_with_attestation_wrong_encrypted_list(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
@@ -89,7 +69,10 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    def test_redis_with_attestation_verifier_kill(self):
+    def test_pytorch_with_attestation_invalid_encryption_key(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
+    def test_redis_with_attestation_verifier_kill(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result

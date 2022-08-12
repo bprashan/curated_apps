@@ -26,11 +26,11 @@ def generate_local_image(workload_image, encryption=None):
 
         if encryption == "y":
             docker_path = CURATED_APPS_PATH + "/pytorch/pytorch_with_encrypted_files"
-            docker_build_cmd = "docker build -t pytorch_encrypted ."
             generate_encrypted_files(docker_path, output_filename)
+            docker_build_cmd = "docker build -t pytorch-encrypted ."
         else:
             docker_path = CURATED_APPS_PATH + "/pytorch/pytorch_with_plain_text_files"
-            docker_build_cmd = "docker build -t pytorch_plain ."
+            docker_build_cmd = "docker build -t pytorch-plain ."
 
         output = utils.run_subprocess(docker_build_cmd, docker_path)
         print(output)
@@ -65,12 +65,12 @@ def get_docker_run_command(attestation, workload_name):
     output = []
     wrapper_image = "gsc-{}x".format(workload_name)
     if attestation == 'y':
-        verifier_cmd  = "docker run  --net=host  --device=/dev/sgx/enclave  -t verifier_image:latest"
-        gsc_workload = "docker run --net=host --device=/dev/sgx/enclave -e SECRET_PROVISION_SERVERS=\"localhost:4433\" \
+        verifier_cmd  = "docker run --rm --net=host -e RA_TLS_ALLOW_DEBUG_ENCLAVE_INSECURE=1 -e RA_TLS_ALLOW_OUTDATED_TCB_INSECURE=1 --device=/dev/sgx/enclave  -t verifier_image:latest"
+        gsc_workload = "docker run --rm --net=host --device=/dev/sgx/enclave -e SECRET_PROVISION_SERVERS=\"localhost:4433\" \
             -v /var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket -t {}".format(wrapper_image)
         output.append(verifier_cmd)
     else:
-        gsc_workload = "docker run  --device=/dev/sgx/enclave -t {}".format(wrapper_image)
+        gsc_workload = "docker run --rm --net=host --device=/dev/sgx/enclave -t {}".format(wrapper_image)
     output.append(gsc_workload)
     return output
 
@@ -80,7 +80,7 @@ def run_curated_image(docker_command, attestation=None):
     gsc_docker_command = docker_command[-1]
     if attestation == 'y':
         verifier_process = utils.popen_subprocess(docker_command[0])
-        time.sleep(10)
+        time.sleep(5)
 
     process = utils.popen_subprocess(gsc_docker_command)
     while True:
@@ -136,6 +136,4 @@ def run_test(test_instance, test_yaml_file):
         print("Docker images cleanup")
         utils.cleanup_after_test(workload_name)
     return result
-    
-    
 

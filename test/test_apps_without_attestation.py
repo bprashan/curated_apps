@@ -8,6 +8,9 @@ tests_yaml_path = os.path.join(os.getcwd(), 'data', yaml_file_name)
 @pytest.mark.usefixtures("copy_repo")
 @pytest.mark.usefixtures("curated_setup")
 class TestClass:
+    def test_curated_app_usage(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
 
     def test_redis_default(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)

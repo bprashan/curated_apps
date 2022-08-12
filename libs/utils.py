@@ -36,7 +36,7 @@ def kill(proc_pid):
     process.kill()
 
 def kill_process_by_name(processName):
-    procs = [p.pid for p in psutil.process_iter() for c in p.cmdline() if "/gramine/app_files/apploader.sh" in c]
+    procs = [p.pid for p in psutil.process_iter() for c in p.cmdline() if processName in c]
     for process in procs:
         try:
             utils.run_subprocess("sudo kill -9 {}".format(process))
@@ -45,15 +45,20 @@ def kill_process_by_name(processName):
 
 def cleanup_after_test(workload):
     try:
-        utils.run_subprocess("docker rmi verifier_image:latest -f")
-        utils.run_subprocess('sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"')
-        utils.run_subprocess("docker rmi gsc-{}-wrapper -f".format(workload))
-        utils.run_subprocess("docker rmi gsc-{}-wrapper-unsigned -f".format(workload))
-        utils.run_subprocess("docker rmi {}-wrapper -f".format(workload))
+        kill_process_by_name("secret_prov_server_dcap")
         kill_process_by_name("/gramine/app_files/apploader.sh")
         kill_process_by_name("/gramine/app_files/entrypoint")
+        utils.run_subprocess('sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"')
+        utils.run_subprocess("docker rmi gsc-{}x -f".format(workload))
+        utils.run_subprocess("docker rmi gsc-{}x-unsigned -f".format(workload))
+        utils.run_subprocess("docker rmi {}x -f".format(workload))
+        utils.run_subprocess("docker rmi verifier_image:latest -f")
+        utils.run_subprocess("docker system prune -f")
     except Exception as e:
         pass
 
 def get_workload_name(docker_image):
-    return docker_image.split("/")[1]
+    try:
+        return docker_image.split("/")[1]
+    except Exception as e:
+        return ''

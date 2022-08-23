@@ -1,25 +1,21 @@
 ---
 default_input_args:
-  attestation: n
-  runtime_args: n
-  runtime_variables: n
+  start:
+  attestation:
   signing_key_path :
+  runtime_variables_list:
+  runtime_args_text:
   create_local_image: n
   end_test: n
-
-test_curated_app_usage:
-  docker_image: redis:latest
-  end_test: signing_key_path
-  expected_output_console: "Usage: curation_app.py <redis/redis:7.0.0>"
 
 test_redis_default:
   docker_image: redis/redis:latest
 
 test_redis_unknown_docker_image:
   docker_image: redis/redis:unknown_version
-  test_option: y
+  expected_screen: signing_page
   expected_output_console: " Could not fetch `redis:unknown_version` image from dockerhub"
-  end_test: y
+  end_test: signing_key_path
 
 test_redis_test_option:
   docker_image: redis/redis:latest
@@ -32,13 +28,7 @@ test_redis_with_sign_key:
 test_redis_with_runtime_variables:
   docker_image: redis/redis:latest
   signing_key_path:
-  runtime_variables: y
   runtime_variable_list: name="curator_app",version="1.2"
-
-test_redis_with_local_docker_image:
-  docker_image: redis/redis:latest
-  create_local_image: y
-  test_option: y
 
 test_pytorch_default:
   create_local_image: y
@@ -58,34 +48,36 @@ test_redis_wrong_key_path:
   docker_image: redis/redis:latest
   signing_key_path : no_test_key
   end_test: signing_key_path
+  expected_screen: signing_page
   expected_output_console: "no_test_key file does not exist."
 
 test_redis_ra_wrong_option:
   docker_image: redis/redis:latest
   attestation: k
   end_test: attestation
-  expected_output_console: "You have entered a wrong option"
-
-test_redis_ev_wrong_option:
-  docker_image: redis/redis:latest
-  runtime_variables: k
-  end_test: runtime_variables
+  expected_screen: attestation_page
   expected_output_console: "You have entered a wrong option"
 
 test_redis_ev_invalid_input_1:
   docker_image: redis/redis:latest
-  runtime_variables: y
   runtime_variable_list: name="Xyz",,age="20"
-  expected_output_console: "`gsc-redis:latestx` creation failed"
+  expected_screen: final_page
+  expected_output_console: '`gsc-redis:latest` creation failed'
 
 test_redis_ev_dict:
   docker_image: redis/redis:latest
-  runtime_variables: y
   runtime_variable_list: {name="Xyz",age="20"}
-  expected_output_console: "`gsc-redis:latestx` creation failed"
+  expected_screen: final_page
+  expected_output_console: "`gsc-redis:latest` creation failed"
 
 test_redis_ev_invalid_input_2:
   docker_image: redis/redis:latest
-  runtime_variables: y
   runtime_variable_list: name="Xyz",age=
-  expected_output_console: "`gsc-redis:latestx` creation failed"
+  expected_screen: final_page
+  expected_output_console: "`gsc-redis:latest` creation failed"
+
+test_bash_runtime_args:
+  docker_image: bash/bash-test:latest
+  create_local_image: y
+  runtime_args: y
+  runtime_args_text: -c free

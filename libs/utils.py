@@ -63,7 +63,7 @@ def cleanup_after_test(workload):
         run_subprocess("docker system prune -f")
         run_subprocess("docker rmi pytorch-plain:latest")
         run_subprocess("docker rmi pytorch-encryption:latest")
-        run_subprocess("docker rmi bash-test:latest")
+        run_subprocess("docker rmi bash-test:latest -f")
     except Exception as e:
         print("Exception occured during cleanup ", e)
 
@@ -87,9 +87,12 @@ def check_machine():
         return "No Provisioning enabled"
 
 def generate_encrypted_files(path, filename):
-    output_path = os.path.join(path, "encrypted", "alexnet-pretrained.pt")
+    output_path = os.path.join(path, "alexnet-pretrained.pt")
     encrypt_cmd = "gramine-sgx-pf-crypt encrypt -w wrap-key -i {} -o {}".format(filename, output_path)
     run_subprocess(encrypt_cmd, path)
+    dest_path = os.path.join(path, "encrypted")
+    move_cmd = "mv %s %s" % output_path, dest_path
+    run_subprocess(move_cmd)
 
 def create_docker_image(docker_path, docker_name):
     docker_build_cmd = "docker build -t %s ." % docker_name

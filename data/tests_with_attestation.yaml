@@ -1,12 +1,12 @@
-default_input_args:
-  signing_key_path:
-  attestation: y
-  runtime_variables: n
-  runtime_args: n
-  cert_file:
-  encrypted_files: n
-  create_local_image: n
-  end_test: n
+default_input_args: 
+  start:
+  azure_warning:
+  signing_key_path :
+  attestation: test
+  runtime_args_text:
+  runtime_variable_list:
+  encrypted_files_path:
+  end:
 
 test_redis_with_attestation:
   docker_image: redis/redis:latest
@@ -15,14 +15,12 @@ test_redis_with_attestation_cert_file_runtime_variables:
   docker_image: redis/redis:latest
   cert_file: y
   ssl_path: test_config/ssl
-  runtime_variables: y
   runtime_variable_list: name="curator_app",version="1.2"
 
 test_redis_with_attestation_end_test_ssl_path:
   docker_image: redis/redis:latest
   cert_file: y
   ssl_path: test_config/empty_ssl_folder
-  runtime_variables: y
   runtime_variable_list: name="curator_app",version="1.2"
   expected_output_console: "Error: verifier_image/ssl/ca.crt file does not exist."
   end_test: ssl_path
@@ -82,7 +80,6 @@ test_pytorch_with_attestation_no_encrypted_files:
 test_pytorch_with_attestation_encrypted_image:
   docker_image: pytorch/pytorch-encryption:latest
   create_local_image: y
-  encrypted_files: y
   encryption_key: pytorch/pytorch_with_encrypted_files/wrap-key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:app/result.txt
   cert_file: y

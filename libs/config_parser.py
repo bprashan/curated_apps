@@ -43,22 +43,23 @@ def data_pre_processing(test_config_dict):
 
     data_pre_processing_for_verifier_image(test_config_dict, end_key)
 
-    input_ord_list = ['start', 'signing_key_path', 'attestation', 'runtime_args_text', 'runtime_variable_list', 'end'] #, 'encryption_key'
+    input_ord_list = ['start', 'azure_warning', 'signing_key_path', 'attestation', 'runtime_args_text', 'runtime_variable_list', 
+                        'encrypted_files_path', 'encryption_key', 'end']
 
     for key in input_ord_list:
-        ordered_test_config[key] = test_config_dict.get(key)
-        if key == end_key:
-            ordered_test_config['end_test'] = key
-            break
+        if key in test_config_dict.keys():
+            ordered_test_config[key] = test_config_dict.get(key)
+            if key == end_key:
+                ordered_test_config['end_test'] = key
+                break
     return ordered_test_config
 
 def data_pre_processing_for_verifier_image(test_config_dict, end_test_key_str):
-    if test_config_dict["attestation"] == "y" and end_test_key_str != "attestation":
-        if test_config_dict["cert_file"] == "y" and end_test_key_str != "cert_file":
+    if test_config_dict["attestation"] == "done" and end_test_key_str != "attestation":
             # copy the verifier_image ssl folder
-            if os.path.isdir(VERIFIER_SERVICE_PATH + "/ssl"):
-                shutil.rmtree(VERIFIER_SERVICE_PATH + "/ssl")
-            if test_config_dict['ssl_path']:
-                shutil.copytree(test_config_dict["ssl_path"], VERIFIER_SERVICE_PATH + "/ssl")
+        if os.path.isdir(VERIFIER_SERVICE_PATH + "/ssl"):
+            shutil.rmtree(VERIFIER_SERVICE_PATH + "/ssl")
+        if test_config_dict['ssl_path']:
+            shutil.copytree(test_config_dict["ssl_path"], VERIFIER_SERVICE_PATH + "/ssl")
     if "bash/bash" in test_config_dict['docker_image']:
         shutil.copytree("data/bash", CURATED_APPS_PATH + "/bash")

@@ -10,6 +10,8 @@ def curated_setup():
     utils.run_subprocess("rm -rf logs")
     os.mkdir("logs")
     print("Cleaning old contrib repo")
+    rm_cmd = "rm -rf {}".format(REPO_PATH)
+    utils.run_subprocess(rm_cmd)
     rm_cmd = "rm -rf {}".format(ORIG_CURATED_PATH)
     utils.run_subprocess(rm_cmd)
     print("Cloning and checking out Contrib Git Repo")

@@ -1,12 +1,12 @@
 ---
 default_input_args:
   start:
-  attestation:
+  azure_warning:
   signing_key_path :
-  runtime_variables_list:
+  attestation:
   runtime_args_text:
-  create_local_image: n
-  end_test: n
+  runtime_variable_list:
+  end:
 
 test_redis_default:
   docker_image: redis/redis:latest

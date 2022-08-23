@@ -38,7 +38,7 @@ def screen_verification(output):
         return "environment_page"
     elif "If the base image contain encrypted data, please provide" in output:
         return "encrypted_page"
-    elif "Image Creation:" in output:
+    elif "The curated GSC image gsc-redis:latest is ready" in output:
         return "final_page"
 
 def test_should_break(screen_name, expected_screen):
@@ -140,7 +140,7 @@ def run_curated_image(docker_command, workload_name, attestation=None):
     return result
 
 def verify_run(curation_output):
-    if re.search("docker run(.*)--device=/dev/sgx(.)enclave", curation_output):
+    if re.search("The curated GSC image gsc-(.*) is ready", curation_output):
         return True
     return False
 

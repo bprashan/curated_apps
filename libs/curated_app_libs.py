@@ -104,8 +104,12 @@ def get_workload_result(workload_name):
 def expected_msg_verification(test_config_dict, curation_output):
     result = False
     if "expected_output_infile" in test_config_dict.keys():
-        with open(os.path.join(CURATED_APPS_PATH, test_config_dict.get("docker_image")+".log"), "r") as logfile:
-            for line in logfile.readlines():
+        base_image_name = test_config_dict.get("docker_image").split('/', maxsplit=1)[1]
+        base_image_type = test_config_dict.get("docker_image").split('/', maxsplit=1)[0]
+        log_file_name, n = re.subn('[:/]', '_', base_image_name)
+        log_file = f'{base_image_type}/{log_file_name}.log'
+        with open(os.path.join(CURATED_APPS_PATH, log_file), "r") as log_file_pointer:
+            for line in log_file_pointer.readlines():
                 print(line)
                 if test_config_dict.get("expected_output_infile") in line:
                     result = True
@@ -141,7 +145,8 @@ def run_curated_image(docker_command, workload_name, attestation=None):
     return result
 
 def verify_run(curation_output):
-    if re.search("The curated GSC image gsc-(.*) is ready", curation_output):
+    if re.search("The curated GSC image gsc-(.*) is ready", curation_output) or \
+            re.search("docker run", curation_output):
         return True
     return False
 

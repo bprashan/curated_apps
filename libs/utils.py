@@ -60,8 +60,10 @@ def cleanup_after_test(workload):
         run_subprocess("docker rmi gsc-{}x-unsigned -f".format(workload))
         run_subprocess("docker rmi {}x -f".format(workload))
         run_subprocess("docker rmi verifier_image:latest -f")
-        run_subprocess("docker rm -f $(docker ps -a -q)")
-        run_subprocess("docker volume rm $(docker volume ls -q)")
+        if run_subprocess("docker ps -a -q"):
+            run_subprocess("docker rm -f $(docker ps -a -q)")
+        if run_subprocess("docker volume ls -q"):
+            run_subprocess("docker volume rm $(docker volume ls -q)")
         #run_subprocess("docker system prune -f")
         #run_subprocess("docker rmi pytorch-plain:latest")
         #run_subprocess("docker rmi pytorch-encryption:latest")

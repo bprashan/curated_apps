@@ -60,10 +60,12 @@ def cleanup_after_test(workload):
         run_subprocess("docker rmi gsc-{}x-unsigned -f".format(workload))
         run_subprocess("docker rmi {}x -f".format(workload))
         run_subprocess("docker rmi verifier_image:latest -f")
-        run_subprocess("docker system prune -f")
-        run_subprocess("docker rmi pytorch-plain:latest")
-        run_subprocess("docker rmi pytorch-encryption:latest")
-        run_subprocess("docker rmi bash-test:latest -f")
+        run_subprocess("docker rm -f $(docker ps -a -q)")
+        run_subprocess("docker volume rm $(docker volume ls -q)")
+        #run_subprocess("docker system prune -f")
+        #run_subprocess("docker rmi pytorch-plain:latest")
+        #run_subprocess("docker rmi pytorch-encryption:latest")
+        #run_subprocess("docker rmi bash-test:latest -f")
     except Exception as e:
         print("Exception occured during cleanup ", e)
 

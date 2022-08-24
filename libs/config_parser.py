@@ -3,6 +3,7 @@ import yaml
 import os
 import shutil
 from data.constants import *
+from libs import utils
 
 def read_config_yaml(config_file_path, test_name):
     yaml_file = open(config_file_path, "r")
@@ -43,8 +44,10 @@ def data_pre_processing(test_config_dict):
 
     data_pre_processing_for_verifier_image(test_config_dict, end_key)
 
-    input_ord_list = ['start', 'azure_warning', 'signing_key_path', 'attestation', 'runtime_args_text', 'runtime_variable_list', 
-                        'encrypted_files_path', 'encryption_key', 'end']
+    if utils.check_machine() == "DCAP client":
+        input_ord_list = ['start', 'azure_warning', 'signing_key_path', 'attestation', 'runtime_args_text', 'runtime_variable_list', 'encrypted_files_path', 'encryption_key', 'end']
+    else:
+        input_ord_list = ['start', 'signing_key_path', 'attestation', 'runtime_args_text', 'runtime_variable_list', 'encrypted_files_path', 'encryption_key', 'end']
 
     for key in input_ord_list:
         if key in test_config_dict.keys():

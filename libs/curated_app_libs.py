@@ -79,7 +79,7 @@ def get_docker_run_command(attestation, workload_name):
     output = []
     wrapper_image = "gsc-{}".format(workload_name)
     ssl_path = os.path.join(VERIFIER_SERVICE_PATH,"ssl_common")
-    if attestation == 'test':
+    if attestation == 'test' or attestation == 'done':
         verifier_cmd  = "docker run --rm --net=host -e RA_TLS_ALLOW_DEBUG_ENCLAVE_INSECURE=1 -e RA_TLS_ALLOW_OUTDATED_TCB_INSECURE=1 -v {}:/ra-tls-secret-prov/ssl --device=/dev/sgx/enclave  -t verifier_image:latest".format(ssl_path)
         gsc_workload = "docker run --rm --net=host --device=/dev/sgx/enclave -e SECRET_PROVISION_SERVERS=\"localhost:4433\" \
             -v /var/run/aesmd/aesm.socket:/var/run/aesmd/aesm.socket -t {}".format(wrapper_image)
@@ -125,7 +125,7 @@ def run_curated_image(docker_command, workload_name, attestation=None):
     result = False
     workload_result = get_workload_result(workload_name)
     gsc_docker_command = docker_command[-1]
-    if attestation == 'test':
+    if attestation == 'test' or attestation == 'done':
         verifier_process = utils.popen_subprocess(docker_command[0])
         time.sleep(20)
 
@@ -137,7 +137,8 @@ def run_curated_image(docker_command, workload_name, attestation=None):
             break
         if  all(x in nextline for x in workload_result):
             process.stdout.close()
-            if attestation == 'test': utils.kill(verifier_process.pid)
+            if attestation == 'test' or attestation == 'done':
+                utils.kill(verifier_process.pid)
             utils.kill(process.pid)
             sys.stdout.flush()
             result = True

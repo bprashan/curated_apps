@@ -12,10 +12,13 @@ import re
 
 def get_curation_cmd(test_config_dict):
     workload_image = test_config_dict["docker_image"]
+    debug_mode = ''
+    if test_config_dict.get("debug_mode") == 'y':
+        debug_mode = '-d '
     if test_config_dict.get("test_option"):
-        curation_cmd = 'sudo python3 curate.py ' + workload_image + ' test < input.txt'
+        curation_cmd = 'sudo python3 curate.py ' + debug_mode + workload_image + ' test < input.txt'
     else:
-        curation_cmd = 'sudo python3 curate.py ' + workload_image + ' < input.txt'
+        curation_cmd = 'sudo python3 curate.py ' + debug_mode + workload_image + ' < input.txt'
     return curation_cmd
 
 def write_to_log_file(tc_dict, output):
@@ -101,6 +104,17 @@ def get_workload_result(workload_name):
         workload_result = pytorch_result
     return workload_result
 
+def verify_debug_log(log):
+    result = False
+    debug_log_statements = ["debug: Adding pages to SGX enclave, this may take some time...", 
+                           "debug: Added all pages to SGX enclave", 
+                           "debug: Gramine parsed TOML manifest file successfully", 
+                           "debug: Key exchange succeeded"]
+    if  all(x in log for x in debug_log_statements):
+        result = True
+        print("Debug logs are available")
+    return result
+
 def expected_msg_verification(test_config_dict, curation_output):
     result = False
     if "expected_output_infile" in test_config_dict.keys():
@@ -121,8 +135,9 @@ def expected_msg_verification(test_config_dict, curation_output):
         return result
     return None
 
-def run_curated_image(docker_command, workload_name, attestation=None):
+def run_curated_image(docker_command, workload_name, attestation=None, debug_mode=''):
     result = False
+    run_log = []
     workload_result = get_workload_result(workload_name)
     gsc_docker_command = docker_command[-1]
     if attestation == 'test' or attestation == 'done':
@@ -132,6 +147,7 @@ def run_curated_image(docker_command, workload_name, attestation=None):
     process = utils.popen_subprocess(gsc_docker_command)
     while True:
         nextline = process.stdout.readline()
+        run_log.append(nextline.strip())
         print(nextline.strip())
         if nextline == '' and process.poll() is not None:
             break
@@ -141,6 +157,9 @@ def run_curated_image(docker_command, workload_name, attestation=None):
                 utils.kill(verifier_process.pid)
             utils.kill(process.pid)
             sys.stdout.flush()
+            if debug_mode:
+                if not verify_debug_log(run_log):
+                    break
             result = True
             break
     return result
@@ -157,6 +176,7 @@ def run_test(test_instance, test_yaml_file):
     print(f"\n********** Executing {test_name} **********\n")
     test_config_dict = config_parser.read_config_yaml(test_yaml_file, test_name)
     utils.test_setup(test_config_dict)
+    debug_mode = utils.is_debug_mode(test_config_dict)
     try:
         workload_name = utils.get_workload_name(test_config_dict['docker_image'])
         curation_output = generate_curated_image(test_config_dict)
@@ -164,8 +184,8 @@ def run_test(test_instance, test_yaml_file):
         if result == None:
             if verify_run(curation_output):
                 docker_run = get_docker_run_command(test_config_dict['attestation'], workload_name)
-                result = run_curated_image(docker_run, workload_name, test_config_dict['attestation'])
-                if "redis" in test_name:
+                result = run_curated_image(docker_run, workload_name, test_config_dict['attestation'], debug_mode)
+                if result and "redis" in test_name:
                     result = workload.run_redis_client()
     finally:
         print("Docker images cleanup")

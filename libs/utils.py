@@ -130,3 +130,9 @@ def test_setup(test_config_dict):
             generate_local_image(workload_image, test_config_dict.get("encrypted_files"))
     else:
         config_parser.create_input_file(b'\x07')
+
+def is_debug_mode(test_config_dict):
+    result = ''
+    if test_config_dict.get("debug_mode") == 'y':
+        result = '-d '
+    return result

@@ -32,11 +32,11 @@ test_redis_with_runtime_variables:
 
 test_pytorch_default:
   create_local_image: y
-  docker_image: pytorch/pytorch-plain:latest
+  docker_image: pytorch/pytorch-base:latest
 
 test_pytorch_test_option:
   create_local_image: y
-  docker_image: pytorch/pytorch-plain:latest
+  docker_image: pytorch/pytorch-base:latest
   test_option: y
 
 test_redis_empty_test_key:

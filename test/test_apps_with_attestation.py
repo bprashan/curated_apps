@@ -13,6 +13,10 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
+    def test_redis_with_attestation_local_image(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
     def test_redis_with_attestation_runtime_variables(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result

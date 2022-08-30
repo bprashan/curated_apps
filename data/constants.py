@@ -9,15 +9,12 @@ CURATED_PATH           = "GSC-Image-Curation"
 CURATED_APPS_PATH      = os.path.join(REPO_PATH, CURATED_PATH)
 VERIFIER_SERVICE_PATH  = os.path.join(CURATED_APPS_PATH, "verifier")
 VERIFIER_DOCKERFILE    = os.path.join(ORIG_CURATED_PATH, CURATED_PATH, "verifier/verifier.dockerfile.template")
-PYTORCH_PLAIN_PATH     = os.path.join(CURATED_APPS_PATH, "pytorch", "pytorch_with_plain_text_files")
-PYTORCH_ENCRYPTED_PATH = os.path.join(CURATED_APPS_PATH, "pytorch", "pytorch_with_encrypted_files")
+PYTORCH_HELPER_PATH    = os.path.join(CURATED_APPS_PATH, "pytorch", "base_image_helper")
+PYTORCH_HELPER_CMD     = f"bash {PYTORCH_HELPER_PATH}/helper.sh"
 BASH_PATH              = os.path.join(CURATED_APPS_PATH, "bash")
-PYTORCH_ENCRYPTION     = "pytorch-encryption"
-PYTORCH_PLAIN          = "pytorch-plain"
 BASH_TEST              = "bash-test"
 SCREEN_LIST            = ["home_page", "signing_page", "attestation_page", "verifier_page", "runtime_page", "environment_page",
                           "encrypted_page", "encryption_key_page", "final_page"]
-PYTORCH_MODEL          = "alexnet-pretrained.pt"
 BASH_DOCKERFILE        = os.path.join(CURATED_APPS_PATH, "bash", "Dockerfile")
 BASH_GSC_DOCKERFILE    = os.path.join(CURATED_APPS_PATH, "bash", "bash-gsc.dockerfile")
 ENV_PROXY_STRING       = 'ENV http_proxy "http://proxy-dmz.intel.com:911"\nENV https_proxy "http://proxy-dmz.intel.com:912"\n'

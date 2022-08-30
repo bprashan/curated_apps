@@ -2,8 +2,6 @@ import pytest
 import os
 from data.constants import *
 from libs import utils
-import re
-
 
 @pytest.fixture(scope="session")
 def curated_setup():
@@ -29,4 +27,6 @@ def dcap_setup():
     utils.run_subprocess(copy_cmd)
     utils.update_file_contents(AZURE_DCAP, "", VERIFIER_DOCKERFILE)
     utils.update_file_contents(GRAMINE_INSTALL, GRAMINE_INSTALL+DCAP_LIBRARY, VERIFIER_DOCKERFILE)
+    utils.update_file_contents('sgx.enclave_size = "8G"', 'sgx.enclave_size = "4G"', 
+                os.path.join(ORIG_CURATED_PATH, CURATED_PATH, "pytorch", "pytorch.manifest.template"))
 

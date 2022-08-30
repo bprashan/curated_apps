@@ -3,8 +3,6 @@ import os
 import time
 import psutil
 import libs.config_parser as config_parser
-from torchvision import models
-import torch
 from data.constants import *
 import re
 
@@ -91,14 +89,6 @@ def check_machine():
         print("No Provisioning service found, cannot run tests with attestation.")
         return "No Provisioning enabled"
 
-def generate_encrypted_files(filename):
-    encrypt_cmd = "gramine-sgx-pf-crypt encrypt -w wrap-key -i {} -o {}".format(filename, PYTORCH_MODEL)
-    run_subprocess(encrypt_cmd, PYTORCH_ENCRYPTED_PATH)
-    dest_path = os.path.join(PYTORCH_ENCRYPTED_PATH, "encrypted")
-    output_path = os.path.join(PYTORCH_ENCRYPTED_PATH, PYTORCH_MODEL)
-    move_cmd = "mv %s %s" %(output_path, dest_path)
-    run_subprocess(move_cmd)
-
 def create_docker_image(docker_path, docker_name):
     docker_build_cmd = "docker build -t %s ." % docker_name
     print("docker build cmd is ", docker_build_cmd)
@@ -107,18 +97,14 @@ def create_docker_image(docker_path, docker_name):
 
 def generate_local_image(workload_image, encryption):
     if "pytorch" in workload_image:
-        output_filename = os.path.join(PYTORCH_PLAIN_PATH, "plaintext", PYTORCH_MODEL)
-        alexnet = models.alexnet(pretrained=True)
-        torch.save(alexnet, output_filename)
-        print("Pre-trained model is saved in \"%s\"" % output_filename)
-
         if encryption:
-            generate_encrypted_files(output_filename)
-            create_docker_image(PYTORCH_ENCRYPTED_PATH, PYTORCH_ENCRYPTION)
+            run_subprocess(PYTORCH_HELPER_CMD + " encrypt", PYTORCH_HELPER_PATH)
         else:
-            create_docker_image(PYTORCH_PLAIN_PATH, PYTORCH_PLAIN)
+            run_subprocess(PYTORCH_HELPER_CMD, PYTORCH_HELPER_PATH)
     elif "bash" in workload_image:
         create_docker_image(BASH_PATH, BASH_TEST)
+    elif "redis" in workload_image:
+        run_subprocess("docker pull redis:7.0.0")
 
 def test_setup(test_config_dict):
     encryption = False
@@ -129,7 +115,7 @@ def test_setup(test_config_dict):
         config_parser.create_input_file(input_str)
 
         if test_config_dict.get("create_local_image") == "y":
-            if test_config_dict["docker_image"] == "pytorch/pytorch-encryption:latest":
+            if test_config_dict["docker_image"] == "pytorch/pytorch-base-encrypt:latest":
                 encryption = True
             generate_local_image(workload_image, encryption)
     else:

@@ -3,9 +3,12 @@ import os
 FRAMEWORK_PATH         = os.getcwd()
 REPO_PATH              = os.path.join(FRAMEWORK_PATH, "contrib_repo")
 ORIG_CURATED_PATH      = os.path.join(FRAMEWORK_PATH, "orig_contrib_repo")
+GSC_REPO_PATH          = os.path.join(FRAMEWORK_PATH, "gsc")
 CONTRIB_GIT_CMD        = "git clone https://github.com/aneessahib/contrib.git orig_contrib_repo"
 GIT_CHECKOUT_CMD       = "git checkout aneessahib/gsc_image_curation"
 CURATED_PATH           = "Curated-Apps"
+GSC_CHECKOUT_CMD       = "git clone https://github.com/gramineproject/gsc"
+CONFIG_YAML_CMD        = "mv config.yaml.template config.yaml"
 CURATED_APPS_PATH      = os.path.join(REPO_PATH, CURATED_PATH)
 VERIFIER_SERVICE_PATH  = os.path.join(CURATED_APPS_PATH, "verifier")
 VERIFIER_DOCKERFILE    = os.path.join(ORIG_CURATED_PATH, CURATED_PATH, "verifier/verifier.dockerfile.template")

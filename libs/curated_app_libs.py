@@ -79,9 +79,12 @@ def generate_curated_image(test_config_dict):
     write_to_log_file(test_config_dict, curation_output)
     return curation_output
 
-def get_docker_run_command(attestation, workload_name, encryption=None):
+def get_docker_run_command(attestation, workload_name, unsigned_image, encryption=None):
     output = []
-    wrapper_image = "gsc-{}".format(workload_name)
+    if unsigned_image:
+        wrapper_image = "gsc-{}-unsigned".format(workload_name)
+    else:
+        wrapper_image = "gsc-{}".format(workload_name)
     ssl_path = os.path.join(VERIFIER_SERVICE_PATH, "ssl_common")
     if attestation:
         mnt_cmd = "-v {}:/ra-tls-secret-prov/ssl".format(ssl_path)
@@ -156,13 +159,24 @@ def run_verifier_process(test_config_dict, verifier_cmd):
         return verify_process(verifier_process, [error_msg])
     return verifier_process
 
+def signing_image(base_image_name):
+    gsc_signing_cmd = "./gsc sign-image {} ../test_config/enclave-key.pem".format(base_image_name)
+    image_signing_result = utils.run_subprocess(gsc_signing_cmd,GSC_REPO_PATH)
+    return image_signing_result
+
 def run_curated_image(test_config_dict, workload_name, encryption):
     verifier_process = None
-
+    unsigned_image = False
     attestation = True if test_config_dict["attestation"] in ["test", "done"] else False
-    docker_command = get_docker_run_command(attestation, workload_name, encryption)
     workload_result = get_workload_result(test_config_dict)
 
+    if test_config_dict.get("signing_key_path") == 'n':
+        if test_config_dict.get("workload_result") == None:
+            signing_image(workload_name)
+        else:
+            unsigned_image = True
+
+    docker_command = get_docker_run_command(attestation, workload_name, unsigned_image, encryption) 
     gsc_docker_command = docker_command[-1]
     if attestation:
         verifier_process = run_verifier_process(test_config_dict, docker_command[0])
@@ -191,7 +205,7 @@ def run_test(test_instance, test_yaml_file):
         if result == None:
             if verify_run(curation_output):
                 result = run_curated_image(test_config_dict, workload_name, encryption)
-                if "redis" in test_name:
+                if "redis" in test_name and test_config_dict["run_benchmark"]:
                     result = workload.run_redis_client()
     finally:
         print("Docker images cleanup")

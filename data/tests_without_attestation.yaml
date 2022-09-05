@@ -8,6 +8,7 @@ default_input_args:
   runtime_args_text:
   runtime_variable_list:
   end:
+  run_benchmark: True
 
 test_redis_default:
   docker_image: redis redis:latest
@@ -25,6 +26,16 @@ test_redis_test_option:
 test_redis_with_sign_key:
   docker_image: redis redis:latest
   signing_key_path : test_config/enclave-key.pem
+
+test_redis_no_signing_key_positive:
+  docker_image: redis redis
+  signing_key_path : n
+
+test_redis_no_signing_key_negative:
+  docker_image: redis redis
+  signing_key_path : n
+  workload_result : "Invalid value for '--sig' / '-s'"
+  run_benchmark: False
 
 test_redis_with_runtime_variables:
   docker_image: redis redis:latest

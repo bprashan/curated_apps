@@ -45,7 +45,7 @@ node('JK_POOL_MASTER') {
         }
 
         stage('checkout'){
-            git url: 'https://github.com/bprashan/curated_apps.git', branch: 'pytorch_update'
+            git url: 'https://github.com/bprashan/curated_apps.git', branch: 'bprashan'
         }
 
         stage("Run : $run_stage_name"){

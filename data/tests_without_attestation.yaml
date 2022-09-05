@@ -1,6 +1,7 @@
 ---
 default_input_args:
   start:
+  distro:
   azure_warning:
   signing_key_path :
   attestation:
@@ -9,75 +10,83 @@ default_input_args:
   end:
 
 test_redis_default:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
 
 test_redis_unknown_docker_image:
-  docker_image: redis/redis:unknown_version
+  docker_image: redis redis:unknown_version
   expected_screen: signing_page
   expected_output_console: " Could not fetch `redis:unknown_version` image from dockerhub"
   end_test: signing_key_path
 
 test_redis_test_option:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
   test_option: y
 
 test_redis_with_sign_key:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
   signing_key_path : test_config/enclave-key.pem
 
 test_redis_with_runtime_variables:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
   signing_key_path:
   runtime_variable_list: name="curator_app",version="1.2"
 
 test_pytorch_default:
   create_local_image: y
-  docker_image: pytorch/pytorch-base:latest
+  docker_image: pytorch pytorch-base:latest
 
 test_pytorch_test_option:
   create_local_image: y
-  docker_image: pytorch/pytorch-base:latest
+  docker_image: pytorch pytorch-base:latest
   test_option: y
 
 test_redis_empty_test_key:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
   signing_key_path : test_config/empty-key
   expected_output_infile: "unable to load Private Key"
 
 test_redis_wrong_key_path:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
   signing_key_path : no_test_key
   end_test: signing_key_path
   expected_screen: signing_page
   expected_output_console: "no_test_key file does not exist."
 
 test_redis_ra_wrong_option:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
   attestation: k
   end_test: attestation
   expected_screen: attestation_page
   expected_output_console: "Invalid option specified"
 
 test_redis_ev_invalid_input_1:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
   runtime_variable_list: name="Xyz",,age="20"
   expected_screen: final_page
   expected_output_console: '`gsc-redis:latest` creation failed'
 
 test_redis_ev_dict:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
   runtime_variable_list: {name="Xyz",age="20"}
   expected_screen: final_page
   expected_output_console: "`gsc-redis:latest` creation failed"
 
 test_redis_ev_invalid_input_2:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
   runtime_variable_list: name="Xyz",age=
   expected_screen: final_page
   expected_output_console: "`gsc-redis:latest` creation failed"
 
 test_bash_runtime_args:
-  docker_image: bash/bash-test:latest
+  docker_image: bash bash-test:latest
   create_local_image: y
   runtime_args: y
   runtime_args_text: -c free
+
+test_bash_20_04_version:
+  docker_image: bash ubuntu_20_04-bash:latest
+  distro: 2
+  create_local_image: y
+  runtime_args: y
+  runtime_args_text: -c free
+  

@@ -46,9 +46,9 @@ def data_pre_processing(test_config_dict):
     data_pre_processing_for_verifier_image(test_config_dict, end_key)
 
     if utils.check_machine() == "DCAP client":
-        input_ord_list = ['start', 'azure_warning', 'signing_key_path', 'attestation', 'runtime_args_text', 'runtime_variable_list', 'encrypted_files_path', 'encryption_key', 'end']
+        input_ord_list = DCAP_ORD_LIST
     else:
-        input_ord_list = ['start', 'signing_key_path', 'attestation', 'runtime_args_text', 'runtime_variable_list', 'encrypted_files_path', 'encryption_key', 'end']
+        input_ord_list = AZURE_ORD_LIST
 
     for key in input_ord_list:
         if key in test_config_dict.keys():
@@ -65,9 +65,14 @@ def data_pre_processing_for_verifier_image(test_config_dict, end_test_key_str):
             shutil.rmtree(VERIFIER_SERVICE_PATH + "/ssl")
         if test_config_dict['ssl_path']:
             shutil.copytree(test_config_dict["ssl_path"], VERIFIER_SERVICE_PATH + "/ssl")
-    if "bash/bash" in test_config_dict['docker_image']:
-        shutil.copytree("data/bash", CURATED_APPS_PATH + "/bash")
-        if utils.check_machine() == "Azure Linux Agent":
-            utils.update_file_contents(ENV_PROXY_STRING, '', BASH_DOCKERFILE)
-            utils.update_file_contents(ENV_PROXY_STRING, '', BASH_GSC_DOCKERFILE)
+    if "bash" in test_config_dict['docker_image']:
+        bash_setup(test_config_dict['docker_image'])
+
+def bash_setup(docker_image):
+    shutil.copytree("data/bash", CURATED_APPS_PATH + "/bash")
+    if "ubuntu_20_04" in docker_image:
+        utils.update_file_contents(UBUNTU_18_04, UBUNTU_20_04, BASH_DOCKERFILE)
+    if utils.check_machine() == "Azure Linux Agent":
+        utils.update_file_contents(ENV_PROXY_STRING, '', BASH_DOCKERFILE)
+        utils.update_file_contents(ENV_PROXY_STRING, '', BASH_GSC_DOCKERFILE)
    

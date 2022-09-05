@@ -26,6 +26,8 @@ def write_to_log_file(tc_dict, output):
 def screen_verification(output):
     if "This application will provide step-by-step guidance" in output:
         return "home_page"
+    elif "Provide the Distro of your base image" in output:
+        return "distro_page"
     elif "Please provide path to your signing key in the blue box" in output:
         return "signing_page"
     elif "To enable remote attestation using Azure DCAP client" in output:
@@ -95,8 +97,8 @@ def get_docker_run_command(attestation, workload_name, encryption=None):
     return output
 
 def get_workload_result(test_config_dict):
-    if "workload_error" in test_config_dict.keys():
-        workload_result = [test_config_dict["workload_error"]]
+    if "workload_result" in test_config_dict.keys():
+        workload_result = [test_config_dict["workload_result"]]
     elif "bash" in test_config_dict["docker_image"]:
         workload_result = ["total        used        free      shared  buff/cache   available"]
     elif "redis" in test_config_dict["docker_image"]:
@@ -108,8 +110,8 @@ def get_workload_result(test_config_dict):
 def expected_msg_verification(test_config_dict, curation_output):
     result = False
     if "expected_output_infile" in test_config_dict.keys():
-        base_image_name = test_config_dict.get("docker_image").split('/', maxsplit=1)[1]
-        base_image_type = test_config_dict.get("docker_image").split('/', maxsplit=1)[0]
+        base_image_name = test_config_dict.get("docker_image").split(' ', maxsplit=1)[1]
+        base_image_type = test_config_dict.get("docker_image").split(' ', maxsplit=1)[0]
         log_file_name, n = re.subn('[:/]', '_', base_image_name)
         log_file = f'{base_image_type}/{log_file_name}.log'
         with open(os.path.join(CURATED_APPS_PATH, log_file), "r") as log_file_pointer:
@@ -146,7 +148,7 @@ def run_verifier_process(test_config_dict, verifier_cmd):
     result = False
     error_msg = test_config_dict.get("verifier_error")
     if error_msg:
-        verifier_cmd = verifier_cmd.replace("pytorch/pytorch_with_encrypted_files", "test_config")
+        verifier_cmd = verifier_cmd.replace("pytorch/base_image_helper", "test_config")
 
     verifier_process = utils.popen_subprocess(verifier_cmd)
     time.sleep(20)

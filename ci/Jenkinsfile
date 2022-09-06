@@ -1,29 +1,3 @@
-def get_testname(run){
-    switch(run) {
-        case 'all_test': 
-            return '';
-            break;
-        case 'all_non_attestation_test': 
-            return 'not with_attestation and not test_redis_ra_wrong_option';
-            break;
-        case 'all_attestation_test': 
-            return 'with_attestation';
-            break;
-        case 'redis_attestation_test': 
-            return 'redis and with_attestation';
-            break;
-        case 'pytorch_attestation_test': 
-            return 'pytorch and with_attestation';
-            break;
-        case 'redis_non_attestation_test': 
-            return 'redis and not with_attestation and not test_redis_ra_wrong_option';
-            break;
-        case 'pytorch_non_attestation_test': 
-            return 'pytorch and not with_attestation';
-            break;
-    }
-}
-
 node('JK_POOL_MASTER') {
 
     properties([parameters([choice(choices: ['all_test', 'all_attestation_test', 'all_non_attestation_test',
@@ -33,34 +7,14 @@ node('JK_POOL_MASTER') {
     string(defaultValue: 'graphene_dcap', description: '''graphene_dcap [attestation test]
     graphene_wcity_02 [non attestation test]''', name: 'nodeLabel')])])
 
+    checkout scm
+    test_executor = load 'ci/libs/utils.pipeline'
+
     node ("$nodeLabel"){
-
-        tests_to_execute = ''
-        if(!run_specific_test?.trim()){
-            tests_to_execute = get_testname(run)
-            run_stage_name = run
-        } else {
-            tests_to_execute = run_specific_test
-            run_stage_name = run_specific_test
-        }
-
-        stage('checkout'){
-            git url: 'https://github.com/bprashan/curated_apps.git', branch: 'bprashan'
-        }
-
-        stage("Run : $run_stage_name"){
-            print("$tests_to_execute")
-                sh """
-                    python3 -m pytest -v -s -k '$tests_to_execute' --collect-only
-                    # sudo python3 -m pytest -v -s -k '$tests_to_execute' --junit-xml libos-regression.xml
-                    ssh -tt intel@localhost "cd $WORKSPACE; sudo python3 -m pytest -v -s -k '$tests_to_execute'"
-                """
-        }
-        
-        stage("cleanup $nodeLabel"){
-            sh "sudo rm -rf $WORKSPACE/*"
-            cleanWs()
-        }
-
+        test_executor.initialize()
+        test_executor.checkout()
+        test_executor.runtest()
+        test_executor.cleanup()
     }
+
 }

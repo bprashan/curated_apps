@@ -72,7 +72,7 @@ def cleanup_after_test(workload):
 
 def get_workload_name(docker_image):
     try:
-        return docker_image.split("/")[1]
+        return docker_image.split(" ")[1]
     except Exception as e:
         return ''
 
@@ -98,28 +98,32 @@ def create_docker_image(docker_path, docker_name):
 def generate_local_image(workload_image, encryption):
     if "pytorch" in workload_image:
         if encryption:
-            run_subprocess(PYTORCH_HELPER_CMD + " encrypt", PYTORCH_HELPER_PATH)
+            output = run_subprocess(PYTORCH_HELPER_CMD + " encrypt", PYTORCH_HELPER_PATH)
         else:
-            run_subprocess(PYTORCH_HELPER_CMD, PYTORCH_HELPER_PATH)
+            output = run_subprocess(PYTORCH_HELPER_CMD, PYTORCH_HELPER_PATH)
+        print(output)
     elif "bash" in workload_image:
-        create_docker_image(BASH_PATH, BASH_TEST)
+        image_name = workload_image.split(":")[0].split(" ")[1]
+        create_docker_image(BASH_PATH, image_name)
     elif "redis" in workload_image:
         run_subprocess("docker pull redis:7.0.0")
 
-def test_setup(test_config_dict):
+def local_image_setup(test_config_dict):
     encryption = False
+    if test_config_dict.get("create_local_image") == "y":
+        if test_config_dict["docker_image"] == "pytorch pytorch-base-encrypt:latest":
+            encryption = True
+        generate_local_image(test_config_dict["docker_image"], encryption)
+    return encryption
+
+def test_setup(test_config_dict):
     if test_config_dict.get("test_option") == None:
-        workload_image = test_config_dict["docker_image"]
         sorted_dict = config_parser.data_pre_processing(test_config_dict)
         input_str = config_parser.convert_dict_to_str(sorted_dict)
         config_parser.create_input_file(input_str)
-
-        if test_config_dict.get("create_local_image") == "y":
-            if test_config_dict["docker_image"] == "pytorch/pytorch-base-encrypt:latest":
-                encryption = True
-            generate_local_image(workload_image, encryption)
     else:
-        config_parser.create_input_file(b'\x07') 
+        config_parser.create_input_file(b'\x07')
+    encryption = local_image_setup(test_config_dict)
     return encryption
 
 def update_file_contents(old_contents, new_contents, filename):

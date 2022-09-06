@@ -30,3 +30,11 @@ def dcap_setup():
     utils.update_file_contents('sgx.enclave_size = "8G"', 'sgx.enclave_size = "4G"', 
                 os.path.join(ORIG_CURATED_PATH, CURATED_PATH, "pytorch", "pytorch.manifest.template"))
 
+@pytest.fixture(scope="function")
+def clone_gsc_repo():
+    print("Cleaning old gsc repo")
+    utils.run_subprocess("rm -rf {}".format(GSC_REPO_PATH))
+    print("Cloning and checking out GSC Git Repo")
+    utils.run_subprocess(GSC_CHECKOUT_CMD, FRAMEWORK_PATH)
+    utils.run_subprocess(CONFIG_YAML_CMD, GSC_REPO_PATH)
+

@@ -1,5 +1,6 @@
 default_input_args: 
   start:
+  distro:
   azure_warning:
   signing_key_path :
   attestation: test
@@ -7,22 +8,23 @@ default_input_args:
   runtime_variable_list:
   encrypted_files_path:
   end:
+  run_benchmark: True
 
 test_redis_with_attestation:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
 
 test_redis_with_attestation_local_image:
-  docker_image: redis/redis:7.0.0
+  docker_image: redis redis:7.0.0
   create_local_image: y
 
 test_redis_with_attestation_runtime_variables:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
   ssl_path: test_config/ssl
   attestation: done
   runtime_variable_list: name="curator_app",version="1.2"
 
 test_redis_with_attestation_end_test_ssl_path:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
   ssl_path: test_config/empty_ssl_folder
   attestation: done
   expected_output_console: "One or more files does not exist at verifier/ssl/"
@@ -30,7 +32,7 @@ test_redis_with_attestation_end_test_ssl_path:
   expected_screen: attestation_page
 
 test_redis_with_attestation_ssl_server_crt:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
   attestation: done
   ssl_path: test_config/ca_cert_folder
   end_test: attestation
@@ -38,7 +40,7 @@ test_redis_with_attestation_ssl_server_crt:
   expected_screen: attestation_page
 
 test_redis_with_attestation_ssl_server_key:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
   attestation: done
   ssl_path: test_config/wo_server_key
   end_test: ssl_path
@@ -46,7 +48,7 @@ test_redis_with_attestation_ssl_server_key:
   expected_screen: attestation_page
 
 test_redis_with_attestation_wo_ssl:
-  docker_image: redis/redis:latest
+  docker_image: redis redis:latest
   attestation: done
   ssl_path: ''
   end_test: attestation
@@ -54,7 +56,7 @@ test_redis_with_attestation_wo_ssl:
   expected_screen: attestation_page
 
 test_pytorch_with_attestation_no_encryption_key:
-  docker_image: pytorch/pytorch-base-encrypt:latest
+  docker_image: pytorch pytorch-base-encrypt:latest
   create_local_image: y
   encryption_key: ''
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:app/result.txt
@@ -63,38 +65,38 @@ test_pytorch_with_attestation_no_encryption_key:
   expected_screen: encryption_key_page
 
 test_pytorch_with_attestation:
-  docker_image: pytorch/pytorch-base:latest
+  docker_image: pytorch pytorch-base:latest
   create_local_image: y
 
 test_pytorch_with_attestation_encrypted_image:
-  docker_image: pytorch/pytorch-base-encrypt:latest
+  docker_image: pytorch pytorch-base-encrypt:latest
   create_local_image: y
   encryption_key: pytorch/base_image_helper/wrap-key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:app/result.txt
 
 test_pytorch_with_attestation_wrong_encrypted_list:
-  docker_image: pytorch/pytorch-base-encrypt:latest
+  docker_image: pytorch pytorch-base-encrypt:latest
   create_local_image: y
   encryption_key: pytorch/base_image_helper/wrap-key
   encrypted_files_path: input.jpg:alexnet-pretrained.pt:app/result.txt
-  workload_error: "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xf0 in position 10: invalid continuation byte"
+  workload_result: "UnicodeDecodeError: 'utf-8' codec can't decode byte"
 
 test_pytorch_with_attestation_invalid_encrypted_files:
-  docker_image: pytorch/pytorch-base-encrypt:latest
+  docker_image: pytorch pytorch-base-encrypt:latest
   create_local_image: y
   encryption_key: pytorch/base_image_helper/wrap-key
   encrypted_files_path: text-file
-  workload_error: "_pickle.UnpicklingError: invalid load key, '\\x00'."
+  workload_result: "_pickle.UnpicklingError: invalid load key, '\\x00'."
 
 test_pytorch_with_attestation_encrypted_file_invalid_format:
-  docker_image: pytorch/pytorch-base-encrypt:latest
+  docker_image: pytorch pytorch-base-encrypt:latest
   create_local_image: y
   encryption_key: pytorch/base_image_helper/wrap-key
   encrypted_files_path: classes.txt;input.jpg;alexnet-pretrained.pt;app/result.txt
-  workload_error: "_pickle.UnpicklingError: invalid load key, '\\x00'."
+  workload_result: "_pickle.UnpicklingError: invalid load key, '\\x00'."
 
 test_pytorch_with_attestation_invalid_encryption_key:
-  docker_image: pytorch/pytorch-base-encrypt:latest
+  docker_image: pytorch pytorch-base-encrypt:latest
   create_local_image: y
   encryption_key: test_config/invalid_wrap-key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:app/result.txt

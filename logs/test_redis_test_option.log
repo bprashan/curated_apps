@@ -1,0 +1,10 @@
+[?1049h[22;0;0t[1;32r(B[m[4l[?7h[?1h=[8;35;120t
+[39;49m[39;49m[37m[40m[H[2JYour test GSC image is being generated. This image is not supposed to be used in production
+
+You may monitor redis/redis_latest.log for detailed progressRun the gsc-redis:latest docker image in an Azure Confidential Compute i[4;1Hnstance using the below command. Host networking (--net=host) is optional
+
+docker run --net=host --device=/dev/sgx/enclave -it gsc-redis:latest
+
+Press any key to exit the app[?1l>[39;49m
+[32d[K[32;1H[?1049l[23;0;0t
+[?1l>

@@ -20,11 +20,11 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    def test_redis_with_sign_key(self):
+    def test_redis_with_test_sign_key(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    def test_redis_with_sign_key_debug(self):
+    def test_redis_with_test_sign_key_debug(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
@@ -40,14 +40,6 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    def test_pytorch_default(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
-    def test_pytorch_test_option(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-    
     def test_redis_unknown_docker_image(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
@@ -73,6 +65,10 @@ class TestClass:
         assert test_result
     
     def test_redis_ev_invalid_input_2(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    def test_bash_default(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 

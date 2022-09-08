@@ -1,0 +1,185 @@
+[?1049h[22;0;0t[1;32r(B[m[4l[?7h[?1h=[8;35;120t
+[39;49m[39;49m[37m[40m[H[2J[8;59H(B[0;1m[37m[44m 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ [8;59H(B[m[39;49m[37m[40m[1;28H[37m[44m[1K (B[0;1m[37m[44mCurate  Your  Own  Gramine  Shielded  Container (GSC) Image !!!(B[0m[37m[44m[29X[3;26H(B[0;1;4m[37m[40mUser Agent[3;86HCommentary(B[m[39;49m[37m[40m
+
+
+This application will provide step-by-step guidance for
+creating your own custom containers protected by Gramine.
+
+The commentary window to the right will provide more
+context for each of the steps.
+
+Do not resize this terminal window.
+
+Press CTRL+G to get started![6;61HThe target deployment environment is assumed to be an[7;61HAzure Confidential compute instance having out of tree[8;61HDCAP driver.[10;61HFollowing stages are involved in the GSC image curation:[12;61H1. Enclave Signing Key[14;61H2. Attestation[16;61H3. Secret Provisioning[18;61H4. Runtime Arguments[20;61H5. Environment Variables[22;61H7. Encrypted Files[24;61H8. Execution & Debug[?1h=[31;120H(B[0;1m[37m[44m[1K
+[1K
+[A(B[m[39;49m[37m[40m
+[A[6dProvide the Distro of your base image[18X[7;60H[1K
+- Press 1 for Ubuntu 18.04[9;58H[1K
+- Press 2 for Ubuntu 20.04    
+
+Any other option or no input will default to Ubuntu
+18.04.[14;58H[1K
+Press CTRL+G when done.[6;62Hested distros are Ubuntu 18.04 and Ubuntu 20.04[K
+[K[8;61H[K
+
+[K
+
+[K
+
+[K
+
+[K
+
+[K
+
+[K
+
+[K
+
+[K[6;109H[?1h=
+[31d
+[A[6d>> Enclave signing key:[14X
+
+- Please provide path to your enclave signing key in the
+blue box, and press CTRL+G OR[10;58H[1K
+- Press n and CTRL+G if you don't want to sign the
+graminized image OR[32X[13;58H[1K
+- Press CTRL+G without any input to generate a test
+signing key            [15;12H[6;61HSGX requires RSA 3072 keys with public exponent equal to[7;61H3. You can generate signing key for learning and testing[8;61Hpurposes using this command:[10;61H(B[0;7m[37m[44mopenssl genrsa -3 -out enclave-key.pem 3072[12;61H(B[m[39;49m[37m[40mYou can also generate unsigned images in case you wish to[13;61Hsign them separately[?1h=
+[31d(B[0;1m[37m[44mt(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44ms(B[m[39;49m[37m[40m(B[0;1m[37m[44mt(B[m[39;49m[37m[40m(B[0;1m[37m[44m_(B[m[39;49m[37m[40m(B[0;1m[37m[44mc(B[m[39;49m[37m[40m(B[0;1m[37m[44mo(B[m[39;49m[37m[40m(B[0;1m[37m[44mn(B[m[39;49m[37m[40m(B[0;1m[37m[44mf(B[m[39;49m[37m[40m(B[0;1m[37m[44mi(B[m[39;49m[37m[40m(B[0;1m[37m[44mg(B[m[39;49m[37m[40m(B[0;1m[37m[44m/(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44mn(B[m[39;49m[37m[40m(B[0;1m[37m[44mc(B[m[39;49m[37m[40m(B[0;1m[37m[44ml(B[m[39;49m[37m[40m(B[0;1m[37m[44ma(B[m[39;49m[37m[40m(B[0;1m[37m[44mv(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44m-(B[m[39;49m[37m[40m(B[0;1m[37m[44mk(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44my(B[m[39;49m[37m[40m(B[0;1m[37m[44m.(B[m[39;49m[37m[40m(B[0;1m[37m[44mp(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44mm(B[m[39;49m[37m[40m
+[31;120H(B[0;1m[37m[44m[1K
+(B[m[39;49m[37m[40m[17d(B[0;1m[31m[40mError: test_config/enclave-key.pem file does not exist.
+Please follow instructions above(B[m[39;49m[37m[40m[6;4HRemote Attestation: 
+
+To enable remote attestation using Azure DCAP client    
+libs, use another terminal to copy the ca.crt,
+server.crt, and server.key certificates to Curated-
+Apps/verifier/ssl directory[23X[12;58H[1K
+NOTE: Encrypted Filesystem of Gramine requires
+Attestation to provision a decryption key for encrypted
+files.     
+
+- Type done and press CTRL+G when ready, OR            
+  [1K
+- Type test and press CTRL+G to create test certificates
+
+- OR press CTRL+G to skip attestation[6;61HThis step enables the host enclave to communicate to a[K[7;61Hremote verifier over an RA-TLS link. This remote verifier[8;61Huses Azure DCAP client libs to verify the Quote supplied[9;61Hby the host enclave. RA-TLS attestation flow requires you[10;61Hto provide a set of certificates and keys to enable the[11;61Hattestation flow. The CA certificate will be used to TLS[12;61Hauthenticate the verifier during the Remote Attestation[K[13;61HTLS (RA_TLS) flow. A test sample set of RA-TLS keys and[14;61Hcerts are provided here:[16;61Hhttps://github.com/gramineproject/contrib/tree/master/Exam[18;61Hples/aks-attestation/ssl[20;61HFor further reading -[22;61Hhttps://gramine.readthedocs.io/en/stable/attestation.html[?1h=
+[31d(B[0;1m[37m[44md(B[m[39;49m[37m[40m(B[0;1m[37m[44mo(B[m[39;49m[37m[40m(B[0;1m[37m[44mn(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m
+[31;120H(B[0;1m[37m[44m[1K
+(B[m[39;49m[37m[40m[6;5Huntime Arguments: 
+
+Specify docker run-time arguments here in a single  
+string. for e.g., if your docker runtime is   [10;58H[1K
+(B[0;7m[37m[44mdocker run -it bash -c ls(B[m[39;49m[37m[40m  
+
+then the arguments that needs to be provided here is
+[58G[1K
+(B[0;7m[37m[44m-c ls(B[m[39;49m[37m[40m 
+
+Press CTRL+G when done[21X[19;58H[1K
+
+[1K[17;23H[6;61HAllowing an attacker to control executable arguments can[7;61Hbreak the security of the resulting enclave. Gramine will[8;61Hignore any arguments provided at docker run-time, so[K[9;61Hensure those are provided here now[K[10;61H[K
+[K
+[K
+[K
+[K
+
+[K
+
+[K
+
+[K
+
+[K[9;95H[?1h=
+[31d
+[A[12d[2M[6;12HEnvironments:
+
+Please specify a list of env variables and respective
+values separated by comma[18X
+
+Accepted format:         
+
+(B[0;7m[37m[44mname="Xyz",age="20"[26;59H(B[0;1m[37m[44m 
+ 
+
+(B[m[39;49m[37m[40m[K
+[K[31;120H(B[0;1m[37m[44m[1K
+[1K[15;23H(B[m[39;49m[37m[40m[6;61HThis step secures the environment variables. Gramine will[7;61Hignore environment variables specified at runtime, so[K[8;61Hplease ensure you provide those here.[K[9;61H[K[8;98H[?1h=
+[31d
+[A[10d[8L[6;4HEncrypted File System:
+
+[8Gprovide path of these files relative to the   
+working directory:       [10;59H(B[0;1m[37m[44m 
+(B[m[39;49m[37m[40m1. Encrypted files in the base image used by the[11;59H(B[0;1m[37m[44m 
+(B[m[39;49m[37m[40mapplication, if any.[12;59H(B[0;1m[37m[44m 
+ 
+(B[m[39;49m[37m[40m2. Files created at runtime, if any.[14;59H(B[0;1m[37m[44m 
+ 
+(B[m[39;49m[37m[40mAccepted format: `file_path1:file_path2:file_path3`[59G(B[0;1m[37m[44m 
+ 
+(B[m[39;49m[37m[40mE.g., for pytorch/base_image_helper/Dockerfile based
+image, the encrypted files input would be -->
+
+(B[0;7m[37m[44mclasses.txt:input.jpg:alexnet-pretrained.pt:result.txt
+[28d(B[m[39;49m[37m[40m[K
+[K
+[K[31;120H(B[0;1m[37m[44m[1K
+[1K[23;23H(B[m[39;49m[37m[40m[6;61HGramine's Encrypted FS feature supports transparently[K[7;61Hdecrypting data using the encryption key that will be[8;62Hrovisioned after successful attestation.[?1h=
+[31d(B[0;1m[37m[44mc(B[m[39;49m[37m[40m(B[0;1m[37m[44ml(B[m[39;49m[37m[40m(B[0;1m[37m[44ma(B[m[39;49m[37m[40m(B[0;1m[37m[44ms(B[m[39;49m[37m[40m(B[0;1m[37m[44ms(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44ms(B[m[39;49m[37m[40m(B[0;1m[37m[44m.(B[m[39;49m[37m[40m(B[0;1m[37m[44mt(B[m[39;49m[37m[40m(B[0;1m[37m[44mx(B[m[39;49m[37m[40m(B[0;1m[37m[44mt(B[m[39;49m[37m[40m(B[0;1m[37m[44m;(B[m[39;49m[37m[40m(B[0;1m[37m[44mi(B[m[39;49m[37m[40m(B[0;1m[37m[44mn(B[m[39;49m[37m[40m(B[0;1m[37m[44mp(B[m[39;49m[37m[40m(B[0;1m[37m[44mu(B[m[39;49m[37m[40m(B[0;1m[37m[44mt(B[m[39;49m[37m[40m(B[0;1m[37m[44m.(B[m[39;49m[37m[40m(B[0;1m[37m[44mj(B[m[39;49m[37m[40m(B[0;1m[37m[44mp(B[m[39;49m[37m[40m(B[0;1m[37m[44mg(B[m[39;49m[37m[40m(B[0;1m[37m[44m;(B[m[39;49m[37m[40m(B[0;1m[37m[44ma(B[m[39;49m[37m[40m(B[0;1m[37m[44ml(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44mx(B[m[39;49m[37m[40m(B[0;1m[37m[44mn(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44mt(B[m[39;49m[37m[40m(B[0;1m[37m[44m-(B[m[39;49m[37m[40m(B[0;1m[37m[44mp(B[m[39;49m[37m[40m(B[0;1m[37m[44mr(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44mt(B[m[39;49m[37m[40m(B[0;1m[37m[44mr(B[m[39;49m[37m[40m(B[0;1m[37m[44ma(B[m[39;49m[37m[40m(B[0;1m[37m[44mi(B[m[39;49m[37m[40m(B[0;1m[37m[44mn(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44md(B[m[39;49m[37m[40m(B[0;1m[37m[44m.(B[m[39;49m[37m[40m(B[0;1m[37m[44mp(B[m[39;49m[37m[40m(B[0;1m[37m[44mt(B[m[39;49m[37m[40m(B[0;1m[37m[44m;(B[m[39;49m[37m[40m(B[0;1m[37m[44mr(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44ms(B[m[39;49m[37m[40m(B[0;1m[37m[44mu(B[m[39;49m[37m[40m(B[0;1m[37m[44ml(B[m[39;49m[37m[40m(B[0;1m[37m[44mt(B[m[39;49m[37m[40m(B[0;1m[37m[44m.(B[m[39;49m[37m[40m(B[0;1m[37m[44mt(B[m[39;49m[37m[40m(B[0;1m[37m[44mx(B[m[39;49m[37m[40m(B[0;1m[37m[44mt(B[m[39;49m[37m[40m
+[31;120H(B[0;1m[37m[44m[1K
+(B[m[39;49m[37m[40m[25dPlease provide the path to the key used for the
+encryption.[?1h=
+[31d(B[0;1m[37m[44mp(B[m[39;49m[37m[40m(B[0;1m[37m[44my(B[m[39;49m[37m[40m(B[0;1m[37m[44mt(B[m[39;49m[37m[40m(B[0;1m[37m[44mo(B[m[39;49m[37m[40m(B[0;1m[37m[44mr(B[m[39;49m[37m[40m(B[0;1m[37m[44mc(B[m[39;49m[37m[40m(B[0;1m[37m[44mh(B[m[39;49m[37m[40m(B[0;1m[37m[44m/(B[m[39;49m[37m[40m(B[0;1m[37m[44mb(B[m[39;49m[37m[40m(B[0;1m[37m[44ma(B[m[39;49m[37m[40m(B[0;1m[37m[44ms(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44m_(B[m[39;49m[37m[40m(B[0;1m[37m[44mi(B[m[39;49m[37m[40m(B[0;1m[37m[44mm(B[m[39;49m[37m[40m(B[0;1m[37m[44ma(B[m[39;49m[37m[40m(B[0;1m[37m[44mg(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44m_(B[m[39;49m[37m[40m(B[0;1m[37m[44mh(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44ml(B[m[39;49m[37m[40m(B[0;1m[37m[44mp(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44mr(B[m[39;49m[37m[40m(B[0;1m[37m[44m/(B[m[39;49m[37m[40m(B[0;1m[37m[44mw(B[m[39;49m[37m[40m(B[0;1m[37m[44mr(B[m[39;49m[37m[40m(B[0;1m[37m[44ma(B[m[39;49m[37m[40m(B[0;1m[37m[44mp(B[m[39;49m[37m[40m(B[0;1m[37m[44m-(B[m[39;49m[37m[40m(B[0;1m[37m[44mk(B[m[39;49m[37m[40m(B[0;1m[37m[44me(B[m[39;49m[37m[40m(B[0;1m[37m[44my(B[m[39;49m[37m[40m
+[31;120H(B[0;1m[37m[44m[1K
+(B[m[39;49m[37m[40m[6dBuilding the RA-TLS Verifier image, this might take
+couple of minutes[8;58H[1K
+[1K
+
+[1K
+[1K
+
+[1K
+
+[1K
+
+[1K
+[1K
+
+[1K
+
+[1K
+
+[1K
+[1K[7;18H[6;61HYou may monitor verifier/verifier.log for progress[K[7;61H[K
+[K[6;111H
+Image Creation:[36X
+[K
+Your Gramine Shielded Container image is being created.
+This might take a few minutes.[6;77Hpytorch/pytorch-encrypted_latest.log for[7;61Hdetailed progress
+[AThe curated GSC image gsc-pytorch-encrypted:latest is
+ready, please follow the instructions in the below file
+to run your image(s).[34X[9;58H[1K
+(B[0;7m[37m[44mcommands.txt
+
+(B[m[39;49m[37m[40mPress CTRL+G to exit the application[6;61HIn the event of failures during runtime, run with debug[K[7;61Hflag (if not already)to get more information, as shown[8;61Hbelow:[10;61H(B[0;7m[37m[44mpython3 curate.py pytorch pytorch-encrypted:latest debug[12;61H(B[m[39;49m[37m[40mIt's also possible that you may run into issues resulting[13;61Hfrom lack of sufficient enclave memory pages, or[14;61Hinsufficient number of threads. The pytorch.manifest can[15;61Hbe modified to change the defaults.[?1l>[?1l>[39;49m
+[32d[K[32;1H[?1049l[23;0;0t
+[?1l>

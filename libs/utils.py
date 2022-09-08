@@ -48,21 +48,23 @@ def kill_process_by_name(processName):
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
 
-def cleanup_after_test(workload):
+def cleanup_after_test(workload, test_name):
     try:
+        copy_cmd = "cp -rf {} logs/{}.txt".format((CURATED_APPS_PATH + "/input.txt"), test_name)
+        run_subprocess(copy_cmd)
         kill_process_by_name("secret_prov_server_dcap")
         kill_process_by_name("/gramine/app_files/apploader.sh")
         kill_process_by_name("/gramine/app_files/entrypoint")
         kill_process_by_name("/gramine/meson_build_output/lib/x86_64-linux-gnu/gramine/sgx/loader")
         run_subprocess('sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"')
-        run_subprocess("docker rmi gsc-{} -f".format(workload))
-        run_subprocess("docker rmi gsc-{}-unsigned -f".format(workload))
-        run_subprocess("docker rmi {} -f".format(workload.replace(":", "_x:")))
-        run_subprocess("docker rmi verifier:latest -f")
-        if run_subprocess("docker ps -a -q"):
-            run_subprocess("docker rm -f $(docker ps -a -q)")
-        if run_subprocess("docker volume ls -q"):
-            run_subprocess("docker volume rm $(docker volume ls -q)")
+        # run_subprocess("docker rmi gsc-{} -f".format(workload))
+        # run_subprocess("docker rmi gsc-{}-unsigned -f".format(workload))
+        # run_subprocess("docker rmi {} -f".format(workload.replace(":", "_x:")))
+        # run_subprocess("docker rmi verifier:latest -f")
+        #if run_subprocess("docker ps -a -q"):
+        #    run_subprocess("docker rm -f $(docker ps -a -q)")
+        #if run_subprocess("docker volume ls -q"):
+        #    run_subprocess("docker volume rm $(docker volume ls -q)")
         #run_subprocess("docker system prune -f")
         #run_subprocess("docker rmi pytorch-plain:latest")
         #run_subprocess("docker rmi pytorch-encryption:latest")
@@ -95,12 +97,9 @@ def create_docker_image(docker_path, docker_name):
     output = run_subprocess(docker_build_cmd, docker_path)
     print(output)
 
-def generate_local_image(workload_image, encryption):
+def generate_local_image(workload_image):
     if "pytorch" in workload_image:
-        if encryption:
-            output = run_subprocess(PYTORCH_HELPER_CMD + " encrypt", PYTORCH_HELPER_PATH)
-        else:
-            output = run_subprocess(PYTORCH_HELPER_CMD, PYTORCH_HELPER_PATH)
+        output = run_subprocess(PYTORCH_HELPER_CMD, PYTORCH_HELPER_PATH)
         print(output)
     elif "bash" in workload_image:
         image_name = workload_image.split(":")[0].split(" ")[1]
@@ -111,9 +110,9 @@ def generate_local_image(workload_image, encryption):
 def local_image_setup(test_config_dict):
     encryption = False
     if test_config_dict.get("create_local_image") == "y":
-        if test_config_dict["docker_image"] == "pytorch pytorch-base-encrypt:latest":
+        if test_config_dict["docker_image"] == "pytorch pytorch-encrypted:latest":
             encryption = True
-        generate_local_image(test_config_dict["docker_image"], encryption)
+        generate_local_image(test_config_dict["docker_image"])
     return encryption
 
 def test_setup(test_config_dict):

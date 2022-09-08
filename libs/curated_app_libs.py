@@ -12,10 +12,11 @@ import re
 
 def get_curation_cmd(test_config_dict):
     workload_image = test_config_dict["docker_image"]
+    debug_mode = " debug " if test_config_dict.get("debug_mode") == 'y' else ''
     if test_config_dict.get("test_option"):
-        curation_cmd = 'sudo python3 curate.py ' + workload_image + ' test < input.txt'
+        curation_cmd = 'python3 curate.py ' + workload_image + debug_mode + ' test < input.txt'
     else:
-        curation_cmd = 'sudo python3 curate.py ' + workload_image + ' < input.txt'
+        curation_cmd = 'python3 curate.py ' + workload_image + debug_mode + ' < input.txt'
     return curation_cmd
 
 def write_to_log_file(tc_dict, output):

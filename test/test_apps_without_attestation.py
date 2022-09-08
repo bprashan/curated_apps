@@ -12,11 +12,19 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
+    def test_redis_default_with_debug(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
     def test_redis_test_option(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
     def test_redis_with_sign_key(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    def test_redis_with_sign_key_debug(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 

@@ -7,6 +7,7 @@ default_input_args:
   runtime_args_text:
   runtime_variable_list:
   encrypted_files_path:
+  run_benchmark: True
   end:
 
 test_redis_with_attestation:

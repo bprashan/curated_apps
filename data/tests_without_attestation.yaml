@@ -3,7 +3,7 @@ default_input_args:
   start:
   distro:
   azure_warning:
-  signing_key_path :
+  signing_key_path : test_config/enclave-key.pem
   attestation:
   runtime_args_text:
   runtime_variable_list:
@@ -27,13 +27,13 @@ test_redis_test_option:
   docker_image: redis redis:latest
   test_option: y
 
-test_redis_with_sign_key:
+test_redis_with_test_sign_key:
   docker_image: redis redis:latest
-  signing_key_path : test_config/enclave-key.pem
+  signing_key_path : 
 
-test_redis_with_sign_key_debug:
+test_redis_with_test_sign_key_debug:
   docker_image: redis redis:latest
-  signing_key_path : test_config/enclave-key.pem
+  signing_key_path : 
   debug_mode: y
 
 test_redis_no_signing_key_positive:
@@ -48,17 +48,7 @@ test_redis_no_signing_key_negative:
 
 test_redis_with_runtime_variables:
   docker_image: redis redis:latest
-  signing_key_path:
   runtime_variable_list: name="curator_app",version="1.2"
-
-test_pytorch_default:
-  create_local_image: y
-  docker_image: pytorch pytorch-base:latest
-
-test_pytorch_test_option:
-  create_local_image: y
-  docker_image: pytorch pytorch-base:latest
-  test_option: y
 
 test_redis_empty_test_key:
   docker_image: redis redis:latest
@@ -97,16 +87,21 @@ test_redis_ev_invalid_input_2:
   expected_screen: final_page
   expected_output_console: "`gsc-redis:latest` creation failed"
 
+test_bash_default:
+  docker_image: bash bash-test:latest
+  create_local_image: y
+  workload_result: "Curated Apps"
+
 test_bash_runtime_args:
   docker_image: bash bash-test:latest
   create_local_image: y
   runtime_args: y
-  runtime_args_text: -c free
+  runtime_args_text: free
 
 test_bash_20_04_version:
   docker_image: bash ubuntu_20_04-bash:latest
   distro: 2
   create_local_image: y
   runtime_args: y
-  runtime_args_text: -c free
+  runtime_args_text: free
   

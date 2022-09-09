@@ -2,6 +2,7 @@
 /build
 /install
 logs
+gsc
 *contrib_repo
 
 # No editor backup files.

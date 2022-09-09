@@ -13,6 +13,10 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
+    def test_redis_with_test_attestation(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
     def test_redis_with_attestation_local_image(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
@@ -38,10 +42,6 @@ class TestClass:
         assert test_result
 
     def test_pytorch_with_attestation_no_encryption_key(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
-    def test_pytorch_with_attestation(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 

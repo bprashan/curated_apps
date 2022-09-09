@@ -210,6 +210,6 @@ def run_test(test_instance, test_yaml_file):
                     result = workload.run_redis_client()
     finally:
         print("Docker images cleanup")
-        utils.cleanup_after_test(workload_name)
+        utils.cleanup_after_test(workload_name, test_name)
     return result
 

@@ -73,6 +73,13 @@ test_pytorch_with_attestation_encrypted_image:
   encryption_key: pytorch/base_image_helper/wrap-key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
 
+test_pytorch_with_test_attestation:
+  docker_image: pytorch pytorch-encrypted:latest
+  create_local_image: y
+  attestation: test
+  encryption_key: pytorch/base_image_helper/wrap-key
+  encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
+
 test_pytorch_with_attestation_wrong_encrypted_list:
   docker_image: pytorch pytorch-encrypted:latest
   create_local_image: y
@@ -100,3 +107,9 @@ test_pytorch_with_attestation_invalid_encryption_key:
   encryption_key: test_config/invalid_wrap-key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
   verifier_error: "[error] encryption key from /keys/invalid_wrap-key is not 16B in size"
+
+test_bash_with_test_attestation:
+  docker_image: bash bash-test:latest
+  create_local_image: y
+  workload_result: "Curated Apps"
+  attestation: test

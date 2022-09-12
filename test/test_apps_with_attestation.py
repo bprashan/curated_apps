@@ -6,7 +6,7 @@ yaml_file_name = "tests_with_attestation.yaml"
 tests_yaml_path = os.path.join(os.getcwd(), 'data', yaml_file_name)
 
 @pytest.mark.usefixtures("copy_repo")
-@pytest.mark.usefixtures("curated_setup")
+# @pytest.mark.usefixtures("curated_setup")
 class TestClass:
 
     def test_redis_with_attestation(self):
@@ -49,6 +49,10 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
+    def test_pytorch_with_test_attestation(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
     def test_pytorch_with_attestation_wrong_encrypted_list(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
@@ -62,5 +66,9 @@ class TestClass:
         assert test_result
 
     def test_pytorch_with_attestation_invalid_encryption_key(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    def test_bash_with_test_attestation(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result

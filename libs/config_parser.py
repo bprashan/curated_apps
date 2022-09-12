@@ -28,6 +28,7 @@ def convert_dict_to_str(test_config_dict):
             input_str += b'\x1a'
             break
     # Curator app expects ANY key press as the last input, after copying ssl certificates.
+    print(input_str)
     return input_str
 
 def create_input_file(input_str):

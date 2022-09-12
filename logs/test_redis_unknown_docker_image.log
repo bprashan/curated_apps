@@ -1,5 +1,0 @@
-[?1049h[22;0;0t[1;32r(B[m[4l[?7h[?1h=[8;35;120t
-[39;49m[39;49m[37m[40m[H[2JWarning: Cannot find application Docker image `redis:unknown_version`.
-Fetching from Docker Hub ...
-
-Error: Could not fetch `redis:unknown_version` image from dockerhub

@@ -49,6 +49,10 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
+    def test_pytorch_with_test_attestation(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
     def test_pytorch_with_attestation_wrong_encrypted_list(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
@@ -62,5 +66,13 @@ class TestClass:
         assert test_result
 
     def test_pytorch_with_attestation_invalid_encryption_key(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    def test_bash_with_test_attestation(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    def test_bash_attestation_without_verifier_image(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result

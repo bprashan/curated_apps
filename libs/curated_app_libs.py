@@ -126,7 +126,7 @@ def expected_msg_verification(test_config_dict, curation_output):
             return result
 
     if "expected_output_console" in test_config_dict.keys():
-        if test_config_dict.get("expected_output_console") in curation_output:
+        if re.search(test_config_dict["expected_output_console"], curation_output):
             result = True
         return result
     return None
@@ -149,7 +149,6 @@ def verify_process(process, workload_result, verifier_process=None):
     return result
 
 def run_verifier_process(test_config_dict, verifier_cmd):
-    result = False
     error_msg = test_config_dict.get("verifier_error")
     if error_msg:
         verifier_cmd = verifier_cmd.replace("pytorch/base_image_helper", "test_config")
@@ -179,7 +178,7 @@ def run_curated_image(test_config_dict, workload_name, encryption):
 
     docker_command = get_docker_run_command(attestation, workload_name, unsigned_image, encryption) 
     gsc_docker_command = docker_command[-1]
-    if attestation:
+    if attestation and (test_config_dict.get("verifier_run") == None):
         verifier_process = run_verifier_process(test_config_dict, docker_command[0])
         if type(verifier_process) == bool:
             return verifier_process

@@ -95,13 +95,16 @@ test_bash_default:
 test_bash_runtime_args:
   docker_image: bash bash-test:latest
   create_local_image: y
-  runtime_args: y
   runtime_args_text: free
 
 test_bash_20_04_version:
   docker_image: bash ubuntu_20_04-bash:latest
   distro: 2
   create_local_image: y
-  runtime_args: y
   runtime_args_text: free
-  
+
+test_commentary_sequence:
+  docker_image: redis redis:latest
+  expected_screen: signing_page
+  expected_output_console: "1. Distro Selection(.*)2. Enclave Signing Key(.*)3. Attestation(.*)4. Secret Provisioning(.*)5. Runtime Arguments(.*)6. Environment Variables(.*)7. Encrypted Files(.*)8. Execution & Debug"
+  end_test: signing_key_path

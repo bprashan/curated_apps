@@ -14,6 +14,7 @@ def run_subprocess(command, dest_dir=None):
     process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                     universal_newlines=True, shell=True)
     if process.returncode != 0:
+        if dest_dir: os.chdir(FRAMEWORK_PATH)
         print(process.stderr.strip())
         raise Exception("Failed to run command {}".format(command))
     
@@ -50,9 +51,9 @@ def kill_process_by_name(processName):
 
 def cleanup_after_test(workload, test_name):
     try:
-        copy_cmd = "cp -rf {} logs/{}.txt".format((CURATED_APPS_PATH + "/input.txt"), test_name)
+        copy_cmd = "sudo mv {} {}.txt".format(os.path.join(CURATED_APPS_PATH, "input.txt"), os.path.join(LOGS, test_name))
         run_subprocess(copy_cmd)
-        kill_process_by_name("secret_prov_server_dcap")
+        kill_process_by_name("server_dcap")
         kill_process_by_name("/gramine/app_files/apploader.sh")
         kill_process_by_name("/gramine/app_files/entrypoint")
         kill_process_by_name("/gramine/meson_build_output/lib/x86_64-linux-gnu/gramine/sgx/loader")
@@ -123,6 +124,7 @@ def test_setup(test_config_dict):
     else:
         config_parser.create_input_file(b'\x07')
     encryption = local_image_setup(test_config_dict)
+    time.sleep(5)
     return encryption
 
 def update_file_contents(old_contents, new_contents, filename):

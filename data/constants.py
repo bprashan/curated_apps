@@ -29,3 +29,4 @@ AZURE_ORD_LIST         = ['start', 'distro', 'signing_key_path', 'attestation', 
                             'encrypted_files_path', 'encryption_key', 'end']
 UBUNTU_18_04           = "From ubuntu:18.04"
 UBUNTU_20_04           = "From ubuntu:20.04"
+LOGS                   = os.path.join(FRAMEWORK_PATH, "logs")

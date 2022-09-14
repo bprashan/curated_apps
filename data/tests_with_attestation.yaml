@@ -29,14 +29,12 @@ test_redis_with_attestation_runtime_variables:
 test_redis_with_attestation_end_test_ssl_path:
   docker_image: redis redis:latest
   ssl_path: test_config/empty_ssl_folder
-  attestation: done
   expected_output_console: "One or more files does not exist at verifier/ssl/"
   end_test: attestation
   expected_screen: attestation_page
 
 test_redis_with_attestation_ssl_server_crt:
   docker_image: redis redis:latest
-  attestation: done
   ssl_path: test_config/ca_cert_folder
   end_test: attestation
   expected_output_console: "One or more files does not exist at verifier/ssl/"
@@ -44,7 +42,6 @@ test_redis_with_attestation_ssl_server_crt:
 
 test_redis_with_attestation_ssl_server_key:
   docker_image: redis redis:latest
-  attestation: done
   ssl_path: test_config/wo_server_key
   end_test: ssl_path
   expected_output_console: "One or more files does not exist at verifier/ssl/"
@@ -52,7 +49,6 @@ test_redis_with_attestation_ssl_server_key:
 
 test_redis_with_attestation_wo_ssl:
   docker_image: redis redis:latest
-  attestation: done
   ssl_path: ''
   end_test: attestation
   expected_output_console: "One or more files does not exist at verifier/ssl/"

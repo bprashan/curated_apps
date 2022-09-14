@@ -5,8 +5,8 @@ from libs import utils
 
 @pytest.fixture(scope="session")
 def curated_setup():
-    utils.run_subprocess("rm -rf logs")
-    os.mkdir("logs")
+    utils.run_subprocess(f"rm -rf {LOGS}")
+    os.mkdir(LOGS)
     print("Cleaning old contrib repo")
     utils.run_subprocess("rm -rf {}".format(REPO_PATH))
     utils.run_subprocess("rm -rf {}".format(ORIG_CURATED_PATH))

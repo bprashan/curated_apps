@@ -29,7 +29,7 @@ def screen_verification(output):
         return "home_page"
     elif "Provide the Distro of your base image" in output:
         return "distro_page"
-    elif "Please provide path to your signing key in the blue box" in output:
+    elif "Please provide path to your enclave signing key" in output:
         return "signing_page"
     elif "To enable remote attestation using Azure DCAP client" in output:
         return "attestation_page"
@@ -39,9 +39,9 @@ def screen_verification(output):
         return "runtime_page"
     elif "Please specify a list of env variables" in output:
         return "environment_page"
-    elif "If the base image contain encrypted data, please provide" in output:
+    elif "Encrypted files in the base image used by the" in output:
         return "encrypted_page"
-    elif "Please provide the path to the key used for the\nencryption." in output:
+    elif "Please provide the path to the key used for" in output:
         return "encryption_key_page"
     elif "The curated GSC image gsc-redis:latest is ready" in output:
         return "final_page"

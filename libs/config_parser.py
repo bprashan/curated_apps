@@ -1,10 +1,8 @@
-import sys
 import yaml
 import os
 import shutil
 from data.constants import *
 from libs import utils
-import re
 
 def read_config_yaml(config_file_path, test_name):
     yaml_file = open(config_file_path, "r")
@@ -14,17 +12,17 @@ def read_config_yaml(config_file_path, test_name):
     if parsed_yaml_file.get(test_name):
         test_items = parsed_yaml_file[test_name]
         test_config.update(test_items)
-        test_config["log_file"] = f"logs/{test_name}.log"
+        test_config["log_file"] = f"{LOGS}/{test_name}.log"
     return test_config
 
-def convert_dict_to_str(test_config_dict):
+def convert_dict_to_str(sorted_dict):
     input_str = b''
-    for key, value in test_config_dict.items():
+    for key, value in sorted_dict.items():
         if value:
             input_str += str(value).strip().encode('utf-8') + b'\x07'
         else:
             input_str += b'\x07'
-        if key == test_config_dict.get('end_test'):
+        if key == sorted_dict.get('end_test'):
             input_str += b'\x1a'
             break
     # Curator app expects ANY key press as the last input, after copying ssl certificates.
@@ -45,10 +43,10 @@ def data_pre_processing(test_config_dict):
 
     data_pre_processing_for_verifier_image(test_config_dict, end_key)
 
-    if utils.check_machine() == "DCAP client":
-        input_ord_list = DCAP_ORD_LIST
-    else:
+    if utils.check_machine() == "Azure Linux Agent":
         input_ord_list = AZURE_ORD_LIST
+    else:
+        input_ord_list = DCAP_ORD_LIST
 
     for key in input_ord_list:
         if key in test_config_dict.keys():

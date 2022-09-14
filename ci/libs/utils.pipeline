@@ -1,32 +1,34 @@
-excluded_list = ['test_redis_ra_wrong_option', 
-'test_pytorch_with_attestation_no_encryption_key', 
-'test_redis_with_attestation_end_test_ssl_path',
-'test_redis_with_attestation_ssl_server_crt', 
-'test_redis_with_attestation_wo_ssl']
+excluded_list = ['test_pytorch_with_attestation_no_encryption_key']
 
 def get_testname(run){
     def add_excluded_tests = "not " + excluded_list.join(" and not ")
-    result = add_excluded_tests
+    result = "";
     switch(run) {
         case 'all_test': 
             break;
         case 'all_non_attestation_test': 
-            result += ' and not with_attestation';
+            result = 'non_attestation';
             break;
         case 'all_attestation_test': 
-            result += ' and with_attestation';
+            result = 'attestation';
             break;
         case 'redis_attestation_test': 
-            result += ' and redis and with_attestation';
+            result = 'redis_attestation';
             break;
         case 'pytorch_attestation_test': 
-            result += ' and pytorch and with_attestation';
+            result = 'pytorch_attestation';
             break;
         case 'redis_non_attestation_test': 
-            result += ' and redis and not with_attestation';
+            result = 'redis_non_attestation';
             break;
         case 'pytorch_non_attestation_test': 
-            result += ' and pytorch and not with_attestation';
+            result = 'pytorch_non_attestation';
+            break;
+        case 'bash_non_attestation_test':
+            result = 'bash_non_attestation';
+            break;
+        case 'bash_attestation_test':
+            result = 'bash_attestation';
             break;
     }
     return result;
@@ -34,23 +36,13 @@ def get_testname(run){
 
 def initialize(){
     if(!run_specific_test?.trim()){
-        test_cmd = 'sudo python3 -m pytest -v -s -k'
+        test_cmd = " -m "
         tests_to_execute = get_testname(run)
         run_stage_name = run
     } else {
-        test_cmd = 'sudo python3 -m pytest -v -s'
+        test_cmd = " "
         run_stage_name = run_specific_test
-        if (run_specific_test.contains('attestation')){
-            tests_to_execute = 'test/test_apps_with_attestation.py::TestClass::' + run_specific_test
-        } else {
-            tests_to_execute = 'test/test_apps_without_attestation.py::TestClass::' + run_specific_test
-        }
-    }
-}
-
-def checkout(){
-    stage("checkout $nodeLabel"){
-        git url: 'https://github.com/bprashan/curated_apps.git', branch: 'bprashan'
+        tests_to_execute = sh(returnStdout:true, script:"python3 ci/libs/get_test_details.py $run_specific_test  2>&1").trim()
     }
 }
 
@@ -60,15 +52,25 @@ def runtest(){
         sh """
             # sudo python3 -m pytest -v -s -k '$tests_to_execute' --junit-xml libos-regression.xml
             # curses doesnt recognise Jenkins terminal. Hence ssh to local machine with pseudo-terminal allocation
-            ssh -tt intel@localhost "cd $WORKSPACE; $test_cmd '$tests_to_execute'"
+            # ssh -tt intel@localhost "cd $WORKSPACE; $test_cmd '$tests_to_execute'"
+            # cd $WORKSPACE
+            # sudo python3 -m pytest -v -s $test_cmd $tests_to_execute
+            ssh -tt intel@localhost "cd $WORKSPACE; sudo python3 -m pytest -v -s $test_cmd '$tests_to_execute'"
         """
+    }
+}
+
+def storeartifacts(){
+    stage("Archive artifacts"){
+        dir('logs') {
+            archiveArtifacts artifacts: '**'
+        }
     }
 }
 
 def cleanup(){
     stage("cleanup $nodeLabel"){
         sh "sudo rm -rf $WORKSPACE/*"
-        cleanWs()
     }
 }
 

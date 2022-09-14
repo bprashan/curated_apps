@@ -1,4 +1,4 @@
-node('JK_POOL_MASTER') {
+node("$nodeLabel") {
 
     properties([parameters([choice(choices: ['all_test', 'all_attestation_test', 'all_non_attestation_test',
     'redis_attestation_test', 'pytorch_attestation_test', 'redis_non_attestation_test',
@@ -10,11 +10,11 @@ node('JK_POOL_MASTER') {
     checkout scm
     test_executor = load 'ci/libs/utils.pipeline'
 
-    node ("$nodeLabel"){
+    try {
         test_executor.initialize()
-        test_executor.checkout()
         test_executor.runtest()
+    } catch (Exception e){
+        test_executor.storeartifacts()
         test_executor.cleanup()
     }
-
 }

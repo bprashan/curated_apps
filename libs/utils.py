@@ -51,7 +51,7 @@ def kill_process_by_name(processName):
 
 def cleanup_after_test(workload, test_name):
     try:
-        copy_cmd = "sudo mv {} {}.txt".format(os.path.join(CURATED_APPS_PATH, "input.txt"), os.path.join(LOGS, test_name))
+        copy_cmd = "sudo cp -rf {} {}.txt".format(os.path.join(CURATED_APPS_PATH, "input.txt"), os.path.join(LOGS, test_name))
         run_subprocess(copy_cmd)
         kill_process_by_name("server_dcap")
         kill_process_by_name("/gramine/app_files/apploader.sh")
@@ -82,10 +82,12 @@ def get_workload_name(docker_image):
 def check_machine():
     service_cmd = "sudo systemctl --type=service --state=running"
     service_output = run_subprocess(service_cmd)
-    if "walinuxagent.service" in service_output:
+    if "walinuxagent.service" in service_output or "waagent.service" in service_output:
+        # 'loaded active running Azure Linux Agent'
         print("Running on Azure Linux Agent")
         return "Azure Linux Agent"
     elif "pccs.service" in service_output:
+        # 'loaded active running Provisioning Certificate Caching Service (PCCS)'
         print("Running on DCAP client")
         return "DCAP client"
     else:
@@ -109,12 +111,8 @@ def generate_local_image(workload_image):
         run_subprocess("docker pull redis:7.0.0")
 
 def local_image_setup(test_config_dict):
-    encryption = False
     if test_config_dict.get("create_local_image") == "y":
-        if test_config_dict["docker_image"] == "pytorch pytorch-encrypted:latest":
-            encryption = True
         generate_local_image(test_config_dict["docker_image"])
-    return encryption
 
 def test_setup(test_config_dict):
     if test_config_dict.get("test_option") == None:
@@ -123,14 +121,17 @@ def test_setup(test_config_dict):
         config_parser.create_input_file(input_str)
     else:
         config_parser.create_input_file(b'\x07')
-    encryption = local_image_setup(test_config_dict)
+    local_image_setup(test_config_dict)
     time.sleep(5)
-    return encryption
 
-def update_file_contents(old_contents, new_contents, filename):
+def read_file(filename):
     fd = open(filename)
     fd_contents = fd.read()
     fd.close()
+    return fd_contents
+
+def update_file_contents(old_contents, new_contents, filename):
+    fd_contents = read_file(filename)
     new_data = re.sub(old_contents, new_contents, fd_contents)
     fd = open(filename, "w")
     fd.write(new_data)

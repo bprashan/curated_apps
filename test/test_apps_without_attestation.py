@@ -35,16 +35,6 @@ class TestClass:
         assert test_result
 
     @pytest.mark.redis_non_attestation
-    def test_redis_no_signing_key_positive(self, clone_gsc_repo):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
-    @pytest.mark.redis_non_attestation
-    def test_redis_no_signing_key_negative(self, clone_gsc_repo):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
-    @pytest.mark.redis_non_attestation
     def test_redis_with_runtime_variables(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
@@ -100,5 +90,10 @@ class TestClass:
         assert test_result
 
     def test_commentary_sequence(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    @pytest.mark.redis_non_attestation
+    def test_redis_protected_signing_key(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result

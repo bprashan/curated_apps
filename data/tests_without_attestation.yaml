@@ -3,12 +3,13 @@ default_input_args:
   start:
   distro:
   azure_warning:
-  signing_key_path : test_config/enclave-key.pem
+  signing_key_path: test_config/enclave-key.pem
   attestation:
   runtime_args_text:
   runtime_variable_list:
+  encrypted_files_path:
   end:
-  run_benchmark: True
+  signing_key_password:
 
 test_redis_default:
   docker_image: redis redis:latest
@@ -20,7 +21,7 @@ test_redis_default_with_debug:
 test_redis_unknown_docker_image:
   docker_image: redis redis:unknown_version
   expected_screen: signing_page
-  expected_output_console: " Could not fetch `redis:unknown_version` image from dockerhub"
+  expected_output_console: "Could not fetch `redis:unknown_version` image from DockerHub"
   end_test: signing_key_path
 
 test_redis_test_option:
@@ -29,26 +30,16 @@ test_redis_test_option:
 
 test_redis_with_test_sign_key:
   docker_image: redis redis:latest
-  signing_key_path : 
+  signing_key_path :
 
 test_redis_with_test_sign_key_debug:
   docker_image: redis redis:latest
   signing_key_path : 
   debug_mode: y
 
-test_redis_no_signing_key_positive:
-  docker_image: redis redis
-  signing_key_path : n
-
-test_redis_no_signing_key_negative:
-  docker_image: redis redis
-  signing_key_path : n
-  workload_result : "Invalid value for '--sig' / '-s'"
-  run_benchmark: False
-
 test_redis_with_runtime_variables:
   docker_image: redis redis:latest
-  runtime_variable_list: name="curator_app",version="1.2"
+  runtime_variable_list: -e name="curator_app" -e version="1.2"
 
 test_redis_empty_test_key:
   docker_image: redis redis:latest
@@ -71,25 +62,20 @@ test_redis_ra_wrong_option:
 
 test_redis_ev_invalid_input_1:
   docker_image: redis redis:latest
-  runtime_variable_list: name="Xyz",,age="20"
-  expected_screen: final_page
-  expected_output_console: '`gsc-redis:latest` creation failed'
+  runtime_variable_list: -e name="Xyz" -e -e age="20"
 
 test_redis_ev_dict:
   docker_image: redis redis:latest
   runtime_variable_list: {name="Xyz",age="20"}
-  expected_screen: final_page
-  expected_output_console: "`gsc-redis:latest` creation failed"
 
 test_redis_ev_invalid_input_2:
   docker_image: redis redis:latest
-  runtime_variable_list: name="Xyz",age=
-  expected_screen: final_page
-  expected_output_console: "`gsc-redis:latest` creation failed"
+  runtime_variable_list: -e name="Xyz" -e age=
 
 test_bash_default:
   docker_image: bash bash-test:latest
   create_local_image: y
+  runtime_variable_list: -e APP_NAME="Curated Apps"
   workload_result: "Curated Apps"
 
 test_bash_runtime_args:
@@ -108,3 +94,8 @@ test_commentary_sequence:
   expected_screen: signing_page
   expected_output_console: "1. Distro Selection(.*)2. Enclave Signing Key(.*)3. Attestation(.*)4. Secret Provisioning(.*)5. Runtime Arguments(.*)6. Environment Variables(.*)7. Encrypted Files(.*)8. Execution & Debug"
   end_test: signing_key_path
+
+test_redis_protected_signing_key:
+  docker_image: redis redis:latest
+  signing_key_path: test_config/protected-enclave-key.pem
+  signing_key_password: test@123

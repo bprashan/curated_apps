@@ -93,3 +93,8 @@ class TestClass:
     def test_bash_attestation_without_verifier_image(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
+
+    @pytest.mark.pytorch_attestation
+    def test_pytorch_with_test_option(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result

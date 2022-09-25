@@ -2,13 +2,13 @@ default_input_args:
   start:
   distro:
   azure_warning:
-  signing_key_path : test_config/enclave-key.pem
+  signing_key_path: test_config/enclave-key.pem
   attestation: done
   ssl_path: test_config/ssl
   runtime_args_text:
   runtime_variable_list:
   encrypted_files_path:
-  run_benchmark: True
+  signing_key_password:
   end:
 
 test_redis_with_attestation:
@@ -24,7 +24,7 @@ test_redis_with_attestation_local_image:
 
 test_redis_with_attestation_runtime_variables:
   docker_image: redis redis:latest
-  runtime_variable_list: name="curator_app",version="1.2"
+  runtime_variable_list: -e name="curator_app" -e version="1.2"
 
 test_redis_with_attestation_end_test_ssl_path:
   docker_image: redis redis:latest
@@ -66,34 +66,34 @@ test_pytorch_with_attestation_no_encryption_key:
 test_pytorch_with_attestation_encrypted_image:
   docker_image: pytorch pytorch-encrypted:latest
   create_local_image: y
-  encryption_key: pytorch/base_image_helper/wrap-key
+  encryption_key: pytorch/base_image_helper/wrap_key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
 
 test_pytorch_with_test_attestation:
   docker_image: pytorch pytorch-encrypted:latest
   create_local_image: y
   attestation: test
-  encryption_key: pytorch/base_image_helper/wrap-key
+  encryption_key: pytorch/base_image_helper/wrap_key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
 
 test_pytorch_with_attestation_wrong_encrypted_list:
   docker_image: pytorch pytorch-encrypted:latest
   create_local_image: y
-  encryption_key: pytorch/base_image_helper/wrap-key
+  encryption_key: pytorch/base_image_helper/wrap_key
   encrypted_files_path: input.jpg:alexnet-pretrained.pt:result.txt
   workload_result: "UnicodeDecodeError: 'utf-8' codec can't decode byte"
 
 test_pytorch_with_attestation_invalid_encrypted_files:
   docker_image: pytorch pytorch-encrypted:latest
   create_local_image: y
-  encryption_key: pytorch/base_image_helper/wrap-key
+  encryption_key: pytorch/base_image_helper/wrap_key
   encrypted_files_path: text-file
   workload_result: "_pickle.UnpicklingError: invalid load key, '\\x00'."
 
 test_pytorch_with_attestation_encrypted_file_invalid_format:
   docker_image: pytorch pytorch-encrypted:latest
   create_local_image: y
-  encryption_key: pytorch/base_image_helper/wrap-key
+  encryption_key: pytorch/base_image_helper/wrap_key
   encrypted_files_path: classes.txt;input.jpg;alexnet-pretrained.pt;result.txt
   workload_result: "_pickle.UnpicklingError: invalid load key, '\\x00'."
 
@@ -115,3 +115,8 @@ test_bash_attestation_without_verifier_image:
   create_local_image: y
   verifier_run: False
   workload_result: "secret_provision_start: Secret Provisioning could not connect to any of the servers specified in SECRET_PROVISION_SERVERS"
+
+test_pytorch_with_test_option:
+  docker_image: pytorch pytorch-encrypted:latest
+  create_local_image: y
+  test_option: y

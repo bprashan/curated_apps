@@ -66,34 +66,34 @@ test_pytorch_with_attestation_no_encryption_key:
 test_pytorch_with_attestation_encrypted_image:
   docker_image: pytorch pytorch-encrypted:latest
   create_local_image: y
-  encryption_key: pytorch/base_image_helper/wrap_key
+  encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
 
 test_pytorch_with_test_attestation:
   docker_image: pytorch pytorch-encrypted:latest
   create_local_image: y
   attestation: test
-  encryption_key: pytorch/base_image_helper/wrap_key
+  encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
 
 test_pytorch_with_attestation_wrong_encrypted_list:
   docker_image: pytorch pytorch-encrypted:latest
   create_local_image: y
-  encryption_key: pytorch/base_image_helper/wrap_key
+  encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: input.jpg:alexnet-pretrained.pt:result.txt
   workload_result: "UnicodeDecodeError: 'utf-8' codec can't decode byte"
 
 test_pytorch_with_attestation_invalid_encrypted_files:
   docker_image: pytorch pytorch-encrypted:latest
   create_local_image: y
-  encryption_key: pytorch/base_image_helper/wrap_key
+  encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: text-file
   workload_result: "_pickle.UnpicklingError: invalid load key, '\\x00'."
 
 test_pytorch_with_attestation_encrypted_file_invalid_format:
   docker_image: pytorch pytorch-encrypted:latest
   create_local_image: y
-  encryption_key: pytorch/base_image_helper/wrap_key
+  encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: classes.txt;input.jpg;alexnet-pretrained.pt;result.txt
   workload_result: "_pickle.UnpicklingError: invalid load key, '\\x00'."
 
@@ -107,8 +107,15 @@ test_pytorch_with_attestation_invalid_encryption_key:
 test_bash_with_test_attestation:
   docker_image: bash bash-test:latest
   create_local_image: y
+  runtime_variable_list: -e APP_NAME="Curated Apps"
   workload_result: "Curated Apps"
   attestation: test
+
+test_bash_with_attestation:
+  docker_image: bash bash-test:latest
+  create_local_image: y
+  runtime_variable_list: -e APP_NAME="Curated Apps"
+  workload_result: "Curated Apps"
 
 test_bash_attestation_without_verifier_image:
   docker_image: bash bash-test:latest

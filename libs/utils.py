@@ -49,27 +49,27 @@ def kill_process_by_name(processName):
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
 
-def cleanup_after_test(workload, test_name):
+def cleanup_after_test(workload, test_config_dict):
     try:
-        copy_cmd = "sudo cp -rf {} {}.txt".format(os.path.join(CURATED_APPS_PATH, "input.txt"), os.path.join(LOGS, test_name))
+        copy_cmd = "sudo mv {} {}.txt".format(test_config_dict["curation_log"], 
+                                    os.path.join(LOGS, test_config_dict["test_name"]))
         run_subprocess(copy_cmd)
-        kill_process_by_name("server_dcap")
         kill_process_by_name("/gramine/app_files/apploader.sh")
         kill_process_by_name("/gramine/app_files/entrypoint")
         kill_process_by_name("/gramine/meson_build_output/lib/x86_64-linux-gnu/gramine/sgx/loader")
+        kill_process_by_name("server_dcap")
         run_subprocess('sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"')
         run_subprocess("docker rmi gsc-{} -f".format(workload))
         run_subprocess("docker rmi gsc-{}-unsigned -f".format(workload))
         run_subprocess("docker rmi {} -f".format(workload.replace(":", "_x:")))
         run_subprocess("docker rmi verifier:latest -f")
-        if run_subprocess("docker ps -a -q"):
-            run_subprocess("docker rm -f $(docker ps -a -q)")
-        if run_subprocess("docker volume ls -q"):
-            run_subprocess("docker volume rm $(docker volume ls -q)")
-        #run_subprocess("docker system prune -f")
-        #run_subprocess("docker rmi pytorch-plain:latest")
-        #run_subprocess("docker rmi pytorch-encryption:latest")
-        #run_subprocess("docker rmi bash-test:latest -f")
+        # if run_subprocess("docker ps -a -q"):
+        #     run_subprocess("docker rm -f $(docker ps -a -q)")
+        # if run_subprocess("docker volume ls -q"):
+        #     run_subprocess("docker volume rm $(docker volume ls -q)")
+        run_subprocess("docker system prune -f")
+        run_subprocess("docker rmi pytorch-encrypted:latest")
+        run_subprocess("docker rmi bash-test:latest -f")
     except Exception as e:
         print("Exception occured during cleanup ", e)
 

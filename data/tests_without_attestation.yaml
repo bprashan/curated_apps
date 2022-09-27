@@ -30,11 +30,11 @@ test_redis_test_option:
 
 test_redis_with_test_sign_key:
   docker_image: redis redis:latest
-  signing_key_path :
+  signing_key_path : test
 
 test_redis_with_test_sign_key_debug:
   docker_image: redis redis:latest
-  signing_key_path : 
+  signing_key_path : test
   debug_mode: y
 
 test_redis_with_runtime_variables:
@@ -67,6 +67,8 @@ test_redis_ev_invalid_input_1:
 test_redis_ev_dict:
   docker_image: redis redis:latest
   runtime_variable_list: {name="Xyz",age="20"}
+  expected_screen: final_page
+  expected_output_console: '`gsc-redis:latest` creation failed'
 
 test_redis_ev_invalid_input_2:
   docker_image: redis redis:latest
@@ -99,3 +101,10 @@ test_redis_protected_signing_key:
   docker_image: redis redis:latest
   signing_key_path: test_config/protected-enclave-key.pem
   signing_key_password: test@123
+
+test_redis_signing_key_no_input:
+  docker_image: redis redis:latest
+  signing_key_path:
+  expected_screen: signing_page
+  expected_output_console: "Please provide a valid input"
+  end_test: signing_key_path

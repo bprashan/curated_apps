@@ -100,7 +100,6 @@ def get_docker_run_command(test_config_dict, curation_output):
             if "$ docker run" in line:
                 line = line.replace("$ docker run", "docker run")
             output.append(line)
-    print("Get Docker Run Command is ", output)
     return output
 
 def get_workload_result(test_config_dict):
@@ -117,10 +116,7 @@ def get_workload_result(test_config_dict):
 def expected_msg_verification(test_config_dict, curation_output):
     result = False
     if "expected_output_infile" in test_config_dict.keys():
-        base_image_name = test_config_dict.get("docker_image").split(' ', maxsplit=1)[1]
-        base_image_type = test_config_dict.get("docker_image").split(' ', maxsplit=1)[0]
-        log_file_name, n = re.subn('[:/]', '_', base_image_name)
-        log_file = f'{base_image_type}/{log_file_name}.log'
+        log_file = test_config_dict["curation_log"]
         with open(os.path.join(CURATED_APPS_PATH, log_file), "r") as log_file_pointer:
             for line in log_file_pointer.readlines():
                 print(line)
@@ -171,7 +167,7 @@ def run_curated_image(test_config_dict, curation_output):
     docker_command = get_docker_run_command(test_config_dict, curation_output)
     gsc_docker_command = docker_command[-1]
     if attestation and (test_config_dict.get("verifier_run") == None):
-        if test_config_dict.get('test_option') != None:
+        if test_config_dict.get('test_option') != 'y':
             verifier_process = run_verifier_process(test_config_dict, docker_command[0])
             if type(verifier_process) == bool:
                 return verifier_process
@@ -202,6 +198,6 @@ def run_test(test_instance, test_yaml_file):
                     result = workload.run_redis_client()
     finally:
         print("Docker images cleanup")
-        utils.cleanup_after_test(workload_name, test_name)
+        utils.cleanup_after_test(workload_name, test_config_dict)
     return result
 

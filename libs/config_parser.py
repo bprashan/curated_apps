@@ -10,9 +10,17 @@ def read_config_yaml(config_file_path, test_name):
     test_config = parsed_yaml_file["default_input_args"]
 
     if parsed_yaml_file.get(test_name):
+        test_config["test_name"] = test_name
         test_items = parsed_yaml_file[test_name]
         test_config.update(test_items)
         test_config["log_file"] = f"{LOGS}/{test_name}.log"
+        base_image_name = test_config.get("docker_image").split(' ', maxsplit=1)[1]
+        base_image_type = test_config.get("docker_image").split(' ', maxsplit=1)[0]
+        # log_file_name, n = re.subn('[:/]', '_', base_image_name)
+        log_file_name = base_image_name.replace(":", "_")
+        log_file = f'{WORKLOADS_PATH}/{base_image_type}/{log_file_name}.log'
+        test_config["curation_log"] = log_file
+        print("test_config_dict ", test_config)
     return test_config
 
 def convert_dict_to_str(sorted_dict):
@@ -67,7 +75,7 @@ def data_pre_processing_for_verifier_image(test_config_dict, end_test_key_str):
         bash_setup(test_config_dict['docker_image'])
 
 def bash_setup(docker_image):
-    shutil.copytree("data/bash", CURATED_APPS_PATH + "/bash")
+    shutil.copytree("data/bash", BASH_PATH)
     if "ubuntu_20_04" in docker_image:
         utils.update_file_contents(UBUNTU_18_04, UBUNTU_20_04, BASH_DOCKERFILE)
     if utils.check_machine() == "Azure Linux Agent":

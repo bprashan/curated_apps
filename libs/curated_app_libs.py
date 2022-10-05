@@ -93,6 +93,9 @@ def get_docker_run_command(test_config_dict, curation_output):
         if "docker run" in line:
             if "--net=host" not in line:
                 line = line.replace("docker run", "docker run --net=host")
+            if "RA_TLS_MRENCLAVE" in line and "RA_TLS_ALLOW_OUTDATED_TCB_INSECURE" not in line:
+                line = line.replace("-e RA_TLS_MRENCLAVE",
+                        "-e RA_TLS_ALLOW_OUTDATED_TCB_INSECURE=1 -e RA_TLS_MRENCLAVE")
             if "<verifier-dns-name:port>" in line:
                 line = line.replace("<verifier-dns-name:port>", "localhost:4433")
             if "-it" in line:
@@ -188,7 +191,6 @@ def run_test(test_instance, test_yaml_file):
     test_config_dict = config_parser.read_config_yaml(test_yaml_file, test_name)
     utils.test_setup(test_config_dict)
     try:
-        workload_name = utils.get_workload_name(test_config_dict['docker_image'])
         curation_output = generate_curated_image(test_config_dict)
         result = expected_msg_verification(test_config_dict, curation_output)
         if result == None:
@@ -198,6 +200,6 @@ def run_test(test_instance, test_yaml_file):
                     result = workload.run_redis_client()
     finally:
         print("Docker images cleanup")
-        utils.cleanup_after_test(workload_name, test_config_dict)
+        utils.cleanup_after_test(test_config_dict)
     return result
 

@@ -20,7 +20,6 @@ def read_config_yaml(config_file_path, test_name):
         log_file_name = base_image_name.replace(":", "_")
         log_file = f'{WORKLOADS_PATH}/{base_image_type}/{log_file_name}.log'
         test_config["curation_log"] = log_file
-        print("test_config_dict ", test_config)
     return test_config
 
 def convert_dict_to_str(sorted_dict):
@@ -51,7 +50,7 @@ def data_pre_processing(test_config_dict):
 
     data_pre_processing_for_verifier_image(test_config_dict, end_key)
 
-    if utils.check_machine() == "Azure Linux Agent":
+    if os.environ["SETUP_MACHINE"] == "Azure Linux Agent":
         input_ord_list = AZURE_ORD_LIST
     else:
         input_ord_list = DCAP_ORD_LIST
@@ -78,7 +77,7 @@ def bash_setup(docker_image):
     shutil.copytree("data/bash", BASH_PATH)
     if "ubuntu_20_04" in docker_image:
         utils.update_file_contents(UBUNTU_18_04, UBUNTU_20_04, BASH_DOCKERFILE)
-    if utils.check_machine() == "Azure Linux Agent":
+    if os.environ["SETUP_MACHINE"] == "Azure Linux Agent":
         utils.update_file_contents(ENV_PROXY_STRING, '', BASH_DOCKERFILE)
         utils.update_file_contents(ENV_PROXY_STRING, '', BASH_GSC_DOCKERFILE)
    

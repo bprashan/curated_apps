@@ -3,33 +3,8 @@ excluded_list = ['test_pytorch_with_attestation_no_encryption_key']
 def get_testname(run){
     def add_excluded_tests = "not " + excluded_list.join(" and not ")
     result = "";
-    switch(run) {
-        case 'all_test': 
-            break;
-        case 'all_non_attestation_test': 
-            result = 'non_attestation';
-            break;
-        case 'all_attestation_test': 
-            result = 'attestation';
-            break;
-        case 'redis_attestation_test': 
-            result = 'redis_attestation';
-            break;
-        case 'pytorch_attestation_test': 
-            result = 'pytorch_attestation';
-            break;
-        case 'redis_non_attestation_test': 
-            result = 'redis_non_attestation';
-            break;
-        case 'pytorch_non_attestation_test': 
-            result = 'pytorch_non_attestation';
-            break;
-        case 'bash_non_attestation_test':
-            result = 'bash_non_attestation';
-            break;
-        case 'bash_attestation_test':
-            result = 'bash_attestation';
-            break;
+    if (result != "all") {
+        result = run;
     }
     return result;
 }

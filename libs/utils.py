@@ -45,37 +45,31 @@ def kill_process_by_name(processName):
     procs = [p for p in psutil.process_iter() for c in p.cmdline() if processName in c]
     for process in procs:
         try:
-            run_subprocess("sudo kill -9 {}".format(process.pid))
+            run_subprocess("kill -9 {}".format(process.pid))
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
 
-def cleanup_after_test(workload, test_config_dict):
+def cleanup_after_test(test_config_dict):
     try:
-        copy_cmd = "sudo mv {} {}.txt".format(test_config_dict["curation_log"], 
+        workload = get_workload_name(test_config_dict['docker_image'])
+        copy_cmd = "mv {} {}.txt >/dev/null 2>&1".format(test_config_dict["curation_log"], 
                                     os.path.join(LOGS, test_config_dict["test_name"]))
         run_subprocess(copy_cmd)
-        kill_process_by_name("/gramine/app_files/apploader.sh")
-        kill_process_by_name("/gramine/app_files/entrypoint")
-        kill_process_by_name("/gramine/meson_build_output/lib/x86_64-linux-gnu/gramine/sgx/loader")
-        kill_process_by_name("server_dcap")
-        run_subprocess('sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"')
-        run_subprocess("docker rmi gsc-{} -f".format(workload))
-        run_subprocess("docker rmi gsc-{}-unsigned -f".format(workload))
-        run_subprocess("docker rmi {} -f".format(workload.replace(":", "_x:")))
+        verifier_id = run_subprocess("docker container ls  | grep 'verifier:latest' | awk '{print $1}'")
+        if verifier_id: run_subprocess("docker stop {}".format(verifier_id))
+        workload_id = run_subprocess("docker container ls  | grep 'gramine' | awk '{print $1}'")
+        if workload_id: run_subprocess("docker stop {}".format(workload_id))
         run_subprocess("docker rmi verifier:latest -f")
-        # if run_subprocess("docker ps -a -q"):
-        #     run_subprocess("docker rm -f $(docker ps -a -q)")
-        # if run_subprocess("docker volume ls -q"):
-        #     run_subprocess("docker volume rm $(docker volume ls -q)")
+        run_subprocess("docker rmi gsc-{} -f".format(workload))
         run_subprocess("docker system prune -f")
-        run_subprocess("docker rmi pytorch-encrypted:latest")
-        run_subprocess("docker rmi bash-test:latest -f")
+        run_subprocess("docker rmi pytorch-encrypted:latest -f >/dev/null 2>&1")
+        run_subprocess("docker rmi bash-test:latest -f >/dev/null 2>&1")
     except Exception as e:
         print("Exception occured during cleanup ", e)
 
 def get_workload_name(docker_image):
     try:
-        return docker_image.split(" ")[1]
+        return docker_image.split(" ")[0]
     except Exception as e:
         return ''
 

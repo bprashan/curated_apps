@@ -63,9 +63,24 @@ def data_pre_processing(test_config_dict):
                 break
     return ordered_test_config
 
+def generate_ssl_certificate():
+    utils.run_subprocess("rm -rf test_config/ssl/server.crt >/dev/null 2>&1")
+    utils.run_subprocess("rm -rf test_config/ssl/ca.key >/dev/null 2>&1")
+    utils.run_subprocess("rm -rf test_config/ssl/server.key >/dev/null 2>&1")
+
+    utils.run_subprocess("openssl genrsa -out ssl/ca.key 2048", TEST_CONFIG_PATH)
+    utils.run_subprocess("openssl req -x509 -new -nodes -key ssl/ca.key -sha256 -days 1024 \
+        -out ssl/ca.crt -config ssl/ca_config.conf", TEST_CONFIG_PATH)
+    utils.run_subprocess("openssl genrsa -out ssl/server.key 2048", TEST_CONFIG_PATH)
+    utils.run_subprocess("openssl req -new -key ssl/server.key -out ssl/server.csr -config \
+        ssl/ca_config.conf", TEST_CONFIG_PATH)
+    utils.run_subprocess("openssl x509 -req -days 360 -in ssl/server.csr -CA ssl/ca.crt -CAkey \
+        ssl/ca.key -CAcreateserial -out ssl/server.crt", TEST_CONFIG_PATH)
+
 def data_pre_processing_for_verifier_image(test_config_dict, end_test_key_str):
     if test_config_dict["attestation"] == "done" and end_test_key_str != "attestation":
-            # copy the verifier ssl folder
+        generate_ssl_certificate()
+        # copy the verifier ssl folder
         if os.path.isdir(VERIFIER_SERVICE_PATH + "/ssl"):
             shutil.rmtree(VERIFIER_SERVICE_PATH + "/ssl")
         if test_config_dict['ssl_path']:

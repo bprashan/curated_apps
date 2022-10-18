@@ -17,6 +17,7 @@ def curated_setup():
     if os.environ["SETUP_MACHINE"] == "DCAP client":
         print("Configuring the contrib repo to setup DCAP client")
         dcap_setup()
+        update_gramine_branch()
 
 @pytest.fixture()
 def copy_repo():
@@ -31,3 +32,9 @@ def dcap_setup():
     # utils.update_file_contents('sgx.enclave_size = "8G"', 'sgx.enclave_size = "4G"', 
     #             os.path.join(ORIG_CURATED_PATH, CURATED_PATH, "workloads/pytorch", "pytorch.manifest.template"))
 
+def update_gramine_branch():
+    utils.update_file_contents(GRAMINE_VERSION, GRAMINE_BRANCH, os.path.join(ORIG_CURATED_PATH, CURATED_PATH,
+        "util", "config.yaml.template"))
+    utils.update_file_contents(GRAMINE_VERSION, GRAMINE_BRANCH, os.path.join(ORIG_CURATED_PATH, CURATED_PATH,
+        "verifier", "helper.sh"))
+    utils.update_file_contents(GRAMINE_VERSION, GRAMINE_BRANCH, VERIFIER_DOCKERFILE)

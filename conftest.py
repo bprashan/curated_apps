@@ -17,7 +17,8 @@ def curated_setup():
     if os.environ["SETUP_MACHINE"] == "DCAP client":
         print("Configuring the contrib repo to setup DCAP client")
         dcap_setup()
-        update_gramine_branch()
+        # by default gramine tag v1.3.1 will be cloned
+        # update_gramine_branch()
 
 @pytest.fixture()
 def copy_repo():

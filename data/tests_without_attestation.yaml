@@ -108,3 +108,10 @@ test_redis_signing_key_no_input:
   expected_screen: signing_page
   expected_output_console: "Please provide a valid input"
   end_test: signing_key_path
+
+test_redis_with_sign_key_special_character:
+  docker_image: redis redis:latest
+  signing_key_path : .
+  expected_screen: signing_page
+  expected_output_console: "Error: . file does not exist"
+  end_test: signing_key_path

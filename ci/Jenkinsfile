@@ -1,4 +1,4 @@
-properties([parameters([choice(choices: ['all', 'attestation', 'non_attestation',
+properties([parameters([choice(choices: ['all', 'jenkins', 'attestation', 'non_attestation',
 'redis_attestation', 'pytorch_attestation', 'redis_non_attestation',
 'pytorch_non_attestation', 'redis', 'pytorch', 'bash', 'bash_attestation', 'bash_non_attestation'], name: 'run'),
 string(description: 'enter the specific pytest to execute', name: 'run_specific_test'),

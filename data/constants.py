@@ -29,6 +29,5 @@ AZURE_ORD_LIST         = ['start', 'distro', 'runtime_args_text', 'runtime_varia
 UBUNTU_18_04           = "From ubuntu:18.04"
 UBUNTU_20_04           = "From ubuntu:20.04"
 LOGS                   = os.path.join(FRAMEWORK_PATH, "logs")
-GRAMINE_BRANCH         = "master"
 GRAMINE_VERSION        = "v1.3.1"
 TEST_CONFIG_PATH       = os.path.join(FRAMEWORK_PATH, "test_config")

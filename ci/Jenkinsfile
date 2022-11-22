@@ -2,6 +2,7 @@ properties([parameters([choice(choices: ['all', 'jenkins', 'attestation', 'non_a
 'redis_attestation', 'pytorch_attestation', 'redis_non_attestation',
 'pytorch_non_attestation', 'redis', 'pytorch', 'bash', 'bash_attestation', 'bash_non_attestation'], name: 'run'),
 string(description: 'enter the specific pytest to execute', name: 'run_specific_test'),
+string(description: 'Provide either Gramine repo branch or tag, by default automation is assigned with v1.3.1 tag', name: 'gramine_commit'),
 string(defaultValue: 'graphene_dcap', description: '''graphene_dcap [attestation test]
 graphene_wcity_02 [non attestation test]''', name: 'nodeLabel')])])
 

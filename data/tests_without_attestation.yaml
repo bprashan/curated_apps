@@ -94,7 +94,7 @@ test_bash_20_04_version:
 test_commentary_sequence:
   docker_image: redis redis:latest
   expected_screen: signing_page
-  expected_output_console: "1. Distro Selection(.*)2. Enclave Signing Key(.*)3. Attestation(.*)4. Secret Provisioning(.*)5. Runtime Arguments(.*)6. Environment Variables(.*)7. Encrypted Files(.*)8. Execution & Debug"
+  expected_output_console: "1. Distro selection(.*)2. Command-line arguments(.*)3. Environment variables(.*)4. Encrypted files and key provisioning(.*)5. Remote Attestation(.*)6. Enclave signing(.*)7. Generation of the final curated images(.*)8. Generation of docker run commands"
   end_test: signing_key_path
 
 test_redis_protected_signing_key:

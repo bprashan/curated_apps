@@ -135,3 +135,17 @@ class TestClass:
     def test_pytorch_with_test_option(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
+
+    @pytest.mark.jenkins
+    @pytest.mark.sklearn
+    @pytest.mark.sklearn_attestation
+    def test_sklearn_with_attestation(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    @pytest.mark.jenkins
+    @pytest.mark.sklearn
+    @pytest.mark.sklearn_attestation
+    def test_sklearn_with_test_attestation(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result

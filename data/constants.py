@@ -3,8 +3,8 @@ import os
 FRAMEWORK_PATH         = os.getcwd()
 REPO_PATH              = os.path.join(FRAMEWORK_PATH, "contrib_repo")
 ORIG_CURATED_PATH      = os.path.join(FRAMEWORK_PATH, "orig_contrib_repo")
-CONTRIB_GIT_CMD        = "git clone https://github.com/gramineproject/contrib.git orig_contrib_repo"
-GIT_CHECKOUT_CMD       = "git checkout master"
+CONTRIB_GIT_CMD        = "git clone https://github.com/jkr0103/contrib.git orig_contrib_repo"
+GIT_CHECKOUT_CMD       = "git checkout sklearn"
 CURATED_PATH           = "Curated-Apps"
 CURATED_APPS_PATH      = os.path.join(REPO_PATH, CURATED_PATH)
 WORKLOADS_PATH         = os.path.join(CURATED_APPS_PATH, "workloads")
@@ -13,6 +13,8 @@ VERIFIER_SERVICE_PATH  = os.path.join(CURATED_APPS_PATH, "verifier")
 VERIFIER_DOCKERFILE    = os.path.join(ORIG_CURATED_PATH, CURATED_PATH, "verifier/verifier.dockerfile.template")
 PYTORCH_HELPER_PATH    = os.path.join(WORKLOADS_PATH, "pytorch", "base_image_helper")
 PYTORCH_HELPER_CMD     = f"bash {PYTORCH_HELPER_PATH}/helper.sh"
+SKLEARN_HELPER_PATH    = os.path.join(WORKLOADS_PATH, "sklearn", "base_image_helper")
+SKLEARN_HELPER_CMD     = f"bash {SKLEARN_HELPER_PATH}/helper.sh"
 BASH_PATH              = os.path.join(WORKLOADS_PATH, "bash")
 SCREEN_LIST            = ["home_page", "distro_page", "runtime_page", "environment_page", "encrypted_page", "encryption_key_page",
                             "attestation_page", "signing_page", "signing_key_password", "verifier_page", "final_page"]

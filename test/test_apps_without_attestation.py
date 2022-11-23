@@ -144,3 +144,24 @@ class TestClass:
     def test_redis_with_sign_key_special_character(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
+
+    @pytest.mark.jenkins
+    @pytest.mark.sklearn
+    @pytest.mark.sklearn_non_attestation
+    def test_sklearn_default(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    @pytest.mark.jenkins
+    @pytest.mark.sklearn
+    @pytest.mark.sklearn_non_attestation
+    def test_sklearn_default_with_debug(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    @pytest.mark.jenkins
+    @pytest.mark.sklearn
+    @pytest.mark.sklearn_non_attestation
+    def test_sklearn_test_option(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result

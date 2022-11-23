@@ -103,6 +103,9 @@ def generate_local_image(workload_image):
         create_docker_image(BASH_PATH, image_name)
     elif "redis" in workload_image:
         run_subprocess("docker pull redis:7.0.0")
+    elif "sklearn" in workload_image:
+        output = run_subprocess(SKLEARN_HELPER_CMD, SKLEARN_HELPER_PATH)
+        print(output)
 
 def local_image_setup(test_config_dict):
     if test_config_dict.get("create_local_image") == "y":

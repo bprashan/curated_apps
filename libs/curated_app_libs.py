@@ -114,6 +114,8 @@ def get_workload_result(test_config_dict):
         workload_result = ["Ready to accept connections"]
     elif "pytorch" in test_config_dict["docker_image"]:
         workload_result = ["Done. The result was written to `result.txt`."]
+    elif "sklearn" in test_config_dict["docker_image"]:
+        workload_result = "Kmeans perf evaluation finished"
     return workload_result
 
 def expected_msg_verification(test_config_dict, curation_output):

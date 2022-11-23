@@ -127,3 +127,12 @@ test_pytorch_with_test_option:
   docker_image: pytorch pytorch-encrypted:latest
   create_local_image: y
   test_option: y
+
+test_sklearn_with_attestation:
+  docker_image: sklearn sklearn-base:latest
+  create_local_image: y
+
+test_sklearn_with_test_attestation:
+  docker_image: sklearn sklearn-base:latest
+  attestation: test
+  create_local_image: y

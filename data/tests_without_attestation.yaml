@@ -115,3 +115,17 @@ test_redis_with_sign_key_special_character:
   expected_screen: signing_page
   expected_output_console: "Error: . file does not exist"
   end_test: signing_key_path
+
+test_sklearn_default:
+  docker_image: sklearn sklearn-base:latest
+  create_local_image: y
+
+test_sklearn_default_with_debug:
+  docker_image: sklearn sklearn-base:latest
+  debug_mode: y
+  create_local_image: y
+
+test_sklearn_test_option:
+  docker_image: sklearn sklearn-base:latest
+  create_local_image: y
+  test_option: y

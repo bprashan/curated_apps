@@ -1,7 +1,4 @@
-excluded_list = ['test_pytorch_with_attestation_no_encryption_key']
-
 def get_testname(run){
-    def add_excluded_tests = "not " + excluded_list.join(" and not ")
     result = "";
     if (run != "all") {
         result = run;
@@ -30,7 +27,7 @@ def runtest(){
             # ssh -tt intel@localhost "cd $WORKSPACE; $test_cmd '$tests_to_execute'"
             # cd $WORKSPACE
             # sudo python3 -m pytest -v -s $test_cmd $tests_to_execute
-            ssh -tt intel@localhost "cd $WORKSPACE; sudo python3 -m pytest -v -s $test_cmd '$tests_to_execute'"
+            ssh -tt intel@localhost "cd $WORKSPACE; sudo gramine_commit=$gramine_commit python3 -m pytest -v -s $test_cmd '$tests_to_execute'"
         """
     }
 }

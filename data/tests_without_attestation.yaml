@@ -13,10 +13,12 @@ default_input_args:
 
 test_redis_default:
   docker_image: redis redis:latest
+  distro: 4
 
 test_redis_default_with_debug:
   docker_image: redis redis:latest
   debug_mode: y
+  distro: 4
 
 test_redis_unknown_docker_image:
   docker_image: redis redis:unknown_version
@@ -31,20 +33,24 @@ test_redis_test_option:
 test_redis_with_test_sign_key:
   docker_image: redis redis:latest
   signing_key_path : test
+  distro: 4
 
 test_redis_with_test_sign_key_debug:
   docker_image: redis redis:latest
   signing_key_path : test
   debug_mode: y
+  distro: 4
 
 test_redis_with_runtime_variables:
   docker_image: redis redis:latest
   runtime_variable_list: -e name="curator_app" -e version="1.2"
+  distro: 4
 
 test_redis_empty_test_key:
   docker_image: redis redis:latest
   signing_key_path : test_config/empty-key
   expected_output_infile: "unable to load Private Key"
+  distro: 4
 
 test_redis_wrong_key_path:
   docker_image: redis redis:latest
@@ -52,6 +58,7 @@ test_redis_wrong_key_path:
   end_test: signing_key_path
   expected_screen: signing_page
   expected_output_console: "no_test_key file does not exist."
+  distro: 4
 
 test_redis_ra_wrong_option:
   docker_image: redis redis:latest
@@ -59,20 +66,24 @@ test_redis_ra_wrong_option:
   end_test: attestation
   expected_screen: attestation_page
   expected_output_console: "Invalid option specified"
+  distro: 4
 
 test_redis_ev_invalid_input_1:
   docker_image: redis redis:latest
   runtime_variable_list: -e name="Xyz" -e -e age="20"
+  distro: 4
 
 test_redis_ev_dict:
   docker_image: redis redis:latest
   runtime_variable_list: {name="Xyz",age="20"}
   expected_screen: final_page
   expected_output_console: '`gsc-redis:latest` creation failed'
+  distro: 4
 
 test_redis_ev_invalid_input_2:
   docker_image: redis redis:latest
   runtime_variable_list: -e name="Xyz" -e age=
+  distro: 4
 
 test_bash_default:
   docker_image: bash bash-test:latest
@@ -84,6 +95,7 @@ test_bash_runtime_args:
   docker_image: bash bash-test:latest
   create_local_image: y
   runtime_args_text: free
+  distro: 1
 
 test_bash_20_04_version:
   docker_image: bash ubuntu_20_04-bash:latest
@@ -101,6 +113,7 @@ test_redis_protected_signing_key:
   docker_image: redis redis:latest
   signing_key_path: test_config/protected-enclave-key.pem
   signing_key_password: test@123
+  distro: 4
 
 test_redis_signing_key_no_input:
   docker_image: redis redis:latest
@@ -108,6 +121,7 @@ test_redis_signing_key_no_input:
   expected_screen: signing_page
   expected_output_console: "Please provide a valid input"
   end_test: signing_key_path
+  distro: 4
 
 test_redis_with_sign_key_special_character:
   docker_image: redis redis:latest
@@ -115,15 +129,18 @@ test_redis_with_sign_key_special_character:
   expected_screen: signing_page
   expected_output_console: "Error: . file does not exist"
   end_test: signing_key_path
+  distro: 4
 
 test_sklearn_default:
   docker_image: sklearn sklearn-base:latest
   create_local_image: y
+  distro: 4
 
 test_sklearn_default_with_debug:
   docker_image: sklearn sklearn-base:latest
   debug_mode: y
   create_local_image: y
+  distro: 4
 
 test_sklearn_test_option:
   docker_image: sklearn sklearn-base:latest

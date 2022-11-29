@@ -3,8 +3,14 @@ import os
 FRAMEWORK_PATH         = os.getcwd()
 REPO_PATH              = os.path.join(FRAMEWORK_PATH, "contrib_repo")
 ORIG_CURATED_PATH      = os.path.join(FRAMEWORK_PATH, "orig_contrib_repo")
-CONTRIB_GIT_CMD        = "git clone https://github.com/gramineproject/contrib.git orig_contrib_repo"
-GIT_CHECKOUT_CMD       = "git checkout master"
+CONTRIB_GIT_REPO       = os.environ.get("contrib_repo")
+if not CONTRIB_GIT_REPO:
+    CONTRIB_GIT_REPO = "https://github.com/gramineproject/contrib.git"
+CONTRIB_GIT_CMD        = f"git clone {CONTRIB_GIT_REPO} orig_contrib_repo"
+CONTRIB_BRANCH         = os.environ.get("contrib_branch")
+if not CONTRIB_BRANCH:
+    CONTRIB_BRANCH = "master"
+GIT_CHECKOUT_CMD       = f"git checkout {CONTRIB_BRANCH}"
 CURATED_PATH           = "Curated-Apps"
 CURATED_APPS_PATH      = os.path.join(REPO_PATH, CURATED_PATH)
 WORKLOADS_PATH         = os.path.join(CURATED_APPS_PATH, "workloads")
@@ -36,3 +42,6 @@ LOGS                   = os.path.join(FRAMEWORK_PATH, "logs")
 GRAMINE_VERSION        = "v1.3.1"
 TEST_CONFIG_PATH       = os.path.join(FRAMEWORK_PATH, "test_config")
 CONFIG_YAML            = "config.yaml.template"
+GRAMINE_CLONE          = "git clone --depth 1 --branch v1.3.1 https://github.com/gramineproject/gramine.git"
+GSC_CLONE              = "git clone --depth 1 --branch v1.3.1 https://github.com/gramineproject/gsc.git"
+DEPTH_STR              = "--depth 1 --branch v1.3.1 "

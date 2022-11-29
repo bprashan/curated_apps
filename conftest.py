@@ -17,9 +17,12 @@ def curated_setup():
     if os.environ["SETUP_MACHINE"] == "DCAP client":
         print("Configuring the contrib repo to setup DCAP client")
         dcap_setup()
-    commit = os.environ.get('gramine_commit', '')
-    if commit:
-        update_gramine_branch(commit)
+    gramine_commit = os.environ.get('gramine_commit', '')
+    if gramine_commit:
+        update_gramine_branch(gramine_commit)
+    gsc_commit = os.environ.get('gsc_commit', '')
+    if gsc_commit:
+        update_gsc(gsc_commit)
 
 @pytest.fixture()
 def copy_repo():
@@ -35,15 +38,17 @@ def dcap_setup():
     #             os.path.join(ORIG_CURATED_PATH, CURATED_PATH, "workloads/pytorch", "pytorch.manifest.template"))
 
 def update_gramine_branch(commit):
+    commit_str = f" && cd gramine && git checkout {commit} && cd .."
     if commit != "master":
         utils.update_file_contents(GRAMINE_VERSION, commit, os.path.join(ORIG_BASE_PATH, "util", CONFIG_YAML))
-        utils.update_file_contents(GRAMINE_VERSION, commit, os.path.join(ORIG_BASE_PATH,
-            "verifier", "helper.sh"))
-        utils.update_file_contents(GRAMINE_VERSION, commit, VERIFIER_DOCKERFILE)
+        utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(DEPTH_STR, "") + commit_str,
+            VERIFIER_DOCKERFILE)
     else:
         utils.run_subprocess(f"cp -rf helper-files/{VERIFIER_TEMPLATE} {VERIFIER_DOCKERFILE}")
         utils.run_subprocess(f"cp -rf helper-files/{CONFIG_YAML} {ORIG_BASE_PATH}/util/{CONFIG_YAML}")
-        utils.update_file_contents(GRAMINE_VERSION, commit, os.path.join(ORIG_BASE_PATH,
-                "verifier", "helper.sh"))
-        utils.update_file_contents(GRAMINE_VERSION, commit, os.path.join(ORIG_BASE_PATH,
-                "util", "curation_script.sh"))
+    utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(DEPTH_STR, "") + commit_str,
+        os.path.join(ORIG_BASE_PATH, "verifier", "helper.sh"))
+
+def update_gsc(gsc_commit):
+    utils.update_file_contents(GSC_CLONE, GSC_CLONE.replace(DEPTH_STR, "") + f" && cd gsc && git checkout {gsc_commit} && cd ..", 
+        os.path.join(ORIG_BASE_PATH, "util", "curation_script.sh"))

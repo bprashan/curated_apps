@@ -1,4 +1,4 @@
-From <base_image_name>
+FROM <base_image_name>
 
 # COPY ca.crt /ca.crt
 

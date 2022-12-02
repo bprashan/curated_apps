@@ -27,7 +27,7 @@ def runtest(){
             # ssh -tt intel@localhost "cd $WORKSPACE; $test_cmd '$tests_to_execute'"
             # cd $WORKSPACE
             # sudo python3 -m pytest -v -s $test_cmd $tests_to_execute
-            ssh -tt intel@localhost "cd $WORKSPACE; sudo gramine_commit=$gramine_commit python3 -m pytest -v -s $test_cmd '$tests_to_execute'"
+            ssh -tt intel@localhost "cd $WORKSPACE; gramine_commit=$gramine_commit python3 -m pytest -v -s $test_cmd '$tests_to_execute'"
         """
     }
 }
@@ -42,7 +42,7 @@ def storeartifacts(){
 
 def cleanup(){
     stage("cleanup $nodeLabel"){
-        sh "sudo rm -rf $WORKSPACE/*"
+        sh "rm -rf $WORKSPACE/*"
     }
 }
 

@@ -3,8 +3,8 @@ import os
 FRAMEWORK_PATH         = os.getcwd()
 REPO_PATH              = os.path.join(FRAMEWORK_PATH, "contrib_repo")
 ORIG_CURATED_PATH      = os.path.join(FRAMEWORK_PATH, "orig_contrib_repo")
-CONTRIB_GIT_CMD        = "git clone https://github.com/jkr0103/contrib.git orig_contrib_repo"
-GIT_CHECKOUT_CMD       = "git checkout sklearn"
+CONTRIB_GIT_CMD        = "git clone https://github.com/anjalirai-intel/contrib.git orig_contrib_repo"
+GIT_CHECKOUT_CMD       = "git checkout sklearn_updated"
 CURATED_PATH           = "Curated-Apps"
 CURATED_APPS_PATH      = os.path.join(REPO_PATH, CURATED_PATH)
 WORKLOADS_PATH         = os.path.join(CURATED_APPS_PATH, "workloads")

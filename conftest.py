@@ -34,9 +34,16 @@ def dcap_setup():
     # utils.update_file_contents('sgx.enclave_size = "8G"', 'sgx.enclave_size = "4G"', 
     #             os.path.join(ORIG_CURATED_PATH, CURATED_PATH, "workloads/pytorch", "pytorch.manifest.template"))
 
-def update_gramine_branch(gramine_branch):
-    utils.update_file_contents(GRAMINE_VERSION, gramine_branch, os.path.join(ORIG_CURATED_PATH, CURATED_PATH,
-        "util", "config.yaml.template"))
-    utils.update_file_contents(GRAMINE_VERSION, gramine_branch, os.path.join(ORIG_CURATED_PATH, CURATED_PATH,
-        "verifier", "helper.sh"))
-    utils.update_file_contents(GRAMINE_VERSION, gramine_branch, VERIFIER_DOCKERFILE)
+def update_gramine_branch(commit):
+    if commit != "master":
+        utils.update_file_contents(GRAMINE_VERSION, commit, os.path.join(ORIG_BASE_PATH, "util", CONFIG_YAML))
+        utils.update_file_contents(GRAMINE_VERSION, commit, os.path.join(ORIG_BASE_PATH,
+            "verifier", "helper.sh"))
+        utils.update_file_contents(GRAMINE_VERSION, commit, VERIFIER_DOCKERFILE)
+    else:
+        utils.run_subprocess(f"cp -rf helper-files/{VERIFIER_TEMPLATE} {VERIFIER_DOCKERFILE}")
+        utils.run_subprocess(f"cp -rf helper-files/{CONFIG_YAML} {ORIG_BASE_PATH}/util/{CONFIG_YAML}")
+        utils.update_file_contents(GRAMINE_VERSION, commit, os.path.join(ORIG_BASE_PATH,
+                "verifier", "helper.sh"))
+        utils.update_file_contents(GRAMINE_VERSION, commit, os.path.join(ORIG_BASE_PATH,
+                "util", "curation_script.sh"))

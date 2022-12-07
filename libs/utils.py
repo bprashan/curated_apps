@@ -94,7 +94,7 @@ def create_docker_image(docker_path, docker_name):
     output = run_subprocess(docker_build_cmd, docker_path)
     print(output)
 
-def generate_local_image(workload_image):
+def generate_local_image(workload_image, distro=None):
     if "pytorch" in workload_image:
         output = run_subprocess(PYTORCH_HELPER_CMD, PYTORCH_HELPER_PATH)
         print(output)
@@ -106,10 +106,20 @@ def generate_local_image(workload_image):
     elif "sklearn" in workload_image:
         output = run_subprocess(SKLEARN_HELPER_CMD, SKLEARN_HELPER_PATH)
         print(output)
+    elif "tensorflow-serving" in workload_image:
+        output = run_subprocess(TFSERVING_HELPER_CMD + " " + distro, TFSERVING_HELPER_PATH)
+        print(output)
 
 def local_image_setup(test_config_dict):
     if test_config_dict.get("create_local_image") == "y":
-        generate_local_image(test_config_dict["docker_image"])
+        if "tensorflow" in test_config_dict["docker_image"]:
+            if test_config_dict["distro"] == 1:
+                distro = "18.04"
+            elif test_config_dict["distro"] == 2:
+                distro = "20.04"
+            generate_local_image(test_config_dict["docker_image"], distro)
+        else:
+            generate_local_image(test_config_dict["docker_image"])
 
 def test_setup(test_config_dict):
     if test_config_dict.get("test_option") == None:

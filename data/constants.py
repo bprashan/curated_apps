@@ -23,6 +23,8 @@ PYTORCH_HELPER_PATH    = os.path.join(WORKLOADS_PATH, "pytorch", "base_image_hel
 PYTORCH_HELPER_CMD     = f"bash {PYTORCH_HELPER_PATH}/helper.sh"
 SKLEARN_HELPER_PATH    = os.path.join(WORKLOADS_PATH, "sklearn", "base_image_helper")
 SKLEARN_HELPER_CMD     = f"bash {SKLEARN_HELPER_PATH}/helper.sh"
+TFSERVING_HELPER_PATH    = os.path.join(WORKLOADS_PATH, "tensorflow-serving", "base_image_helper")
+TFSERVING_HELPER_CMD     = f"bash {TFSERVING_HELPER_PATH}/helper.sh"
 BASH_PATH              = os.path.join(WORKLOADS_PATH, "bash")
 SCREEN_LIST            = ["home_page", "distro_page", "runtime_page", "environment_page", "encrypted_page", "encryption_key_page",
                             "attestation_page", "signing_page", "signing_key_password", "verifier_page", "final_page"]

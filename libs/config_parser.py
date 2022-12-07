@@ -17,7 +17,7 @@ def read_config_yaml(config_file_path, test_name):
         base_image_name = test_config.get("docker_image").split(' ', maxsplit=1)[1]
         base_image_type = test_config.get("docker_image").split(' ', maxsplit=1)[0]
         # log_file_name, n = re.subn('[:/]', '_', base_image_name)
-        log_file_name = base_image_name.replace(":", "_")
+        log_file_name = base_image_name.replace(":", "_").replace("/","_")
         log_file = f'{WORKLOADS_PATH}/{base_image_type}/{log_file_name}.log'
         test_config["curation_log"] = log_file
     return test_config

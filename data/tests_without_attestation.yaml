@@ -146,3 +146,25 @@ test_sklearn_test_option:
   docker_image: sklearn sklearn-base:latest
   create_local_image: y
   test_option: y
+
+test_tfserving_default:
+  docker_image: tensorflow-serving tf-serving-base:latest
+  create_local_image: y
+  runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
+  distro: 1
+
+test_tfserving_default_with_debug:
+  docker_image: tensorflow-serving tf-serving-base:latest
+  debug_mode: y
+  runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
+  create_local_image: y
+  distro: 1
+
+test_tfserving_test_option:
+  docker_image: tensorflow-serving tf-serving-base:latest
+  create_local_image: y
+  runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
+  test_option: y
+  insecure_args: --insecure-args --model_name="resnet" --model_base_path="/models/resnet"
+  distro: 1
+

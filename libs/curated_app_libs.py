@@ -116,6 +116,8 @@ def get_workload_result(test_config_dict):
         workload_result = ["Done. The result was written to `result.txt`."]
     elif "sklearn" in test_config_dict["docker_image"]:
         workload_result = "Kmeans perf evaluation finished"
+    elif "tensorflow-serving" in test_config_dict["docker_image"]:
+        workload_result = "Running gRPC ModelServer at 0.0.0.0:8500"
     return workload_result
 
 def expected_msg_verification(test_config_dict, curation_output):
@@ -176,7 +178,8 @@ def run_curated_image(test_config_dict, curation_output):
             verifier_process = run_verifier_process(test_config_dict, docker_command[0])
             if type(verifier_process) == bool:
                 return verifier_process
-
+    if test_config_dict.get("test_option") and test_config_dict.get("insecure_args"):
+        gsc_docker_command = gsc_docker_command + " " + test_config_dict["insecure_args"]
     process = utils.popen_subprocess(gsc_docker_command)
     return verify_process(process, workload_result, verifier_process)
 

@@ -147,3 +147,29 @@ test_sklearn_with_test_attestation:
   attestation: test
   create_local_image: y
   distro: 4
+
+test_tfserving_with_attestation_ubuntu18_04:
+  docker_image: tensorflow-serving tf-serving-base:latest
+  create_local_image: y
+  runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
+  distro: 1
+
+test_tfserving_with_test_attestation_ubuntu18_04:
+  docker_image: tensorflow-serving tf-serving-base:latest
+  attestation: test
+  create_local_image: y
+  runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
+  distro: 1
+
+test_tfserving_with_attestation_ubuntu20_04:
+  docker_image: tensorflow-serving tf-serving-base:latest
+  create_local_image: y
+  runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
+  distro: 2
+
+test_tfserving_with_test_attestation_ubuntu20_04:
+  docker_image: tensorflow-serving tf-serving-base:latest
+  attestation: test
+  create_local_image: y
+  runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
+  distro: 2

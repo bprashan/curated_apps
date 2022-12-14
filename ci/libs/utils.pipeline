@@ -28,7 +28,8 @@ def runtest(){
             # cd $WORKSPACE
             # sudo python3 -m pytest -v -s $test_cmd $tests_to_execute
             ssh -tt intel@localhost "cd $WORKSPACE; gramine_commit=$gramine_commit \
-                gsc_commit=$gsc_commit contrib_repo=$contrib_repo contrib_branch=$contrib_branch \
+                gsc_repo=$gsc_repo gsc_commit=$gsc_commit \
+                contrib_repo=$contrib_repo contrib_branch=$contrib_branch \
                 python3 -m pytest -v -s $test_cmd '$tests_to_execute' --junit-xml=result.xml"
         """
     }

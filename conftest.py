@@ -5,6 +5,7 @@ from libs import utils
 
 @pytest.fixture(scope="session")
 def curated_setup():
+    print_env_variables()
     utils.run_subprocess(f"rm -rf {LOGS}")
     os.mkdir(LOGS)
     print("Cleaning old contrib repo")
@@ -17,12 +18,26 @@ def curated_setup():
     if os.environ["SETUP_MACHINE"] == "DCAP client":
         print("Configuring the contrib repo to setup DCAP client")
         dcap_setup()
+    update_env_variables()
+
+def update_env_variables():
     gramine_commit = os.environ.get('gramine_commit', '')
     if gramine_commit:
         update_gramine_branch(gramine_commit)
+    gsc_repo = os.environ.get('gsc_repo', '')
     gsc_commit = os.environ.get('gsc_commit', '')
-    if gsc_commit:
-        update_gsc(gsc_commit)
+    if gsc_commit or gsc_repo:
+        update_gsc(gsc_commit, gsc_repo)
+
+def print_env_variables():
+    print("\n\n############################################################################")
+    print("Printing the environment variables")
+    print("Gramine Commit: ", os.environ.get("gramine_commit", ""))
+    print("GSC Repo: ", os.environ.get("gsc_repo", ""))
+    print("GSC Commit: ", os.environ.get("gsc_commit", ""))
+    print("Contrib Repo: ", os.environ.get("contrib_repo", ""))
+    print("Contrib Commit: ", os.environ.get("contrib_branch", ""))
+    print("############################################################################\n\n")
 
 @pytest.fixture()
 def copy_repo():
@@ -49,6 +64,13 @@ def update_gramine_branch(commit):
     utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(DEPTH_STR, "") + commit_str,
         os.path.join(ORIG_BASE_PATH, "verifier", "helper.sh"))
 
-def update_gsc(gsc_commit):
-    utils.update_file_contents(GSC_CLONE, GSC_CLONE.replace(DEPTH_STR, "") + f" && cd gsc && git checkout {gsc_commit} && cd ..", 
-        os.path.join(ORIG_BASE_PATH, "util", "curation_script.sh"))
+def update_gsc(gsc_commit='', gsc_repo=''):
+    curation_script = os.path.join(ORIG_BASE_PATH, "util", "curation_script.sh")
+    if gsc_commit: checkout_str = f" && cd gsc && git checkout {gsc_commit} && cd .."
+    if gsc_repo: repo_str = f"git clone {gsc_repo}"
+    if gsc_repo and gsc_commit:
+        utils.update_file_contents(GSC_CLONE, repo_str + checkout_str, curation_script)
+    elif gsc_repo and not gsc_commit:
+        utils.update_file_contents(GSC_CLONE, repo_str, curation_script)
+    elif gsc_commit:
+        utils.update_file_contents(GSC_CLONE, GSC_CLONE.replace(DEPTH_STR, "") + checkout_str, curation_script)

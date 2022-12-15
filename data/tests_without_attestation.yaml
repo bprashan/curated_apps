@@ -168,3 +168,14 @@ test_tfserving_test_option:
   test_option: y
   distro: 1
 
+test_tfserving_mnist:
+  docker_image: tensorflow-serving tf-serving-base:latest
+  create_local_image: y
+  runtime_args_text: --model_name="mnist" --model_base_path="/models/mnist"
+  distro: 1
+
+test_tfserving_half_plus_two:
+  docker_image: tensorflow-serving tf-serving-base:latest
+  create_local_image: y
+  runtime_args_text: --model_name="half_plus_two" --model_base_path="/models/half_plus_two"
+  distro: 1

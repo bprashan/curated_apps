@@ -47,3 +47,4 @@ CONFIG_YAML            = "config.yaml.template"
 GRAMINE_CLONE          = "git clone --depth 1 --branch v1.3.1 https://github.com/gramineproject/gramine.git"
 GSC_CLONE              = "git clone --depth 1 --branch v1.3.1 https://github.com/gramineproject/gsc.git"
 DEPTH_STR              = "--depth 1 --branch v1.3.1 "
+TF_EXAMPLE_PATH        = os.path.join(TFSERVING_HELPER_PATH, "serving/tensorflow_serving/example")

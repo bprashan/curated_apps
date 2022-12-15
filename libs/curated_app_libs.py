@@ -150,7 +150,6 @@ def verify_process(process, workload_result, verifier_process=None):
             process.stdout.close()
             if verifier_process:
                 utils.kill(verifier_process.pid)
-            utils.kill(process.pid)
             sys.stdout.flush()
             result = True
             break
@@ -185,10 +184,18 @@ def run_curated_image(test_config_dict, curation_output):
     return verify_process(process, workload_result, verifier_process)
 
 def verify_run(curation_output):
-    if re.search("The curated GSC image gsc-(.*) is ready", curation_output) or \
-            re.search("docker run", curation_output):
+    if re.search("The curated GSC image gsc-(.*)ready", curation_output, re.DOTALL) or \
+        "docker run --net=host" in curation_output:
         return True
     return False
+
+def run_workload_client(test_config_dict):
+    out = True
+    if "redis" in test_config_dict["docker_image"]:
+        out = workload.run_redis_client()
+    elif "tensorflow-serving" in test_config_dict["docker_image"]:
+        out = workload.run_tensorflow_serving_client(test_config_dict)
+    return out
 
 def run_test(test_instance, test_yaml_file):
     result = False
@@ -199,11 +206,10 @@ def run_test(test_instance, test_yaml_file):
     try:
         curation_output = generate_curated_image(test_config_dict)
         result = expected_msg_verification(test_config_dict, curation_output)
-        if result == None:
-            if verify_run(curation_output):
-                result = run_curated_image(test_config_dict, curation_output)
-                if "redis" in test_name:
-                    result = workload.run_redis_client()
+        if result == None and verify_run(curation_output):
+            result = run_curated_image(test_config_dict, curation_output)
+            if result:
+                result = run_workload_client(test_config_dict)
     finally:
         print("Docker images cleanup")
         utils.cleanup_after_test(test_config_dict)

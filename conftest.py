@@ -18,6 +18,8 @@ def curated_setup():
     if os.environ["SETUP_MACHINE"] == "DCAP client":
         print("Configuring the contrib repo to setup DCAP client")
         dcap_setup()
+    elif os.environ["SETUP_MACHINE"] == "Azure Linux Agent":
+        azure_setup()
     update_env_variables()
 
 def update_env_variables():
@@ -51,6 +53,11 @@ def dcap_setup():
     utils.update_file_contents(GRAMINE_INSTALL, GRAMINE_INSTALL+DCAP_LIBRARY, VERIFIER_DOCKERFILE)
     # utils.update_file_contents('sgx.enclave_size = "8G"', 'sgx.enclave_size = "4G"', 
     #             os.path.join(ORIG_CURATED_PATH, CURATED_PATH, "workloads/pytorch", "pytorch.manifest.template"))
+
+def azure_setup():
+    utils.update_file_contents('sgx.enclave_size = "64G"', 'sgx.enclave_size = "16G"',
+        os.path.join(ORIG_BASE_PATH, "workloads/tensorflow-serving",
+        "tensorflow-serving.manifest.template"))
 
 def update_gramine_branch(commit):
     commit_str = f" && cd gramine && git checkout {commit} && cd .."

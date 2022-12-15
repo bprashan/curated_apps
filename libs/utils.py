@@ -61,9 +61,10 @@ def cleanup_after_test(test_config_dict):
         if workload_id: run_subprocess("docker stop {}".format(workload_id))
         run_subprocess("docker rmi verifier:latest -f")
         run_subprocess("docker rmi gsc-{} -f".format(workload))
-        run_subprocess("docker system prune -f")
+        # run_subprocess("docker system prune -f")
         run_subprocess("docker rmi pytorch-encrypted:latest -f >/dev/null 2>&1")
         run_subprocess("docker rmi bash-test:latest -f >/dev/null 2>&1")
+        run_subprocess("docker rmi tf-serving-base:latest -f >/dev/null 2>&1")
     except Exception as e:
         print("Exception occured during cleanup ", e)
 

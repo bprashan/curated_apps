@@ -174,14 +174,13 @@ def run_curated_image(test_config_dict, curation_output):
     workload_result = get_workload_result(test_config_dict)
 
     docker_command = get_docker_run_command(test_config_dict, curation_output)
-    gsc_docker_command = docker_command[-1]
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    gsc_docker_command = ansi_escape.sub('', docker_command[-1])
     if attestation and (test_config_dict.get("verifier_run") == None):
         if test_config_dict.get('test_option') != 'y':
             verifier_process = run_verifier_process(test_config_dict, docker_command[0])
             if type(verifier_process) == bool:
                 return verifier_process
-    if test_config_dict.get("test_option") and test_config_dict.get("insecure_args"):
-        gsc_docker_command = gsc_docker_command + " " + test_config_dict["insecure_args"]
     process = utils.popen_subprocess(gsc_docker_command)
     return verify_process(process, workload_result, verifier_process)
 

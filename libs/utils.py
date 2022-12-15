@@ -107,7 +107,7 @@ def generate_local_image(workload_image, distro=None):
         output = run_subprocess(SKLEARN_HELPER_CMD, CURATED_APPS_PATH)
         print(output)
     elif "tensorflow-serving" in workload_image:
-        output = run_subprocess(TFSERVING_HELPER_CMD + " " + distro, TFSERVING_HELPER_PATH)
+        output = run_subprocess(TFSERVING_HELPER_CMD + " " + distro, CURATED_APPS_PATH)
         print(output)
 
 def local_image_setup(test_config_dict):

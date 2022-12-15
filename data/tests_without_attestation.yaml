@@ -166,6 +166,5 @@ test_tfserving_test_option:
   create_local_image: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
   test_option: y
-  insecure_args: --insecure-args --model_name="resnet" --model_base_path="/models/resnet"
   distro: 1
 

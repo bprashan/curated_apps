@@ -5,8 +5,6 @@ import libs.curated_app_libs
 yaml_file_name = "tests_without_attestation.yaml"
 tests_yaml_path = os.path.join(os.getcwd(), 'data', yaml_file_name)
 
-@pytest.mark.usefixtures("copy_repo")
-@pytest.mark.usefixtures("curated_setup")
 @pytest.mark.non_attestation
 class TestClass:
     @pytest.mark.jenkins

@@ -51,7 +51,7 @@ def kill_process_by_name(processName):
 
 def cleanup_after_test(test_config_dict):
     try:
-        workload = get_workload_name(test_config_dict['docker_image'])
+        docker_image = test_config_dict['docker_image'].split(" ")[1]
         copy_cmd = "mv {} {}.txt >/dev/null 2>&1".format(test_config_dict["curation_log"], 
                                     os.path.join(LOGS, test_config_dict["test_name"]))
         run_subprocess(copy_cmd)
@@ -60,11 +60,9 @@ def cleanup_after_test(test_config_dict):
         workload_id = run_subprocess("docker container ls  | grep 'gramine' | awk '{print $1}'")
         if workload_id: run_subprocess("docker stop {}".format(workload_id))
         run_subprocess("docker rmi verifier:latest -f")
-        run_subprocess("docker rmi gsc-{} -f".format(workload))
-        # run_subprocess("docker system prune -f")
-        run_subprocess("docker rmi pytorch-encrypted:latest -f >/dev/null 2>&1")
-        run_subprocess("docker rmi bash-test:latest -f >/dev/null 2>&1")
-        run_subprocess("docker rmi tf-serving-base:latest -f >/dev/null 2>&1")
+        run_subprocess(f"docker rmi gsc-{docker_image} -f")
+        if test_config_dict.get("create_local_image") == "y":
+            run_subprocess(f"docker rmi {docker_image} -f >/dev/null 2>&1")
     except Exception as e:
         print("Exception occured during cleanup ", e)
 
@@ -95,7 +93,7 @@ def create_docker_image(docker_path, docker_name):
     output = run_subprocess(docker_build_cmd, docker_path)
     print(output)
 
-def generate_local_image(workload_image, distro=None):
+def generate_local_image(workload_image):
     if "pytorch" in workload_image:
         output = run_subprocess(PYTORCH_HELPER_CMD, CURATED_APPS_PATH)
         print(output)
@@ -108,19 +106,12 @@ def generate_local_image(workload_image, distro=None):
         output = run_subprocess(SKLEARN_HELPER_CMD, CURATED_APPS_PATH)
         print(output)
     elif "tensorflow-serving" in workload_image:
-        output = run_subprocess(TFSERVING_HELPER_CMD + " " + distro, CURATED_APPS_PATH)
+        output = run_subprocess(TFSERVING_HELPER_CMD, CURATED_APPS_PATH)
         print(output)
 
 def local_image_setup(test_config_dict):
     if test_config_dict.get("create_local_image") == "y":
-        if "tensorflow" in test_config_dict["docker_image"]:
-            if test_config_dict["distro"] == 1:
-                distro = "18.04"
-            elif test_config_dict["distro"] == 2:
-                distro = "20.04"
-            generate_local_image(test_config_dict["docker_image"], distro)
-        else:
-            generate_local_image(test_config_dict["docker_image"])
+        generate_local_image(test_config_dict["docker_image"])
 
 def test_setup(test_config_dict):
     if test_config_dict.get("test_option") == None:

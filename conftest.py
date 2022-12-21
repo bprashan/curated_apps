@@ -3,13 +3,13 @@ import os
 from data.constants import *
 from libs import utils
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", autouse=True)
 def curated_setup():
     print_env_variables()
     utils.run_subprocess(f"rm -rf {LOGS}")
     os.mkdir(LOGS)
+    utils.run_subprocess("docker system prune -f")
     print("Cleaning old contrib repo")
-    utils.run_subprocess("rm -rf {}".format(REPO_PATH))
     utils.run_subprocess("rm -rf {}".format(ORIG_CURATED_PATH))
     print("Cloning and checking out Contrib Git Repo")
     utils.run_subprocess(CONTRIB_GIT_CMD)
@@ -41,7 +41,7 @@ def print_env_variables():
     print("Contrib Commit: ", os.environ.get("contrib_branch", ""))
     print("############################################################################\n\n")
 
-@pytest.fixture()
+@pytest.fixture(scope="function", autouse=True)
 def copy_repo():
     utils.run_subprocess("rm -rf {}".format(REPO_PATH))
     utils.run_subprocess("cp -rf {} {}".format(ORIG_CURATED_PATH, REPO_PATH))
@@ -81,3 +81,8 @@ def update_gsc(gsc_commit='', gsc_repo=''):
         utils.update_file_contents(GSC_CLONE, repo_str, curation_script)
     elif gsc_commit:
         utils.update_file_contents(GSC_CLONE, GSC_CLONE.replace(DEPTH_STR, "") + checkout_str, curation_script)
+
+@pytest.fixture(scope="class", autouse=True)
+def teardown():
+    yield
+    utils.run_subprocess("docker system prune -f")

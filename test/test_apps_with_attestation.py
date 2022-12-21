@@ -5,8 +5,6 @@ import libs.curated_app_libs
 yaml_file_name = "tests_with_attestation.yaml"
 tests_yaml_path = os.path.join(os.getcwd(), 'data', yaml_file_name)
 
-@pytest.mark.usefixtures("copy_repo")
-@pytest.mark.usefixtures("curated_setup")
 @pytest.mark.attestation
 class TestClass:
     @pytest.mark.jenkins
@@ -167,7 +165,7 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
     
-    @pytest.mark.jenkins
+"""     @pytest.mark.jenkins
     @pytest.mark.tfserving
     @pytest.mark.tfserving_attestation
     def test_tfserving_with_attestation_ubuntu20_04(self):
@@ -179,4 +177,4 @@ class TestClass:
     @pytest.mark.tfserving_attestation
     def test_tfserving_with_test_attestation_ubuntu20_04(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
+        assert test_result """

@@ -208,6 +208,7 @@ def run_test(test_instance, test_yaml_file):
         result = expected_msg_verification(test_config_dict, curation_output)
         if result == None and verify_run(curation_output):
             result = run_curated_image(test_config_dict, curation_output)
+            time.sleep(3)
             if result:
                 result = run_workload_client(test_config_dict)
     finally:

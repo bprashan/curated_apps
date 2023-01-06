@@ -14,7 +14,7 @@ def get_curation_cmd(test_config_dict):
     workload_image = test_config_dict["docker_image"]
     debug_mode = " debug " if test_config_dict.get("debug_mode") == 'y' else ''
     if test_config_dict.get("test_option"):
-        curation_cmd = 'python3 curate.py ' + workload_image + debug_mode + ' test' + ' < input.txt'
+        curation_cmd = 'python3 curate.py ' + workload_image + debug_mode + ' test'
     else:
         curation_cmd = 'python3 curate.py ' + workload_image + debug_mode + ' < input.txt'
     return curation_cmd
@@ -191,8 +191,7 @@ def run_curated_image(test_config_dict, curation_output):
     attestation = True if test_config_dict["attestation"] in ["test", "done"] else False
 
     docker_command = get_docker_run_command(test_config_dict, curation_output)
-    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-    gsc_docker_command = ansi_escape.sub('', docker_command[-1])
+    gsc_docker_command = docker_command[-1]
     if attestation and (test_config_dict.get("verifier_run") == None):
         if test_config_dict.get('test_option') != 'y':
             verifier_process = run_verifier_process(test_config_dict, docker_command[0])

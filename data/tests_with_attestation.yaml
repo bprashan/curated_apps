@@ -9,7 +9,7 @@ default_input_args:
   runtime_variable_list:
   encrypted_files_path:
   signing_key_password:
-  docker_flags:
+  docker_flags: --rm
   end:
 
 test_redis_with_attestation:

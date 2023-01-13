@@ -137,6 +137,13 @@ def expected_msg_verification(test_config_dict, curation_output):
         if re.search(test_config_dict["expected_output_console"], curation_output):
             result = True
         return result
+
+    if "flag_validation" in test_config_dict.keys():
+        docker_commands = get_docker_run_command(test_config_dict, curation_output)
+        for cmd in docker_commands:
+            if test_config_dict["flag_validation"] in cmd:
+                result = True
+        return result
     return None
 
 def verify_process(test_config_dict, process=None, verifier_process=None):

@@ -10,7 +10,7 @@ default_input_args:
   encrypted_files_path:
   end:
   signing_key_password:
-  docker_flags:
+  docker_flags: --rm
 
 test_redis_default:
   docker_image: redis redis:latest
@@ -77,8 +77,8 @@ test_redis_ev_invalid_input_1:
 test_redis_ev_dict:
   docker_image: redis redis:latest
   runtime_variable_list: {name="Xyz",age="20"}
-  expected_screen: final_page
-  expected_output_console: '`gsc-redis:latest` creation failed'
+  expected_screen: docker_flags
+  expected_output_console: 'Invalid string specified'
   distro: 4
 
 test_redis_ev_invalid_input_2:
@@ -179,3 +179,16 @@ test_tfserving_half_plus_two:
   create_local_image: y
   runtime_args_text: --model_name="half_plus_two" --model_base_path="/models/half_plus_two"
   distro: 1
+
+test_redis_docker_flags:
+  docker_image: redis redis:latest
+  docker_flags: --cidfile="container_id.log"
+  distro: 4
+  flag_validation: --cidfile="container_id.log"
+
+test_redis_docker_invalid_flag_string:
+  docker_image: redis redis:latest
+  expected_screen: encrypted_files_path
+  docker_flags: "--name docker_container, --net=host"
+  expected_output_console: 'Invalid string specified'
+  distro: 4

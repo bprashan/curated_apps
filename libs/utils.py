@@ -136,9 +136,13 @@ def read_file(filename):
     fd.close()
     return fd_contents
 
-def update_file_contents(old_contents, new_contents, filename):
+def update_file_contents(old_contents, new_contents, filename, append=False):
     fd_contents = read_file(filename)
-    new_data = re.sub(old_contents, new_contents, fd_contents)
+    if append:
+        old_data = (old_contents).join(re.search("(.*){}(.*)".format(old_contents), fd_contents).groups())
+        new_data = re.sub(old_data, new_contents+old_data, fd_contents)
+    else:
+        new_data = re.sub(old_contents, new_contents, fd_contents)
     fd = open(filename, "w")
     fd.write(new_data)
     fd.close()

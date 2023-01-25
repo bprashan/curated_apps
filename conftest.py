@@ -16,28 +16,32 @@ def curated_setup():
     utils.run_subprocess(CONTRIB_GIT_CMD)
     utils.run_subprocess(GIT_CHECKOUT_CMD, ORIG_CURATED_PATH)
     os.environ["SETUP_MACHINE"] = utils.check_machine()
+    update_env_variables()
     if os.environ["SETUP_MACHINE"] == "DCAP client":
         print("Configuring the contrib repo to setup DCAP client")
         dcap_setup()
-    update_env_variables()
+    elif os.environ["SETUP_MACHINE"] == "Azure Linux Agent" and os.environ["gramine_commit"]:
+        utils.update_file_contents("gramine.git", "RUN apt-get install -y libsgx-dcap-quote-verify-dev\n", VERIFIER_DOCKERFILE, True)
 
 def update_env_variables():
-    gramine_commit = os.environ.get('gramine_commit', '')
-    if gramine_commit:
-        update_gramine_branch(gramine_commit)
-    gsc_repo = os.environ.get('gsc_repo', '')
-    gsc_commit = os.environ.get('gsc_commit', '')
-    if gsc_commit or gsc_repo:
-        update_gsc(gsc_commit, gsc_repo)
+    if os.environ["gramine_commit"]:
+        update_gramine_branch(os.environ["gramine_commit"])
+    if os.environ["gsc_repo"] or os.environ["gsc_commit"]:
+        update_gsc(os.environ["gsc_commit"], os.environ["gsc_repo"])
 
 def print_env_variables():
+    os.environ["gramine_commit"] = os.environ.get("gramine_commit", "")
+    os.environ["gsc_repo"]       = os.environ.get("gsc_repo", "")
+    os.environ["gsc_commit"]     = os.environ.get("gsc_commit", "")
+    os.environ["contrib_repo"]   = os.environ.get("contrib_repo", "")
+    os.environ["contrib_branch"] = os.environ.get("contrib_branch", "")
     print("\n\n############################################################################")
     print("Printing the environment variables")
-    print("Gramine Commit: ", os.environ.get("gramine_commit", ""))
-    print("GSC Repo: ", os.environ.get("gsc_repo", ""))
-    print("GSC Commit: ", os.environ.get("gsc_commit", ""))
-    print("Contrib Repo: ", os.environ.get("contrib_repo", ""))
-    print("Contrib Commit: ", os.environ.get("contrib_branch", ""))
+    print("Gramine Commit: ", os.environ["gramine_commit"])
+    print("GSC Repo:       ", os.environ["gsc_repo"])
+    print("GSC Commit:     ", os.environ["gsc_commit"])
+    print("Contrib Repo:   ", os.environ["contrib_repo"])
+    print("Contrib Commit: ", os.environ["contrib_branch"])
     print("############################################################################\n\n")
 
 @pytest.fixture(scope="function", autouse=True)
@@ -49,19 +53,16 @@ def dcap_setup():
     copy_cmd = "cp /etc/sgx_default_qcnl.conf {}/verifier/".format(os.path.join(ORIG_CURATED_PATH, CURATED_PATH))
     utils.run_subprocess(copy_cmd)
     utils.update_file_contents(AZURE_DCAP, "", VERIFIER_DOCKERFILE)
-    utils.update_file_contents(GRAMINE_INSTALL, GRAMINE_INSTALL+DCAP_LIBRARY, VERIFIER_DOCKERFILE)
-    # utils.update_file_contents('sgx.enclave_size = "8G"', 'sgx.enclave_size = "4G"', 
-    #             os.path.join(ORIG_CURATED_PATH, CURATED_PATH, "workloads/pytorch", "pytorch.manifest.template"))
+    utils.update_file_contents("gramine.git", DCAP_LIBRARY, VERIFIER_DOCKERFILE, True)
 
 def update_gramine_branch(commit):
     commit_str = f" && cd gramine && git checkout {commit} && cd .."
-    if commit != "master":
-        utils.update_file_contents(GRAMINE_VERSION, commit, os.path.join(ORIG_BASE_PATH, "util", CONFIG_YAML))
-        utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(DEPTH_STR, "") + commit_str,
-            VERIFIER_DOCKERFILE)
-    else:
+    if not "v1" in commit:
         utils.run_subprocess(f"cp -rf helper-files/{VERIFIER_TEMPLATE} {VERIFIER_DOCKERFILE}")
         utils.run_subprocess(f"cp -rf helper-files/{CONFIG_YAML} {ORIG_BASE_PATH}/util/{CONFIG_YAML}")
+    utils.update_file_contents(GRAMINE_VERSION, commit, os.path.join(ORIG_BASE_PATH, "util", CONFIG_YAML))
+    utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(DEPTH_STR, "") + commit_str,
+            VERIFIER_DOCKERFILE)
     utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(DEPTH_STR, "") + commit_str,
         os.path.join(ORIG_BASE_PATH, "verifier", "helper.sh"))
 

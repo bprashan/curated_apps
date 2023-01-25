@@ -32,6 +32,9 @@ RUN python3 -m pip install -U \
     'tomli>=1.1.0' \
     'tomli-w>=0.4.0'
 
+RUN wget https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/a/az-dcap-client/az-dcap-client_1.10_amd64.deb \
+ && dpkg -i az-dcap-client_1.10_amd64.deb
+
 RUN echo 'deb [arch=amd64] https://download.01.org/intel-sgx/sgx_repo/ubuntu bionic main' \
     > /etc/apt/sources.list.d/intel-sgx.list \
     && wget https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key \
@@ -39,10 +42,7 @@ RUN echo 'deb [arch=amd64] https://download.01.org/intel-sgx/sgx_repo/ubuntu bio
 
 RUN apt-get update
 
-RUN apt install -y libsgx-dcap-default-qpl libsgx-dcap-default-qpl-dev libsgx-dcap-quote-verify-dev
-COPY sgx_default_qcnl.conf  /etc/sgx_default_qcnl.conf
-
-RUN git clone --depth 1 --branch master https://github.com/gramineproject/gramine.git
+RUN git clone --depth 1 --branch v1.3.1 https://github.com/gramineproject/gramine.git
 
 RUN mkdir -p /gramine/driver/asm && cd /gramine/driver/asm && wget --timeout=10 -O sgx.h  \
     https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/plain/arch/x86/include/uapi/asm/sgx.h?h=v5.11  \

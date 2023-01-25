@@ -32,7 +32,6 @@ BASH_DOCKERFILE        = os.path.join(WORKLOADS_PATH, "bash", "Dockerfile")
 BASH_GSC_DOCKERFILE    = os.path.join(WORKLOADS_PATH, "bash", "bash-gsc.dockerfile.template")
 ENV_PROXY_STRING       = 'ENV http_proxy "http://proxy-dmz.intel.com:911"\nENV https_proxy "http://proxy-dmz.intel.com:912"\n'
 AZURE_DCAP             = "(.*)RUN wget https:\/\/packages.microsoft(.*)\n(.*)amd64.deb"
-GRAMINE_INSTALL        = "RUN apt-get install -y gramine-dcap"
 DCAP_LIBRARY           = "\nRUN apt install -y libsgx-dcap-default-qpl libsgx-dcap-default-qpl-dev\nCOPY sgx_default_qcnl.conf  /etc/sgx_default_qcnl.conf\n"
 DCAP_ORD_LIST          = ['start', 'azure_warning', 'distro', 'runtime_args_text', 'runtime_variable_list', 'docker_flags', 'encrypted_files_path', 'encryption_key', 
                             'attestation', 'signing_key_path', 'signing_key_password', 'end']
@@ -44,7 +43,7 @@ LOGS                   = os.path.join(FRAMEWORK_PATH, "logs")
 GRAMINE_VERSION        = "v1.3.1"
 TEST_CONFIG_PATH       = os.path.join(FRAMEWORK_PATH, "test_config")
 CONFIG_YAML            = "config.yaml.template"
-GRAMINE_CLONE          = "git clone --depth 1 --branch v1.3.1 https://github.com/gramineproject/gramine.git"
+GRAMINE_CLONE          = "RUN git clone --depth 1 --branch v1.3.1 https://github.com/gramineproject/gramine.git"
 GSC_CLONE              = "git clone --depth 1 --branch v1.3.1 https://github.com/gramineproject/gsc.git"
 DEPTH_STR              = "--depth 1 --branch v1.3.1 "
 TF_EXAMPLE_PATH        = os.path.join(TFSERVING_HELPER_PATH, "serving/tensorflow_serving/example")

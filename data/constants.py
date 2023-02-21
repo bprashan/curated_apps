@@ -31,7 +31,7 @@ SCREEN_LIST            = ["home_page", "distro_page", "runtime_page", "environme
 BASH_DOCKERFILE        = os.path.join(WORKLOADS_PATH, "bash", "Dockerfile")
 BASH_GSC_DOCKERFILE    = os.path.join(WORKLOADS_PATH, "bash", "bash-gsc.dockerfile.template")
 ENV_PROXY_STRING       = 'ENV http_proxy "http://proxy-dmz.intel.com:911"\nENV https_proxy "http://proxy-dmz.intel.com:912"\n'
-AZURE_DCAP             = "az-dcap-client(.*)\n"
+AZURE_DCAP             = "RUN env DEBIAN_FRONTEND=noninteractive apt-get install -y az-dcap-client\n"
 DCAP_LIBRARY           = "\nRUN apt install -y libsgx-dcap-default-qpl libsgx-dcap-default-qpl-dev\nCOPY verifier/sgx_default_qcnl.conf  /etc/sgx_default_qcnl.conf\n"
 DCAP_ORD_LIST          = ['start', 'azure_warning', 'distro', 'runtime_args_text', 'runtime_variable_list', 'docker_flags', 'encrypted_files_path', 'encryption_key', 
                             'attestation', 'signing_key_path', 'signing_key_password', 'end']

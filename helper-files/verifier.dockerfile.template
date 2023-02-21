@@ -50,9 +50,7 @@ RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.asc] https://p
 RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/intel-sgx-deb.asc] https://download.01.org/intel-sgx/sgx_repo/ubuntu jammy main" \
     | tee /etc/apt/sources.list.d/intel-sgx.list
 
-RUN env DEBIAN_FRONTEND=noninteractive apt-get update \
-    && env DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    az-dcap-client
+RUN env DEBIAN_FRONTEND=noninteractive apt-get install -y az-dcap-client
 
 RUN env DEBIAN_FRONTEND=noninteractive apt-get update \
     && env DEBIAN_FRONTEND=noninteractive apt-get install -y libsgx-dcap-quote-verify-dev

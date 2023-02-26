@@ -281,3 +281,28 @@ test_mariadb_default_with_debug:
   pre_workload_setup: y
   debug_mode: y
   distro: 2
+
+test_memcached_default:
+  docker_image: memcached ubuntu/memcached:1.5-20.04_beta
+  distro: 2
+
+test_memcached_with_test_sign_key:
+  docker_image: memcached ubuntu/memcached:1.5-20.04_beta
+  signing_key_path : test
+  distro: 2
+
+test_memcached_with_test_sign_key_debug:
+  docker_image: memcached ubuntu/memcached:1.5-20.04_beta
+  signing_key_path : test
+  debug_mode: y
+  distro: 2
+
+test_memcached_with_test_option:
+  docker_image: memcached ubuntu/memcached:1.5-20.04_beta
+  test_option: y
+  distro: 2
+
+test_memcached_default_with_debug:
+  docker_image: memcached ubuntu/memcached:1.5-20.04_beta
+  debug_mode: y
+  distro: 2

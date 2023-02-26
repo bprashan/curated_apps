@@ -108,22 +108,31 @@ def get_docker_run_command(test_config_dict, curation_output):
     return output
 
 def get_workload_result(test_config_dict):
+    d_image = test_config_dict["docker_image"]
     if "workload_result" in test_config_dict.keys():
         workload_result = [test_config_dict["workload_result"]]
-    elif "bash" in test_config_dict["docker_image"]:
+    elif "bash" in d_image:
         workload_result = ["total        used        free      shared  buff/cache   available"]
-    elif "redis" in test_config_dict["docker_image"]:
+    elif "redis" in d_image:
         workload_result = ["Ready to accept connections"]
-    elif "pytorch" in test_config_dict["docker_image"]:
+    elif "pytorch" in d_image:
         workload_result = ["Done. The result was written to `result.txt`."]
-    elif "sklearn" in test_config_dict["docker_image"]:
+    elif "sklearn" in d_image:
         workload_result = ["Kmeans perf evaluation finished"]
-    elif "tensorflow-serving" in test_config_dict["docker_image"]:
+    elif "tensorflow-serving" in d_image:
         workload_result = ["Running gRPC ModelServer at 0.0.0.0:8500"]
-    elif "mysql" in test_config_dict["docker_image"]:
+    elif "mysql" in d_image:
         workload_result = ["/usr/sbin/mysqld: ready for connections"]
-    elif "mariadb" in test_config_dict["docker_image"]:
+    elif "mariadb" in d_image:
         workload_result = ["mariadbd: ready for connections"]
+    elif "memcached" in d_image:
+        if test_config_dict.get("debug_mode") == "y":
+            time.sleep(180)
+        else:
+            time.sleep(30)
+        out = utils.run_subprocess("sudo lsof -i:11211 | grep LISTEN")
+        if out:
+            workload_result = ""
     return workload_result
 
 def expected_msg_verification(test_config_dict, curation_output):
@@ -220,11 +229,13 @@ def verify_run(curation_output):
 
 def run_workload_client(test_config_dict):
     out = True
-    if "redis" in test_config_dict["docker_image"]:
-        out = workload.run_redis_client()
-    elif "tensorflow-serving" in test_config_dict["docker_image"]:
+    d_image = test_config_dict["docker_image"]
+    if "redis" in d_image or "memcached" in d_image:
+        wk_name = utils.get_workload_name(d_image)
+        out = workload.run_memtier_benchmark(wk_name)
+    elif "tensorflow-serving" in d_image:
         out = workload.run_tensorflow_serving_client(test_config_dict)
-    elif "mysql" in test_config_dict["docker_image"] or "mariadb" in test_config_dict["docker_image"]:
+    elif "mysql" in d_image or "mariadb" in d_image:
         out = workload.run_mysql_client()
     return out
 

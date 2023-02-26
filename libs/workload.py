@@ -3,13 +3,19 @@ import re
 from libs import utils
 from data.constants import *
 
-def run_redis_client():
+def run_memtier_benchmark(workload):
     result = False
-    redis_output = utils.run_subprocess("docker run -it --net=host --rm redis redis-cli ping")
-    print(redis_output)
-    if "PONG" in redis_output:
-        result = True
-
+    memtier_cmd = "docker run --net=host --rm redislabs/memtier_benchmark:latest --test-time=10"
+    if workload == "redis":
+        memtier_cmd += " -p 6379"
+    elif workload == "memcached":
+        memtier_cmd += " -p 11211 --protocol=memcache_binary"
+    memtier_output = utils.run_subprocess(memtier_cmd)
+    out = re.findall("ALL STATS.*Totals\s+(\d+.\d+)\s+(\d+.\d+)\s+(\d+.\d+)\s+(\d+.\d+)",
+                     memtier_output, re.DOTALL)
+    if out:
+        print(out)
+        result=True
     return result
 
 def run_tensorflow_serving_client(test_config_dict):

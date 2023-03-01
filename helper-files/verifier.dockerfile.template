@@ -56,7 +56,7 @@ RUN env DEBIAN_FRONTEND=noninteractive apt-get install -y az-dcap-client
 
 RUN env DEBIAN_FRONTEND=noninteractive apt-get install -y libsgx-dcap-quote-verify-dev
 
-RUN git clone --depth 1 --branch v1.3.1 https://github.com/gramineproject/gramine.git
+RUN git clone --depth 1 --branch v1.4 https://github.com/gramineproject/gramine.git
 
 RUN mkdir -p /gramine/driver/asm && cd /gramine/driver/asm && wget --timeout=10 -O sgx.h  \
     https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/plain/arch/x86/include/uapi/asm/sgx.h?h=v5.11  \

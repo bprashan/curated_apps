@@ -55,25 +55,24 @@ def dcap_setup():
 
 def update_gramine_branch(commit):
     commit_str = f" && cd gramine && git checkout {commit} && cd .."
+    copy_cmd = "cp config.yaml.template config.yaml"
     if not "v1" in commit:
         utils.run_subprocess(f"cp -rf helper-files/{VERIFIER_TEMPLATE} {VERIFIER_DOCKERFILE}")
-        utils.run_subprocess(f"cp -rf helper-files/{CONFIG_YAML} {ORIG_BASE_PATH}/util/{CONFIG_YAML}")
-    utils.update_file_contents(GRAMINE_VERSION, commit, os.path.join(ORIG_BASE_PATH, "util", CONFIG_YAML))
+    utils.update_file_contents(copy_cmd, copy_cmd + "\nsed -i 's|Branch:.*master|Branch: \"{}|' config.yaml".format(commit), CURATION_SCRIPT)
     utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(DEPTH_STR, "") + commit_str,
             VERIFIER_DOCKERFILE)
     utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(DEPTH_STR, "") + commit_str,
         os.path.join(ORIG_BASE_PATH, "verifier", "helper.sh"))
 
 def update_gsc(gsc_commit='', gsc_repo=''):
-    curation_script = os.path.join(ORIG_BASE_PATH, "util", "curation_script.sh")
     if gsc_commit: checkout_str = f" && cd gsc && git checkout {gsc_commit} && cd .."
     if gsc_repo: repo_str = f"git clone {gsc_repo}"
     if gsc_repo and gsc_commit:
-        utils.update_file_contents(GSC_CLONE, repo_str + checkout_str, curation_script)
+        utils.update_file_contents(GSC_CLONE, repo_str + checkout_str, CURATION_SCRIPT)
     elif gsc_repo and not gsc_commit:
-        utils.update_file_contents(GSC_CLONE, repo_str, curation_script)
+        utils.update_file_contents(GSC_CLONE, repo_str, CURATION_SCRIPT)
     elif gsc_commit:
-        utils.update_file_contents(GSC_CLONE, GSC_CLONE.replace(DEPTH_STR, "") + checkout_str, curation_script)
+        utils.update_file_contents(GSC_CLONE, GSC_CLONE.replace(DEPTH_STR, "") + checkout_str, CURATION_SCRIPT)
 
 @pytest.fixture(scope="class", autouse=True)
 def teardown():

@@ -193,3 +193,15 @@ test_redis_docker_invalid_flag_string:
   docker_flags: "--name docker_container, --net=host"
   expected_output_console: 'Invalid string specified'
   distro: 4
+
+test_pytorch_test_option:
+  docker_image: pytorch pytorch-encrypted:latest
+  create_local_image: y
+  test_option: y
+
+test_pytorch_default:
+  docker_image: pytorch pytorch-encrypted:latest
+  create_local_image: y
+  distro: 1
+  encryption_key: workloads/pytorch/base_image_helper/encryption_key
+  encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt

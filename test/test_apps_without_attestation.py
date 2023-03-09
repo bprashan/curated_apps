@@ -214,3 +214,19 @@ class TestClass:
     def test_redis_docker_invalid_flag_string(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
+
+    @pytest.mark.sanity
+    @pytest.mark.jenkins
+    @pytest.mark.pytorch
+    @pytest.mark.pytorch_non_attestation
+    def test_pytorch_test_option(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    @pytest.mark.sanity
+    @pytest.mark.jenkins
+    @pytest.mark.pytorch
+    @pytest.mark.pytorch_non_attestation
+    def test_pytorch_default(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result

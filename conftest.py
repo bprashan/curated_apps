@@ -15,6 +15,10 @@ def curated_setup():
     print("Cloning and checking out Contrib Git Repo")
     utils.run_subprocess(CONTRIB_GIT_CMD)
     utils.run_subprocess(GIT_CHECKOUT_CMD, ORIG_CURATED_PATH)
+    if REBASE_CONTRIB_GIT_REPO:
+        utils.run_subprocess(REBASE_GIT_REPO_CMD, ORIG_CURATED_PATH)
+        utils.run_subprocess(FETCH_REBASE_REPO_CMD, ORIG_CURATED_PATH)
+        utils.run_subprocess(REBASE_BRANCH_CMD, ORIG_CURATED_PATH)
     os.environ["SETUP_MACHINE"] = utils.check_machine()
     update_env_variables()
     if os.environ["SETUP_MACHINE"] == "DCAP client":
@@ -33,6 +37,8 @@ def print_env_variables():
     os.environ["gsc_commit"]     = os.environ.get("gsc_commit", "")
     os.environ["contrib_repo"]   = os.environ.get("contrib_repo", "")
     os.environ["contrib_branch"] = os.environ.get("contrib_branch", "")
+    os.environ["rebase_contrib_repo"]   = os.environ.get("rebase_contrib_repo", "")
+    os.environ["rebase_contrib_branch"] = os.environ.get("rebase_contrib_branch", "")
     print("\n\n############################################################################")
     print("Printing the environment variables")
     print("Gramine Commit: ", os.environ["gramine_commit"])
@@ -40,6 +46,8 @@ def print_env_variables():
     print("GSC Commit:     ", os.environ["gsc_commit"])
     print("Contrib Repo:   ", os.environ["contrib_repo"])
     print("Contrib Commit: ", os.environ["contrib_branch"])
+    print("Rebase Contrib Repo:   ", os.environ["rebase_contrib_repo"])
+    print("Rebase Contrib Commit: ", os.environ["rebase_contrib_branch"])
     print("############################################################################\n\n")
 
 @pytest.fixture(scope="function", autouse=True)

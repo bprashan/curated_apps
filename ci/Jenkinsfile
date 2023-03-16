@@ -7,8 +7,11 @@ string(description: 'If you want to change gsc repo, provide it here', name: 'gs
 string(description: 'If you want to change gsc commit, provide it here', name: 'gsc_commit', trim: true),
 string(description: 'If you want to change contrib repo, provide it here', name: 'contrib_repo', trim: true),
 string(description: 'If you want to change contrib commit, provide it here', name: 'contrib_branch', trim: true),
+string(description: 'If you want to rebase contrib repo, provide it here', name: 'rebase_contrib_repo', trim: true),
+string(description: 'If you want to rebase contrib commit, provide it here', name: 'rebase_contrib_branch', trim: true),
 string(defaultValue: 'graphene_dcap_server', description: '''graphene_dcap_server [attestation test]
 graphene_dcap [attestation test]
+gramineval2 [azure 20.04 vm]
 graphene_wcity_02 [non attestation test]''', name: 'nodeLabel')])])
 
 node("$nodeLabel") {

@@ -11,6 +11,11 @@ CONTRIB_BRANCH         = os.environ.get("contrib_branch")
 if not CONTRIB_BRANCH:
     CONTRIB_BRANCH = "master"
 GIT_CHECKOUT_CMD       = f"git checkout {CONTRIB_BRANCH}"
+REBASE_CONTRIB_GIT_REPO = os.environ.get("rebase_contrib_repo")
+REBASE_CONTRIB_BRANCH  = os.environ.get("rebase_contrib_branch")
+REBASE_GIT_REPO_CMD    = f"git remote add repo_rebase {REBASE_CONTRIB_GIT_REPO}"
+FETCH_REBASE_REPO_CMD  = f"git fetch repo_rebase"
+REBASE_BRANCH_CMD      = f"git rebase repo_rebase/{REBASE_CONTRIB_BRANCH}"
 CURATED_PATH           = "Curated-Apps"
 CURATED_APPS_PATH      = os.path.join(REPO_PATH, CURATED_PATH)
 WORKLOADS_PATH         = os.path.join(CURATED_APPS_PATH, "workloads")

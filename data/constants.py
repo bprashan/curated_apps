@@ -53,3 +53,18 @@ DEPTH_STR              = "--depth 1 --branch v1.4 "
 TF_EXAMPLE_PATH        = os.path.join(TFSERVING_HELPER_PATH, "serving/tensorflow_serving/example")
 TF_IMAGE               = "gramine.azurecr.io:443/base_images/intel-optimized-tensorflow-serving-avx512-ubuntu18.04"
 CURATION_SCRIPT        = os.path.join(ORIG_BASE_PATH, "util", "curation_script.sh")
+MYSQL_TESTDB_PATH      = os.path.join(CURATED_APPS_PATH, "workloads/mysql/test_db")
+MYSQL_INIT_FOLDER_PATH = os.path.join(MYSQL_TESTDB_PATH, "mysql")
+MYSQL_CREATE_TESTDB_CMD = f"mkdir -p {MYSQL_TESTDB_PATH}"
+MYSQL_INIT_DB_CMD      = f"docker run --rm --net=host --name init_test_db --user $(id -u):$(id -g) \
+                            -v $PWD/workloads/mysql/test_db:/test_db \
+                            -e MYSQL_ALLOW_EMPTY_PASSWORD=true -e MYSQL_DATABASE=test_db mysql:8.0.32-debian \
+                            --datadir /test_db"
+STOP_MYSQL_DB_CMD      = f"docker stop init_test_db"
+TEST_ENCRYPTION_KEY    = f"dd if=/dev/urandom bs=16 count=1 > workloads/mysql/base_image_helper/encryption_key"
+
+CLEANUP_ENCRYPTED_DB   = f"sudo rm -rf /var/run/test_db_encrypted"
+ENCRYPT_DB_CMD         = f"sudo gramine-sgx-pf-crypt encrypt -w workloads/mysql/base_image_helper/encryption_key \
+                            -i workloads/mysql/test_db -o /var/run/test_db_encrypted"
+MYSQL_CLIENT_INSTALL_CMD = f"sudo apt-get -y install mysql-client"
+MYSQL_CLIENT_CMD       = f"mysql -h 127.0.0.0 -uroot"

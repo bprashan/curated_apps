@@ -230,3 +230,38 @@ class TestClass:
     def test_pytorch_default(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
+
+    @pytest.mark.sanity
+    @pytest.mark.jenkins
+    @pytest.mark.mysql
+    @pytest.mark.mysql_non_attestation
+    def test_mysql_default(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+    
+    @pytest.mark.jenkins
+    @pytest.mark.mysql
+    @pytest.mark.mysql_non_attestation
+    def test_mysql_with_test_sign_key(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+    
+    @pytest.mark.sanity
+    @pytest.mark.jenkins
+    @pytest.mark.mysql
+    @pytest.mark.mysql_non_attestation
+    def test_mysql_test_option(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+    
+    """
+    Disabling mysql debug mode tests because of a known issue
+    https://jira.devtools.intel.com/browse/GSGX-3560
+    @pytest.mark.jenkins
+    @pytest.mark.mysql
+    @pytest.mark.mysql_non_attestation
+    def test_mysql_default_with_debug(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+    """
+

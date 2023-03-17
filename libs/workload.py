@@ -34,3 +34,9 @@ def run_tensorflow_serving_client(test_config_dict):
         if '"predictions": [3.5' in response: result = True
     print(response)
     return result
+
+def run_mysql_client():
+    result = False
+    install_my_sql_client = utils.run_subprocess(MYSQL_CLIENT_INSTALL_CMD)
+    execute_mysql_client_output = utils.run_subprocess(MYSQL_CLIENT_CMD)
+    

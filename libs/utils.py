@@ -1,5 +1,6 @@
 import subprocess
 import os
+import sys
 import time
 import psutil
 import libs.config_parser as config_parser
@@ -121,6 +122,46 @@ def generate_local_image(workload_image):
         output = run_subprocess(TFSERVING_HELPER_CMD, CURATED_APPS_PATH)
         print(output)
 
+def init_mysql_db(tc_dict):
+    docker_output = ''
+    init_result = False
+    timeout = time.time() + 60*2
+    try:
+        mkdir_output = run_subprocess(MYSQL_CREATE_TESTDB_CMD, CURATED_APPS_PATH)
+        print(mkdir_output)
+        process = subprocess.Popen(MYSQL_INIT_DB_CMD, cwd=CURATED_APPS_PATH, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
+        print("Initializing MYSQL DB")
+        while True:
+            output = process.stderr.readline()
+            print(output)
+            if process.poll() is not None and output == '':
+                break
+            if output:
+                docker_output += output
+                if (docker_output.count("/usr/sbin/mysqld: ready for connections") == 2) or time.time() > timeout:
+                    print("MYSQL DB is initialized\n")
+                    init_result = True
+                    break
+    finally:
+        process.stdout.close()
+        process.stderr.close()
+        kill(process.pid)
+    run_subprocess(STOP_MYSQL_DB_CMD, CURATED_APPS_PATH)
+    return init_result
+
+def encrypt_db():
+    output = run_subprocess(TEST_ENCRYPTION_KEY, CURATED_APPS_PATH)
+    output = run_subprocess(CLEANUP_ENCRYPTED_DB, CURATED_APPS_PATH)
+    encryption_output = run_subprocess(ENCRYPT_DB_CMD, CURATED_APPS_PATH)
+
+def execute_pre_workload_setup(test_config_dict):
+    workload_image = test_config_dict["docker_image"]
+    if "mysql" in workload_image:
+        init_result = init_mysql_db(test_config_dict)
+        if init_result == False:
+            sys.exit("MySQl DB initialization failed")
+        encrypt_db()
+
 def local_image_setup(test_config_dict):
     if test_config_dict.get("create_local_image") == "y":
         generate_local_image(test_config_dict["docker_image"])
@@ -132,6 +173,8 @@ def test_setup(test_config_dict):
         config_parser.create_input_file(input_str)
     else:
         config_parser.create_input_file(b'\x07')
+    if test_config_dict.get("pre_workload_setup") == "y":
+        pre_workload_setup_result = execute_pre_workload_setup(test_config_dict) 
     local_image_setup(test_config_dict)
     time.sleep(5)
 

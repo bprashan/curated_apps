@@ -117,9 +117,11 @@ def get_workload_result(test_config_dict):
     elif "pytorch" in test_config_dict["docker_image"]:
         workload_result = ["Done. The result was written to `result.txt`."]
     elif "sklearn" in test_config_dict["docker_image"]:
-        workload_result = "Kmeans perf evaluation finished"
+        workload_result = ["Kmeans perf evaluation finished"]
     elif "tensorflow-serving" in test_config_dict["docker_image"]:
-        workload_result = "Running gRPC ModelServer at 0.0.0.0:8500"
+        workload_result = ["Running gRPC ModelServer at 0.0.0.0:8500"]
+    elif "mysql" in test_config_dict["docker_image"]:
+        workload_result = ["/usr/sbin/mysqld: ready for connections"]
     return workload_result
 
 def expected_msg_verification(test_config_dict, curation_output):

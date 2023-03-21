@@ -265,3 +265,32 @@ class TestClass:
         assert test_result
     """
 
+    @pytest.mark.sanity
+    @pytest.mark.jenkins
+    @pytest.mark.mariadb
+    @pytest.mark.mariadb_non_attestation
+    def test_mariadb_default(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+    
+    @pytest.mark.jenkins
+    @pytest.mark.mariadb
+    @pytest.mark.mariadb_non_attestation
+    def test_mariadb_with_test_sign_key(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+    
+    @pytest.mark.sanity
+    @pytest.mark.jenkins
+    @pytest.mark.mariadb
+    @pytest.mark.mariadb_non_attestation
+    def test_mariadb_test_option(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+    
+    @pytest.mark.jenkins
+    @pytest.mark.mariadb
+    @pytest.mark.mariadb_non_attestation
+    def test_mariadb_default_with_debug(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result

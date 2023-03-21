@@ -52,7 +52,7 @@ def print_env_variables():
 
 @pytest.fixture(scope="function", autouse=True)
 def copy_repo():
-    utils.run_subprocess("rm -rf {}".format(REPO_PATH))
+    utils.run_subprocess("sudo rm -rf {}".format(REPO_PATH))
     utils.run_subprocess("cp -rf {} {}".format(ORIG_CURATED_PATH, REPO_PATH))
 
 def dcap_setup():

@@ -122,6 +122,8 @@ def get_workload_result(test_config_dict):
         workload_result = ["Running gRPC ModelServer at 0.0.0.0:8500"]
     elif "mysql" in test_config_dict["docker_image"]:
         workload_result = ["/usr/sbin/mysqld: ready for connections"]
+    elif "mariadb" in test_config_dict["docker_image"]:
+        workload_result = ["mariadbd: ready for connections"]
     return workload_result
 
 def expected_msg_verification(test_config_dict, curation_output):
@@ -222,6 +224,8 @@ def run_workload_client(test_config_dict):
         out = workload.run_redis_client()
     elif "tensorflow-serving" in test_config_dict["docker_image"]:
         out = workload.run_tensorflow_serving_client(test_config_dict)
+    elif "mysql" in test_config_dict["docker_image"] or "mariadb" in test_config_dict["docker_image"]:
+        out = workload.run_mysql_client()
     return out
 
 def run_test(test_instance, test_yaml_file):

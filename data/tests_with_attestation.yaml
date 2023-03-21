@@ -196,3 +196,22 @@ test_mysql_with_test_attestation:
   pre_workload_setup: y
   attestation: test
   distro: 4
+
+test_mariadb_with_attestation:
+  docker_image: mariadb mariadb:10.7
+  runtime_args_text: --datadir /var/run/test_db_encrypted
+  docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
+  encryption_key: workloads/mariadb/base_image_helper/encryption_key
+  encrypted_files_path: /var/run/test_db_encrypted
+  pre_workload_setup: y
+  distro: 2
+
+test_mariadb_with_test_attestation:
+  docker_image: mariadb mariadb:10.7
+  runtime_args_text: --datadir /var/run/test_db_encrypted
+  docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
+  encryption_key: workloads/mariadb/base_image_helper/encryption_key
+  encrypted_files_path: /var/run/test_db_encrypted
+  pre_workload_setup: y
+  attestation: test
+  distro: 2

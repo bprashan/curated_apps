@@ -60,11 +60,25 @@ MYSQL_INIT_DB_CMD      = f"docker run --rm --net=host --name init_test_db --user
                             -v $PWD/workloads/mysql/test_db:/test_db \
                             -e MYSQL_ALLOW_EMPTY_PASSWORD=true -e MYSQL_DATABASE=test_db mysql:8.0.32-debian \
                             --datadir /test_db"
-STOP_MYSQL_DB_CMD      = f"docker stop init_test_db"
-TEST_ENCRYPTION_KEY    = f"dd if=/dev/urandom bs=16 count=1 > workloads/mysql/base_image_helper/encryption_key"
+STOP_TEST_DB_CMD      = f"docker stop init_test_db"
+MYSQL_TEST_ENCRYPTION_KEY    = f"dd if=/dev/urandom bs=16 count=1 > workloads/mysql/base_image_helper/encryption_key"
 
 CLEANUP_ENCRYPTED_DB   = f"sudo rm -rf /var/run/test_db_encrypted"
-ENCRYPT_DB_CMD         = f"sudo gramine-sgx-pf-crypt encrypt -w workloads/mysql/base_image_helper/encryption_key \
+MYSQL_ENCRYPT_DB_CMD         = f"sudo gramine-sgx-pf-crypt encrypt -w workloads/mysql/base_image_helper/encryption_key \
                             -i workloads/mysql/test_db -o /var/run/test_db_encrypted"
 MYSQL_CLIENT_INSTALL_CMD = f"sudo apt-get -y install mysql-client"
-MYSQL_CLIENT_CMD       = f"mysql -h 127.0.0.0 -uroot"
+MYSQL_CLIENT_CMD       = f"printf 'SELECT User FROM mysql.user;\nexit' > input.txt | mysql -h 127.0.0.1 -uroot < input.txt"
+
+MARIADB_TESTDB_PATH      = os.path.join(CURATED_APPS_PATH, "workloads/mariadb/test_db")
+MARIADB_INIT_FOLDER_PATH = os.path.join(MARIADB_TESTDB_PATH, "mariadb")
+MARIADB_CREATE_TESTDB_CMD = f"mkdir -p {MARIADB_TESTDB_PATH}"
+MARIADB_INIT_DB_CMD      = f"docker run --rm --net=host --name init_test_db \
+                            -v $PWD/workloads/mariadb/test_db:/test_db \
+                            -e MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true -e MARIADB_DATABASE=test_db mariadb:10.7 \
+                            --datadir /test_db "
+MARIADB_TEST_ENCRYPTION_KEY    = f"dd if=/dev/urandom bs=16 count=1 > workloads/mariadb/base_image_helper/encryption_key"
+MARIADB_ENCRYPT_DB_CMD   = f"sudo gramine-sgx-pf-crypt encrypt -w workloads/mariadb/base_image_helper/encryption_key \
+                            -i workloads/mariadb/test_db -o /var/run/test_db_encrypted"
+MARIADB_CHMOD         = f"sudo chown -R $USER:$USER $PWD/workloads/mariadb/test_db"
+MYSQL_TESTDB_VERIFY   = f"/usr/sbin/mysqld: ready for connections"
+MARIADB_TESTDB_VERIFY = f"mariadbd: ready for connections"

@@ -122,15 +122,15 @@ def generate_local_image(workload_image):
         output = run_subprocess(TFSERVING_HELPER_CMD, CURATED_APPS_PATH)
         print(output)
 
-def init_mysql_db(tc_dict):
+def init_db(workload_name):
     docker_output = ''
     init_result = False
     timeout = time.time() + 60*2
     try:
-        mkdir_output = run_subprocess(MYSQL_CREATE_TESTDB_CMD, CURATED_APPS_PATH)
+        mkdir_output = run_subprocess(eval(workload_name.upper()+"_CREATE_TESTDB_CMD"), CURATED_APPS_PATH)
         print(mkdir_output)
-        process = subprocess.Popen(MYSQL_INIT_DB_CMD, cwd=CURATED_APPS_PATH, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
-        print("Initializing MYSQL DB")
+        process = subprocess.Popen(eval(workload_name.upper()+"_INIT_DB_CMD"), cwd=CURATED_APPS_PATH, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
+        print(f"Initializing {workload_name.upper()} DB")
         while True:
             output = process.stderr.readline()
             print(output)
@@ -138,29 +138,31 @@ def init_mysql_db(tc_dict):
                 break
             if output:
                 docker_output += output
-                if (docker_output.count("/usr/sbin/mysqld: ready for connections") == 2) or time.time() > timeout:
-                    print("MYSQL DB is initialized\n")
+                if (docker_output.count(eval(workload_name.upper()+"_TESTDB_VERIFY")) == 2) or time.time() > timeout:
+                    print(f"{workload_name.upper()} DB is initialized\n")
                     init_result = True
                     break
     finally:
         process.stdout.close()
         process.stderr.close()
         kill(process.pid)
-    run_subprocess(STOP_MYSQL_DB_CMD, CURATED_APPS_PATH)
+    run_subprocess(STOP_TEST_DB_CMD, CURATED_APPS_PATH)
+    if "mariadb" in workload_name:
+        run_subprocess(MARIADB_CHMOD, CURATED_APPS_PATH)
     return init_result
 
-def encrypt_db():
-    output = run_subprocess(TEST_ENCRYPTION_KEY, CURATED_APPS_PATH)
+def encrypt_db(workload_name):
+    output = run_subprocess(eval(workload_name.upper()+"_TEST_ENCRYPTION_KEY"), CURATED_APPS_PATH)
     output = run_subprocess(CLEANUP_ENCRYPTED_DB, CURATED_APPS_PATH)
-    encryption_output = run_subprocess(ENCRYPT_DB_CMD, CURATED_APPS_PATH)
+    encryption_output = run_subprocess(eval(workload_name.upper()+"_ENCRYPT_DB_CMD"), CURATED_APPS_PATH)
 
 def execute_pre_workload_setup(test_config_dict):
-    workload_image = test_config_dict["docker_image"]
-    if "mysql" in workload_image:
-        init_result = init_mysql_db(test_config_dict)
+    workload_name = get_workload_name(test_config_dict["docker_image"])
+    if "mysql" in workload_name or "mariadb" in workload_name:
+        init_result = init_db(workload_name)
         if init_result == False:
-            sys.exit("MySQl DB initialization failed")
-        encrypt_db()
+            sys.exit("DB initialization failed")
+        encrypt_db(workload_name)
 
 def local_image_setup(test_config_dict):
     if test_config_dict.get("create_local_image") == "y":

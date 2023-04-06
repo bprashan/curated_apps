@@ -72,6 +72,7 @@ def cleanup_after_test(test_config_dict):
         stop_docker_process("gramine")
         run_subprocess("docker rmi verifier:latest -f")
         run_subprocess(f"docker rmi gsc-{docker_image} -f")
+        run_subprocess("docker stop init_test_db >/dev/null 2>&1")
         if test_config_dict.get("create_local_image") == "y":
             run_subprocess(f"docker rmi {docker_image} -f >/dev/null 2>&1")
         if run_subprocess("docker ps -a -f status=exited -f status=created -q"):
@@ -124,6 +125,7 @@ def generate_local_image(workload_image):
 
 def init_db(workload_name):
     docker_output = ''
+    output=None
     init_result = False
     timeout = time.time() + 60*2
     try:
@@ -132,23 +134,26 @@ def init_db(workload_name):
         process = subprocess.Popen(eval(workload_name.upper()+"_INIT_DB_CMD"), cwd=CURATED_APPS_PATH, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
         print(f"Initializing {workload_name.upper()} DB")
         while True:
-            output = process.stderr.readline()
-            print(output)
             if process.poll() is not None and output == '':
                 break
+            output = process.stderr.readline()
+            print(output)
             if output:
                 docker_output += output
-                if (docker_output.count(eval(workload_name.upper()+"_TESTDB_VERIFY")) == 2) or time.time() > timeout:
+                if (docker_output.count(eval(workload_name.upper()+"_TESTDB_VERIFY")) == 2):
                     print(f"{workload_name.upper()} DB is initialized\n")
                     init_result = True
+                    break
+                elif time.time() > timeout:
                     break
     finally:
         process.stdout.close()
         process.stderr.close()
         kill(process.pid)
-    run_subprocess(STOP_TEST_DB_CMD, CURATED_APPS_PATH)
-    if "mariadb" in workload_name:
-        run_subprocess(MARIADB_CHMOD, CURATED_APPS_PATH)
+    if init_result:
+        run_subprocess(STOP_TEST_DB_CMD, CURATED_APPS_PATH)
+        if "mariadb" in workload_name:
+            run_subprocess(MARIADB_CHMOD, CURATED_APPS_PATH)
     return init_result
 
 def encrypt_db(workload_name):
@@ -175,6 +180,8 @@ def test_setup(test_config_dict):
         config_parser.create_input_file(input_str)
     else:
         config_parser.create_input_file(b'\x07')
+    if test_config_dict.get("encrypted_files_path"):
+        check_and_install_gramine()
     if test_config_dict.get("pre_workload_setup") == "y":
         pre_workload_setup_result = execute_pre_workload_setup(test_config_dict) 
     local_image_setup(test_config_dict)
@@ -196,3 +203,9 @@ def update_file_contents(old_contents, new_contents, filename, append=False):
     fd = open(filename, "w")
     fd.write(new_data)
     fd.close()
+
+def check_and_install_gramine():
+    run_subprocess("sudo curl -fsSLo /usr/share/keyrings/gramine-keyring.gpg https://packages.gramineproject.io/gramine-keyring.gpg")
+    run_subprocess('echo "deb [arch=amd64 signed-by=/usr/share/keyrings/gramine-keyring.gpg] https://packages.gramineproject.io/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/gramine.list')
+    run_subprocess("sudo apt-get update")
+    run_subprocess("sudo apt-get install -y gramine")

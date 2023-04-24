@@ -67,9 +67,9 @@ def update_gramine_branch(commit):
     if not "v1" in commit:
         utils.run_subprocess(f"cp -rf helper-files/{VERIFIER_TEMPLATE} {VERIFIER_DOCKERFILE}")
     utils.update_file_contents(copy_cmd, copy_cmd + "\nsed -i 's|Branch:.*master|Branch: \"{}|' config.yaml".format(commit), CURATION_SCRIPT)
-    utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(DEPTH_STR, "") + commit_str,
+    utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(GRAMINE_DEPTH_STR, "") + commit_str,
             VERIFIER_DOCKERFILE)
-    utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(DEPTH_STR, "") + commit_str,
+    utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(GRAMINE_DEPTH_STR, "") + commit_str,
         os.path.join(ORIG_BASE_PATH, "verifier", "helper.sh"))
 
 def update_gsc(gsc_commit='', gsc_repo=''):
@@ -80,7 +80,7 @@ def update_gsc(gsc_commit='', gsc_repo=''):
     elif gsc_repo and not gsc_commit:
         utils.update_file_contents(GSC_CLONE, repo_str, CURATION_SCRIPT)
     elif gsc_commit:
-        utils.update_file_contents(GSC_CLONE, GSC_CLONE.replace(DEPTH_STR, "") + checkout_str, CURATION_SCRIPT)
+        utils.update_file_contents(GSC_CLONE, GSC_CLONE.replace(GSC_DEPTH_STR, "") + checkout_str, CURATION_SCRIPT)
 
 @pytest.fixture(scope="class", autouse=True)
 def teardown():

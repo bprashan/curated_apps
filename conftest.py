@@ -19,11 +19,7 @@ def curated_setup():
         utils.run_subprocess(REBASE_GIT_REPO_CMD, ORIG_CURATED_PATH)
         utils.run_subprocess(FETCH_REBASE_REPO_CMD, ORIG_CURATED_PATH)
         utils.run_subprocess(REBASE_BRANCH_CMD, ORIG_CURATED_PATH)
-    os.environ["SETUP_MACHINE"] = utils.check_machine()
     update_env_variables()
-    if os.environ["SETUP_MACHINE"] == "DCAP client":
-        print("Configuring the contrib repo to setup DCAP client")
-        dcap_setup()
 
 def update_env_variables():
     if os.environ["gramine_commit"]:
@@ -54,12 +50,6 @@ def print_env_variables():
 def copy_repo():
     utils.run_subprocess("sudo rm -rf {}".format(REPO_PATH))
     utils.run_subprocess("cp -rf {} {}".format(ORIG_CURATED_PATH, REPO_PATH))
-
-def dcap_setup():
-    copy_cmd = "cp /etc/sgx_default_qcnl.conf {}/verifier/".format(os.path.join(ORIG_CURATED_PATH, CURATED_PATH))
-    utils.run_subprocess(copy_cmd)
-    utils.update_file_contents(AZURE_DCAP, "", VERIFIER_DOCKERFILE)
-    utils.update_file_contents("gramine.git", DCAP_LIBRARY, VERIFIER_DOCKERFILE, True)
 
 def update_gramine_branch(commit):
     commit_str = f" && cd gramine && git checkout {commit} && cd .."

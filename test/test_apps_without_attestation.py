@@ -320,7 +320,7 @@ class TestClass:
     def test_memcached_with_test_option(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
-    
+
     @pytest.mark.ovms
     @pytest.mark.ovms_non_attestation
     def test_ovms_default(self):

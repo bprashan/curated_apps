@@ -1,6 +1,5 @@
 default_input_args: 
   start:
-  azure_warning:
   signing_key_path: test_config/enclave-key.pem
   attestation: done
   ssl_path: test_config/ssl

@@ -53,12 +53,7 @@ def data_pre_processing(test_config_dict):
 
     data_pre_processing_for_verifier_image(test_config_dict, end_key)
 
-    if os.environ["SETUP_MACHINE"] == "Azure Linux Agent":
-        input_ord_list = AZURE_ORD_LIST
-    else:
-        input_ord_list = DCAP_ORD_LIST
-
-    for key in input_ord_list:
+    for key in INPUT_ORD_LIST:
         if key in test_config_dict.keys():
             ordered_test_config[key] = test_config_dict.get(key)
             if key == end_key:
@@ -93,7 +88,4 @@ def data_pre_processing_for_verifier_image(test_config_dict, end_test_key_str):
 
 def bash_setup(docker_image):
     shutil.copytree("data/bash", BASH_PATH)
-    if os.environ["SETUP_MACHINE"] == "Azure Linux Agent":
-        utils.update_file_contents(ENV_PROXY_STRING, '', BASH_DOCKERFILE)
-        utils.update_file_contents(ENV_PROXY_STRING, '', BASH_GSC_DOCKERFILE)
    

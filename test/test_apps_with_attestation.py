@@ -236,7 +236,7 @@ class TestClass:
     def test_mariadb_with_test_attestation(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
-    
+
     @pytest.mark.ovms
     @pytest.mark.ovms_attestation
     def test_ovms_with_attestation(self):

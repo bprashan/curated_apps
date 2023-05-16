@@ -9,7 +9,7 @@ def curated_setup():
     utils.run_subprocess(f"rm -rf {LOGS}")
     os.mkdir(LOGS)
     utils.run_subprocess("docker system prune -f")
-    utils.run_subprocess(f"docker rmi {TF_IMAGE} -f >/dev/null 2>&1")
+    utils.stop_docker_process("server_dcap")
     print("Cleaning old contrib repo")
     utils.run_subprocess("rm -rf {}".format(ORIG_CURATED_PATH))
     print("Cloning and checking out Contrib Git Repo")
@@ -86,3 +86,4 @@ def update_gsc(gsc_commit='', gsc_repo=''):
 def teardown():
     yield
     utils.run_subprocess("docker system prune -f")
+

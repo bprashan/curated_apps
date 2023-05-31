@@ -26,6 +26,9 @@ def convert_dict_to_str(sorted_dict):
     input_str = b''
     for key, value in sorted_dict.items():
         if value:
+            value = str(value).replace("\\u0027", "'")
+            value = str(value).replace("\\u0022", '"')
+            value = str(value).replace("\\u0020", " ")
             input_str += str(value).strip().encode('utf-8') + b'\x07'
         else:
             input_str += b'\x07'

@@ -135,23 +135,35 @@ def init_db(workload_name):
         print(f"Initializing {workload_name.upper()} DB")
         while True:
             if process.poll() is not None and output == '':
-                break
+                if "ovms" in workload_name:
+                    time.sleep(30)
+                    if os.path.exists(os.path.join(CURATED_APPS_PATH, \
+                        "workloads/openvino-model-server/test_model/1/face-detection-retail-0004.bin")) and \
+                        os.path.exists(os.path.join(CURATED_APPS_PATH, \
+                        "workloads/openvino-model-server/test_model/1/face-detection-retail-0004.xml")):
+                        print(f"{workload_name.upper()} DB is initialized\n")
+                        init_result = True
+                        break
+                else:
+                    break
             output = process.stderr.readline()
             print(output)
             if output:
                 docker_output += output
-                if (docker_output.count(eval(workload_name.upper()+"_TESTDB_VERIFY")) == 2):
-                    print(f"{workload_name.upper()} DB is initialized\n")
-                    init_result = True
-                    break
-                elif time.time() > timeout:
-                    break
+                if "mysql" in workload_name or "mariadb" in workload_name:
+                    if (docker_output.count(eval(workload_name.upper()+"_TESTDB_VERIFY")) == 2):
+                        print(f"{workload_name.upper()} DB is initialized\n")
+                        init_result = True
+                        break
+                    elif time.time() > timeout:
+                        break
     finally:
         process.stdout.close()
         process.stderr.close()
         kill(process.pid)
     if init_result:
-        run_subprocess(STOP_TEST_DB_CMD, CURATED_APPS_PATH)
+        if "mysql" in workload_name or "mariadb" in workload_name:
+            run_subprocess(STOP_TEST_DB_CMD, CURATED_APPS_PATH)
         if "mariadb" in workload_name:
             run_subprocess(MARIADB_CHMOD, CURATED_APPS_PATH)
     return init_result
@@ -163,7 +175,10 @@ def encrypt_db(workload_name):
 
 def execute_pre_workload_setup(test_config_dict):
     workload_name = get_workload_name(test_config_dict["docker_image"])
-    if "mysql" in workload_name or "mariadb" in workload_name:
+    if "mysql" in workload_name or "mariadb" in workload_name \
+        or "openvino-model-server" in workload_name:
+        if "openvino-model-server" in workload_name:
+            workload_name = "ovms"
         init_result = init_db(workload_name)
         if init_result == False:
             sys.exit("DB initialization failed")

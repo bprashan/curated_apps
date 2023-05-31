@@ -64,7 +64,7 @@ MYSQL_INIT_DB_CMD      = f"docker run --rm --net=host --name init_test_db --user
 STOP_TEST_DB_CMD      = f"docker stop init_test_db"
 MYSQL_TEST_ENCRYPTION_KEY    = f"dd if=/dev/urandom bs=16 count=1 > workloads/mysql/base_image_helper/encryption_key"
 
-CLEANUP_ENCRYPTED_DB   = f"sudo rm -rf /var/run/test_db_encrypted"
+CLEANUP_ENCRYPTED_DB   = f"sudo rm -rf /var/run/test_db_encrypted && sudo rm -rf /var/run/model_encrypted"
 MYSQL_ENCRYPT_DB_CMD         = f"sudo gramine-sgx-pf-crypt encrypt -w workloads/mysql/base_image_helper/encryption_key \
                             -i workloads/mysql/test_db -o /var/run/test_db_encrypted"
 MYSQL_CLIENT_INSTALL_CMD = f"sudo apt-get -y install mysql-client"
@@ -85,3 +85,11 @@ MARIADB_ENCRYPT_DB_CMD   = f"sudo gramine-sgx-pf-crypt encrypt -w workloads/mari
 MARIADB_CHMOD         = f"sudo chown -R $USER:$USER $PWD/workloads/mariadb/test_db"
 MYSQL_TESTDB_VERIFY   = f"/usr/sbin/mysqld: ready for connections"
 MARIADB_TESTDB_VERIFY = f"mariadbd: ready for connections"
+OVMS_INIT_PATH        = os.path.join(CURATED_APPS_PATH, "workloads/openvino-model-server")
+OVMS_TESTDB_PATH      = os.path.join(CURATED_APPS_PATH, "workloads/openvino-model-server/test_model")
+OVMS_CREATE_TESTDB_CMD = f"mkdir -p {OVMS_TESTDB_PATH}"
+OVMS_INIT_DB_CMD      = f"curl --create-dirs https://storage.openvinotoolkit.org/repositories/open_model_zoo/2022.1/models_bin/2/face-detection-retail-0004/FP32/face-detection-retail-0004.xml https://storage.openvinotoolkit.org/repositories/open_model_zoo/2022.1/models_bin/2/face-detection-retail-0004/FP32/face-detection-retail-0004.bin \
+                         -o workloads/openvino-model-server/test_model/1/face-detection-retail-0004.xml -o workloads/openvino-model-server/test_model/1/face-detection-retail-0004.bin"
+OVMS_TEST_ENCRYPTION_KEY = f"dd if=/dev/urandom bs=16 count=1 > workloads/openvino-model-server/base_image_helper/encryption_key"
+OVMS_ENCRYPT_DB_CMD   = f"sudo gramine-sgx-pf-crypt encrypt -w workloads/openvino-model-server/base_image_helper/encryption_key \
+                        -i workloads/openvino-model-server/test_model -o /var/run/model_encrypted"

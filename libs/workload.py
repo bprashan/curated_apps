@@ -53,3 +53,24 @@ def run_mysql_client():
     if re.findall(r"^User(?s:.*?)^root*", mysql_output, re.M):
         result = True
     return result
+
+def run_ovms_client():
+    result = False
+    inference_script_path = os.path.join(FRAMEWORK_PATH, "libs", "run_ovms_inference.sh")
+    client_utils_path = os.path.join(FRAMEWORK_PATH, "workload_files", "client_utils.py")
+    image_path = os.path.join(FRAMEWORK_PATH, "workload_files", "images")
+    face_detection_file_path = os.path.join(FRAMEWORK_PATH, "workload_files", "face_detection.py")
+    copy_client_utils = utils.run_subprocess(f"cp -f {client_utils_path} .", OVMS_INIT_PATH)
+    copy_face_detection_file = utils.run_subprocess(f"cp -f {face_detection_file_path} .", OVMS_INIT_PATH)
+    copy_script_output = utils.run_subprocess(f"cp -f {inference_script_path} .", OVMS_INIT_PATH)
+    chmod_file = utils.run_subprocess(f"chmod +x face_detection.py run_ovms_inference.sh", OVMS_INIT_PATH)
+    images_folder_copy = utils.run_subprocess(f"cp -rf {image_path} .", OVMS_INIT_PATH)
+    inference_output = utils.run_subprocess(f"/bin/bash run_ovms_inference.sh", OVMS_INIT_PATH)
+    print(inference_output)
+    inference_result = re.findall(r'Iteration 1; Processing time: \d+.\d+ ms; speed \d+.\d+ fps', inference_output)
+    print(inference_result)
+    if inference_result:
+        result = True
+    return result
+
+

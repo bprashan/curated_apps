@@ -113,13 +113,6 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    @pytest.mark.jenkins
-    @pytest.mark.bash
-    @pytest.mark.bash_non_attestation
-    def test_bash_20_04_version(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
     def test_commentary_sequence(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result

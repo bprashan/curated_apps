@@ -87,18 +87,13 @@ test_redis_ev_invalid_input_2:
   distro: 4
 
 test_bash_default:
-  docker_image: bash bash-test:latest
+  docker_image: bash ubuntu_20_04-bash:latest
   create_local_image: y
   runtime_variable_list: -e APP_NAME="Curated Apps"
   workload_result: "Curated Apps"
+  distro: 2
 
 test_bash_runtime_args:
-  docker_image: bash bash-test:latest
-  create_local_image: y
-  runtime_args_text: free
-  distro: 1
-
-test_bash_20_04_version:
   docker_image: bash ubuntu_20_04-bash:latest
   distro: 2
   create_local_image: y

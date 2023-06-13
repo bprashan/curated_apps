@@ -90,8 +90,6 @@ def data_pre_processing_for_verifier_image(test_config_dict, end_test_key_str):
 
 def bash_setup(docker_image):
     shutil.copytree("data/bash", BASH_PATH)
-    if "ubuntu_20_04" in docker_image:
-        utils.update_file_contents(UBUNTU_18_04, UBUNTU_20_04, BASH_DOCKERFILE)
     if os.environ["SETUP_MACHINE"] == "Azure Linux Agent":
         utils.update_file_contents(ENV_PROXY_STRING, '', BASH_DOCKERFILE)
         utils.update_file_contents(ENV_PROXY_STRING, '', BASH_GSC_DOCKERFILE)

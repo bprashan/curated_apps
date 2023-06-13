@@ -121,23 +121,26 @@ test_pytorch_with_attestation_invalid_encryption_key:
   verifier_error: "[error] encryption key from /keys/invalid_wrap-key is not 16B in size"
 
 test_bash_with_test_attestation:
-  docker_image: bash bash-test:latest
+  docker_image: bash ubuntu_20_04-bash:latest
   create_local_image: y
   runtime_variable_list: -e APP_NAME="Curated Apps"
   workload_result: "Curated Apps"
   attestation: test
+  distro: 2
 
 test_bash_with_attestation:
-  docker_image: bash bash-test:latest
+  docker_image: bash ubuntu_20_04-bash:latest
   create_local_image: y
   runtime_variable_list: -e APP_NAME="Curated Apps"
   workload_result: "Curated Apps"
+  distro: 2
 
 test_bash_attestation_without_verifier_image:
-  docker_image: bash bash-test:latest
+  docker_image: bash ubuntu_20_04-bash:latest
   create_local_image: y
   verifier_run: False
   workload_result: "secret_provision_start: Secret Provisioning could not connect to any of the servers specified in SECRET_PROVISION_SERVERS"
+  distro: 2
 
 test_sklearn_with_attestation:
   docker_image: sklearn sklearn-base:latest

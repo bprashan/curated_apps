@@ -13,11 +13,15 @@ default_input_args:
   end:
 
 test_redis_with_attestation:
+  docker_image: redis redis:7.0.0
+  distro: 4
+
+test_redis_latest_image_with_attestation:
   docker_image: redis redis:latest
   distro: 4
 
 test_redis_with_test_attestation:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   attestation: test
   distro: 4
 
@@ -27,12 +31,12 @@ test_redis_with_attestation_local_image:
   distro: 4
 
 test_redis_with_attestation_runtime_variables:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   runtime_variable_list: -e name="curator_app" -e version="1.2"
   distro: 4
 
 test_redis_with_attestation_end_test_ssl_path:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   ssl_path: test_config/empty_ssl_folder
   expected_output_console: "One or more files does not exist at verifier/ssl/"
   end_test: attestation
@@ -40,7 +44,7 @@ test_redis_with_attestation_end_test_ssl_path:
   distro: 4
 
 test_redis_with_attestation_ssl_server_crt:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   ssl_path: test_config/ca_cert_folder
   end_test: attestation
   expected_output_console: "One or more files does not exist at verifier/ssl/"
@@ -48,7 +52,7 @@ test_redis_with_attestation_ssl_server_crt:
   distro: 4
 
 test_redis_with_attestation_ssl_server_key:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   ssl_path: test_config/wo_server_key
   end_test: ssl_path
   expected_output_console: "One or more files does not exist at verifier/ssl/"
@@ -56,7 +60,7 @@ test_redis_with_attestation_ssl_server_key:
   distro: 4
 
 test_redis_with_attestation_wo_ssl:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   ssl_path: ''
   end_test: attestation
   expected_output_console: "One or more files does not exist at verifier/ssl/"

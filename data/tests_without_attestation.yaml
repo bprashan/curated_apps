@@ -13,11 +13,11 @@ default_input_args:
   docker_flags: --rm
 
 test_redis_default:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   distro: 4
 
 test_redis_default_with_debug:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   debug_mode: y
   distro: 4
 
@@ -28,33 +28,33 @@ test_redis_unknown_docker_image:
   end_test: signing_key_path
 
 test_redis_test_option:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   test_option: y
 
 test_redis_with_test_sign_key:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   signing_key_path : test
   distro: 4
 
 test_redis_with_test_sign_key_debug:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   signing_key_path : test
   debug_mode: y
   distro: 4
 
 test_redis_with_runtime_variables:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   runtime_variable_list: -e name="curator_app" -e version="1.2"
   distro: 4
 
 test_redis_empty_test_key:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   signing_key_path : test_config/empty-key
   expected_output_infile: "unable to load Private Key"
   distro: 4
 
 test_redis_wrong_key_path:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   signing_key_path : no_test_key
   end_test: signing_key_path
   expected_screen: signing_page
@@ -62,7 +62,7 @@ test_redis_wrong_key_path:
   distro: 4
 
 test_redis_ra_wrong_option:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   attestation: k
   end_test: attestation
   expected_screen: attestation_page
@@ -70,19 +70,19 @@ test_redis_ra_wrong_option:
   distro: 4
 
 test_redis_ev_invalid_input_1:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   runtime_variable_list: -e name="Xyz" -e -e age="20"
   distro: 4
 
 test_redis_ev_dict:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   runtime_variable_list: {name="Xyz",age="20"}
   expected_screen: docker_flags
   expected_output_console: 'Invalid string specified'
   distro: 4
 
 test_redis_ev_invalid_input_2:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   runtime_variable_list: -e name="Xyz" -e age=
   distro: 4
 
@@ -100,19 +100,19 @@ test_bash_runtime_args:
   runtime_args_text: free
 
 test_commentary_sequence:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   expected_screen: signing_page
   expected_output_console: "1. Distro selection(.*)2. Command-line arguments(.*)3. Environment variables(.*)4. Additional docker run flags(.*)5. Encrypted files and key provisioning(.*)6. Remote Attestation(.*)7. Enclave signing(.*)8. Generation of the final curated images(.*)9. Generation of docker run commands"
   end_test: signing_key_path
 
 test_redis_protected_signing_key:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   signing_key_path: test_config/protected-enclave-key.pem
   signing_key_password: test@123
   distro: 4
 
 test_redis_signing_key_no_input:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   signing_key_path:
   expected_screen: signing_page
   expected_output_console: "Please provide a valid input"
@@ -120,7 +120,7 @@ test_redis_signing_key_no_input:
   distro: 4
 
 test_redis_with_sign_key_special_character:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   signing_key_path : .
   expected_screen: signing_page
   expected_output_console: "Error: . file does not exist"
@@ -176,13 +176,13 @@ test_tfserving_half_plus_two:
   distro: 2
 
 test_redis_docker_flags:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   docker_flags: --cidfile="container_id.log"
   distro: 4
   flag_validation: --cidfile="container_id.log"
 
 test_redis_docker_invalid_flag_string:
-  docker_image: redis redis:latest
+  docker_image: redis redis:7.0.0
   end_test: encrypted_files_path
   expected_screen: encryption_key_page
   docker_flags: "--name docker_container, --net=host"

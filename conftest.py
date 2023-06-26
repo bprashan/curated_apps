@@ -22,12 +22,13 @@ def curated_setup():
     update_env_variables()
 
 def update_env_variables():
-    if os.environ["gramine_commit"]:
-        update_gramine_branch(os.environ["gramine_commit"])
+    if os.environ["gramine_commit"] or os.environ["gramine_repo"]:
+        update_gramine_branch(os.environ["gramine_repo"], os.environ["gramine_commit"])
     if os.environ["gsc_repo"] or os.environ["gsc_commit"]:
         update_gsc(os.environ["gsc_commit"], os.environ["gsc_repo"])
 
 def print_env_variables():
+    os.environ["gramine_repo"] = os.environ.get("gramine_repo", "")
     os.environ["gramine_commit"] = os.environ.get("gramine_commit", "")
     os.environ["gsc_repo"]       = os.environ.get("gsc_repo", "")
     os.environ["gsc_commit"]     = os.environ.get("gsc_commit", "")
@@ -37,6 +38,7 @@ def print_env_variables():
     os.environ["rebase_contrib_branch"] = os.environ.get("rebase_contrib_branch", "")
     print("\n\n############################################################################")
     print("Printing the environment variables")
+    print("Gramine Repo: ", os.environ["gramine_repo"])
     print("Gramine Commit: ", os.environ["gramine_commit"])
     print("GSC Repo:       ", os.environ["gsc_repo"])
     print("GSC Commit:     ", os.environ["gsc_commit"])
@@ -51,16 +53,20 @@ def copy_repo():
     utils.run_subprocess("sudo rm -rf {}".format(REPO_PATH))
     utils.run_subprocess("cp -rf {} {}".format(ORIG_CURATED_PATH, REPO_PATH))
 
-def update_gramine_branch(commit):
-    commit_str = f" && cd gramine && git checkout {commit} && cd .."
+def update_gramine_branch(gramine_repo="", gramine_commit=""):
+    if gramine_repo == "": gramine_repo=GRAMINE_DEFAULT_REPO
+    if gramine_commit == "": gramine_commit="v1.5"
+    commit_str = f" && cd gramine && git checkout {gramine_commit} && cd .."
     copy_cmd = "cp config.yaml.template config.yaml"
-    if not "v1" in commit:
+    gramine_string = GRAMINE_DEPTH_STR + GRAMINE_DEFAULT_REPO
+    if not "v1" in gramine_commit:
         utils.run_subprocess(f"cp -rf helper-files/{VERIFIER_TEMPLATE} {VERIFIER_DOCKERFILE}")
-    utils.update_file_contents(copy_cmd, copy_cmd + "\nsed -i 's|Branch:.*master|Branch: \"{}|' config.yaml".format(commit), CURATION_SCRIPT)
-    utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(GRAMINE_DEPTH_STR, "") + commit_str,
-            VERIFIER_DOCKERFILE)
-    utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(GRAMINE_DEPTH_STR, "") + commit_str,
-        os.path.join(ORIG_BASE_PATH, "verifier", "helper.sh"))
+    utils.update_file_contents(copy_cmd,
+                               copy_cmd + "\nsed -i 's|Branch:.*master|Branch: \"{}|' config.yaml".format(gramine_commit), CURATION_SCRIPT)
+    utils.update_file_contents(copy_cmd,
+                               copy_cmd + "\nsed -i 's|{}|{}|' config.yaml".format(GRAMINE_DEFAULT_REPO, gramine_repo), CURATION_SCRIPT)
+    utils.update_file_contents(gramine_string, gramine_repo + commit_str,
+                                   VERIFIER_DOCKERFILE)
 
 def update_gsc(gsc_commit='', gsc_repo=''):
     if gsc_commit: checkout_str = f" && cd gsc && git checkout {gsc_commit} && cd .."

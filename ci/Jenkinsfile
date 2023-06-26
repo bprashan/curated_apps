@@ -1,6 +1,7 @@
 properties([parameters([string(defaultValue: 'sanity', description: 'select the set of pytest to execute', name: 'run', trim: true),
 string(description: 'enter the specific pytest to execute', name: 'run_specific_test'),
-string(description: 'Provide either Gramine repo branch or tag, by default automation is assigned with v1.3.1 tag', name: 'gramine_commit', trim: true),
+string(description: 'If you want to change Gramine repo, provide it here', name: 'gramine_repo', trim: true),
+string(description: 'If you want to change Gramine commit, provide it here', name: 'gramine_commit', trim: true),
 string(description: 'If you want to change gsc repo, provide it here', name: 'gsc_repo', trim: true),
 string(description: 'If you want to change gsc commit, provide it here', name: 'gsc_commit', trim: true),
 string(description: 'If you want to change contrib repo, provide it here', name: 'contrib_repo', trim: true),

@@ -27,8 +27,6 @@ def write_to_log_file(tc_dict, output):
 def screen_verification(output):
     if "This application will provide step-by-step guidance" in output:
         return "home_page"
-    elif "Provide the Distro of your base image" in output:
-        return "distro_page"
     elif "Please provide path to your enclave signing key" in output:
         return "signing_page"
     elif "Please enter the passphrase for the signing key" in output:

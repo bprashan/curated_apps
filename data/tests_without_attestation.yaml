@@ -1,7 +1,6 @@
 ---
 default_input_args:
   start:
-  distro:
   azure_warning:
   signing_key_path: test_config/enclave-key.pem
   attestation:
@@ -14,12 +13,10 @@ default_input_args:
 
 test_redis_default:
   docker_image: redis redis:7.0.0
-  distro: 4
 
 test_redis_default_with_debug:
   docker_image: redis redis:7.0.0
   debug_mode: y
-  distro: 4
 
 test_redis_unknown_docker_image:
   docker_image: redis redis:unknown_version
@@ -34,24 +31,20 @@ test_redis_test_option:
 test_redis_with_test_sign_key:
   docker_image: redis redis:7.0.0
   signing_key_path : test
-  distro: 4
 
 test_redis_with_test_sign_key_debug:
   docker_image: redis redis:7.0.0
   signing_key_path : test
   debug_mode: y
-  distro: 4
 
 test_redis_with_runtime_variables:
   docker_image: redis redis:7.0.0
   runtime_variable_list: -e name="curator_app" -e version="1.2"
-  distro: 4
 
 test_redis_empty_test_key:
   docker_image: redis redis:7.0.0
   signing_key_path : test_config/empty-key
   expected_output_infile: "unable to load Private Key"
-  distro: 4
 
 test_redis_wrong_key_path:
   docker_image: redis redis:7.0.0
@@ -59,7 +52,6 @@ test_redis_wrong_key_path:
   end_test: signing_key_path
   expected_screen: signing_page
   expected_output_console: "no_test_key file does not exist."
-  distro: 4
 
 test_redis_ra_wrong_option:
   docker_image: redis redis:7.0.0
@@ -67,49 +59,42 @@ test_redis_ra_wrong_option:
   end_test: attestation
   expected_screen: attestation_page
   expected_output_console: "Invalid option specified"
-  distro: 4
 
 test_redis_ev_invalid_input_1:
   docker_image: redis redis:7.0.0
   runtime_variable_list: -e name="Xyz" -e -e age="20"
-  distro: 4
 
 test_redis_ev_dict:
   docker_image: redis redis:7.0.0
   runtime_variable_list: {name="Xyz",age="20"}
   expected_screen: docker_flags
   expected_output_console: 'Invalid string specified'
-  distro: 4
 
 test_redis_ev_invalid_input_2:
   docker_image: redis redis:7.0.0
   runtime_variable_list: -e name="Xyz" -e age=
-  distro: 4
 
 test_bash_default:
   docker_image: bash ubuntu_20_04-bash:latest
   create_local_image: y
   runtime_variable_list: -e APP_NAME="Curated Apps"
   workload_result: "Curated Apps"
-  distro: 2
 
 test_bash_runtime_args:
   docker_image: bash ubuntu_20_04-bash:latest
-  distro: 2
   create_local_image: y
   runtime_args_text: free
 
 test_commentary_sequence:
   docker_image: redis redis:7.0.0
   expected_screen: signing_page
-  expected_output_console: "1. Distro selection(.*)2. Command-line arguments(.*)3. Environment variables(.*)4. Additional docker run flags(.*)5. Encrypted files and key provisioning(.*)6. Remote Attestation(.*)7. Enclave signing(.*)8. Generation of the final curated images(.*)9. Generation of docker run commands"
+  expected_output_console: "1. Command-line arguments(.*)2. Environment variables(.*)3. Additional docker run flags(.*)4. Encrypted files and key provisioning(.*)5. Remote Attestation(.*)6. Enclave signing(.*)7. Generation of the final curated images(.*)8. Generation of docker run commands"
   end_test: signing_key_path
 
 test_redis_protected_signing_key:
   docker_image: redis redis:7.0.0
   signing_key_path: test_config/protected-enclave-key.pem
   signing_key_password: test@123
-  distro: 4
 
 test_redis_signing_key_no_input:
   docker_image: redis redis:7.0.0
@@ -117,7 +102,6 @@ test_redis_signing_key_no_input:
   expected_screen: signing_page
   expected_output_console: "Please provide a valid input"
   end_test: signing_key_path
-  distro: 4
 
 test_redis_with_sign_key_special_character:
   docker_image: redis redis:7.0.0
@@ -125,18 +109,15 @@ test_redis_with_sign_key_special_character:
   expected_screen: signing_page
   expected_output_console: "Error: . file does not exist"
   end_test: signing_key_path
-  distro: 4
 
 test_sklearn_default:
   docker_image: sklearn sklearn-base:latest
   create_local_image: y
-  distro: 4
 
 test_sklearn_default_with_debug:
   docker_image: sklearn sklearn-base:latest
   debug_mode: y
   create_local_image: y
-  distro: 4
 
 test_sklearn_test_option:
   docker_image: sklearn sklearn-base:latest
@@ -147,38 +128,32 @@ test_tfserving_default:
   docker_image: tensorflow-serving tf-serving-base:latest
   create_local_image: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
-  distro: 2
 
 test_tfserving_default_with_debug:
   docker_image: tensorflow-serving tf-serving-base:latest
   debug_mode: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
   create_local_image: y
-  distro: 2
 
 test_tfserving_test_option:
   docker_image: tensorflow-serving tf-serving-base:latest
   create_local_image: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
   test_option: y
-  distro: 2
 
 test_tfserving_mnist:
   docker_image: tensorflow-serving tf-serving-base:latest
   create_local_image: y
   runtime_args_text: --model_name="mnist" --model_base_path="/models/mnist"
-  distro: 2
 
 test_tfserving_half_plus_two:
   docker_image: tensorflow-serving tf-serving-base:latest
   create_local_image: y
   runtime_args_text: --model_name="half_plus_two" --model_base_path="/models/half_plus_two"
-  distro: 2
 
 test_redis_docker_flags:
   docker_image: redis redis:7.0.0
   docker_flags: --cidfile="container_id.log"
-  distro: 4
   flag_validation: --cidfile="container_id.log"
 
 test_redis_docker_invalid_flag_string:
@@ -187,7 +162,6 @@ test_redis_docker_invalid_flag_string:
   expected_screen: encryption_key_page
   docker_flags: "--name docker_container, --net=host"
   expected_output_console: 'Invalid string specified'
-  distro: 4
 
 test_pytorch_test_option:
   docker_image: pytorch pytorch-encrypted:latest
@@ -197,7 +171,6 @@ test_pytorch_test_option:
 test_pytorch_default:
   docker_image: pytorch pytorch-encrypted:latest
   create_local_image: y
-  distro: 2
   encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
 
@@ -208,7 +181,6 @@ test_mysql_default:
   encryption_key: workloads/mysql/base_image_helper/encryption_key
   encrypted_files_path: /var/run/test_db_encrypted
   pre_workload_setup: y
-  distro: 4
 
 test_mysql_test_option:
   docker_image: mysql mysql:8.0.32-debian
@@ -227,7 +199,6 @@ test_mysql_with_test_sign_key:
   encrypted_files_path: /var/run/test_db_encrypted
   pre_workload_setup: y
   signing_key_path : test
-  distro: 4
 
 test_mysql_default_with_debug:
   docker_image: mysql mysql:8.0.32-debian
@@ -237,7 +208,6 @@ test_mysql_default_with_debug:
   encrypted_files_path: /var/run/test_db_encrypted
   pre_workload_setup: y
   debug_mode: y
-  distro: 4
 
 test_mariadb_default:
   docker_image: mariadb mariadb:10.7
@@ -246,7 +216,6 @@ test_mariadb_default:
   encryption_key: workloads/mariadb/base_image_helper/encryption_key
   encrypted_files_path: /var/run/test_db_encrypted
   pre_workload_setup: y
-  distro: 2
 
 test_mariadb_test_option:
   docker_image: mariadb mariadb:10.7
@@ -265,7 +234,6 @@ test_mariadb_with_test_sign_key:
   encrypted_files_path: /var/run/test_db_encrypted
   pre_workload_setup: y
   signing_key_path : test
-  distro: 2
 
 test_mariadb_default_with_debug:
   docker_image: mariadb mariadb:10.7
@@ -275,32 +243,26 @@ test_mariadb_default_with_debug:
   encrypted_files_path: /var/run/test_db_encrypted
   pre_workload_setup: y
   debug_mode: y
-  distro: 2
 
 test_memcached_default:
   docker_image: memcached ubuntu/memcached:1.5-20.04_beta
-  distro: 2
 
 test_memcached_with_test_sign_key:
   docker_image: memcached ubuntu/memcached:1.5-20.04_beta
   signing_key_path : test
-  distro: 2
 
 test_memcached_with_test_sign_key_debug:
   docker_image: memcached ubuntu/memcached:1.5-20.04_beta
   signing_key_path : test
   debug_mode: y
-  distro: 2
 
 test_memcached_with_test_option:
   docker_image: memcached ubuntu/memcached:1.5-20.04_beta
   test_option: y
-  distro: 2
 
 test_memcached_default_with_debug:
   docker_image: memcached ubuntu/memcached:1.5-20.04_beta
   debug_mode: y
-  distro: 2
 
 test_ovms_default:
   docker_image: openvino-model-server openvino/model_server
@@ -309,7 +271,6 @@ test_ovms_default:
   encryption_key: workloads/openvino-model-server/base_image_helper/encryption_key
   encrypted_files_path: /var/run/model_encrypted
   pre_workload_setup: y
-  distro: 2
 
 test_ovms_with_test_sign_key:
   docker_image: openvino-model-server openvino/model_server
@@ -319,7 +280,6 @@ test_ovms_with_test_sign_key:
   encrypted_files_path: /var/run/model_encrypted
   pre_workload_setup: y
   signing_key_path : test
-  distro: 2
 
 test_ovms_with_test_sign_key_debug:
   docker_image: openvino-model-server openvino/model_server
@@ -330,7 +290,6 @@ test_ovms_with_test_sign_key_debug:
   pre_workload_setup: y
   signing_key_path : test
   debug_mode: y
-  distro: 2
 
 test_ovms_with_test_option:
   docker_image: openvino-model-server openvino/model_server
@@ -340,7 +299,6 @@ test_ovms_with_test_option:
   encrypted_files_path: /var/run/model_encrypted
   pre_workload_setup: y
   test_option: y
-  distro: 2
 
 test_ovms_default_with_debug:
   docker_image: openvino-model-server openvino/model_server
@@ -350,4 +308,3 @@ test_ovms_default_with_debug:
   encrypted_files_path: /var/run/model_encrypted
   pre_workload_setup: y
   debug_mode: y
-  distro: 2

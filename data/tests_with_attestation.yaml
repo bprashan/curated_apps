@@ -1,6 +1,5 @@
 default_input_args: 
   start:
-  distro:
   azure_warning:
   signing_key_path: test_config/enclave-key.pem
   attestation: done
@@ -14,26 +13,21 @@ default_input_args:
 
 test_redis_with_attestation:
   docker_image: redis redis:7.0.0
-  distro: 4
 
 test_redis_latest_image_with_attestation:
   docker_image: redis redis:latest
-  distro: 4
 
 test_redis_with_test_attestation:
   docker_image: redis redis:7.0.0
   attestation: test
-  distro: 4
 
 test_redis_with_attestation_local_image:
   docker_image: redis redis:7.0.0
   create_local_image: y
-  distro: 4
 
 test_redis_with_attestation_runtime_variables:
   docker_image: redis redis:7.0.0
   runtime_variable_list: -e name="curator_app" -e version="1.2"
-  distro: 4
 
 test_redis_with_attestation_end_test_ssl_path:
   docker_image: redis redis:7.0.0
@@ -41,7 +35,6 @@ test_redis_with_attestation_end_test_ssl_path:
   expected_output_console: "One or more files does not exist at verifier/ssl/"
   end_test: attestation
   expected_screen: attestation_page
-  distro: 4
 
 test_redis_with_attestation_ssl_server_crt:
   docker_image: redis redis:7.0.0
@@ -49,7 +42,6 @@ test_redis_with_attestation_ssl_server_crt:
   end_test: attestation
   expected_output_console: "One or more files does not exist at verifier/ssl/"
   expected_screen: attestation_page
-  distro: 4
 
 test_redis_with_attestation_ssl_server_key:
   docker_image: redis redis:7.0.0
@@ -57,7 +49,6 @@ test_redis_with_attestation_ssl_server_key:
   end_test: ssl_path
   expected_output_console: "One or more files does not exist at verifier/ssl/"
   expected_screen: attestation_page
-  distro: 4
 
 test_redis_with_attestation_wo_ssl:
   docker_image: redis redis:7.0.0
@@ -65,11 +56,9 @@ test_redis_with_attestation_wo_ssl:
   end_test: attestation
   expected_output_console: "One or more files does not exist at verifier/ssl/"
   expected_screen: attestation_page
-  distro: 4
 
 test_pytorch_with_attestation_no_encryption_key:
   docker_image: pytorch pytorch-encrypted:latest
-  distro: 2
   create_local_image: y
   encryption_key: ''
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
@@ -78,7 +67,6 @@ test_pytorch_with_attestation_no_encryption_key:
   expected_screen: encryption_key_page
 
 test_pytorch_with_attestation_encrypted_image:
-  distro: 2
   docker_image: pytorch pytorch-encrypted:latest
   create_local_image: y
   encryption_key: workloads/pytorch/base_image_helper/encryption_key
@@ -86,7 +74,6 @@ test_pytorch_with_attestation_encrypted_image:
 
 test_pytorch_with_test_attestation:
   docker_image: pytorch pytorch-encrypted:latest
-  distro: 2
   create_local_image: y
   attestation: test
   encryption_key: workloads/pytorch/base_image_helper/encryption_key
@@ -94,7 +81,6 @@ test_pytorch_with_test_attestation:
 
 test_pytorch_with_attestation_wrong_encrypted_list:
   docker_image: pytorch pytorch-encrypted:latest
-  distro: 2
   create_local_image: y
   encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: input.jpg:alexnet-pretrained.pt:result.txt
@@ -102,7 +88,6 @@ test_pytorch_with_attestation_wrong_encrypted_list:
 
 test_pytorch_with_attestation_invalid_encrypted_files:
   docker_image: pytorch pytorch-encrypted:latest
-  distro: 2
   create_local_image: y
   encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: text-file
@@ -110,7 +95,6 @@ test_pytorch_with_attestation_invalid_encrypted_files:
 
 test_pytorch_with_attestation_encrypted_file_invalid_format:
   docker_image: pytorch pytorch-encrypted:latest
-  distro: 2
   create_local_image: y
   encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: classes.txt;input.jpg;alexnet-pretrained.pt;result.txt
@@ -118,7 +102,6 @@ test_pytorch_with_attestation_encrypted_file_invalid_format:
 
 test_pytorch_with_attestation_invalid_encryption_key:
   docker_image: pytorch pytorch-encrypted:latest
-  distro: 2
   create_local_image: y
   encryption_key: test_config/invalid_wrap-key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
@@ -130,58 +113,49 @@ test_bash_with_test_attestation:
   runtime_variable_list: -e APP_NAME="Curated Apps"
   workload_result: "Curated Apps"
   attestation: test
-  distro: 2
 
 test_bash_with_attestation:
   docker_image: bash ubuntu_20_04-bash:latest
   create_local_image: y
   runtime_variable_list: -e APP_NAME="Curated Apps"
   workload_result: "Curated Apps"
-  distro: 2
 
 test_bash_attestation_without_verifier_image:
   docker_image: bash ubuntu_20_04-bash:latest
   create_local_image: y
   verifier_run: False
   workload_result: "secret_provision_start: Secret Provisioning could not connect to any of the servers specified in SECRET_PROVISION_SERVERS"
-  distro: 2
 
 test_sklearn_with_attestation:
   docker_image: sklearn sklearn-base:latest
   create_local_image: y
-  distro: 4
 
 test_sklearn_with_test_attestation:
   docker_image: sklearn sklearn-base:latest
   attestation: test
   create_local_image: y
-  distro: 4
 
 test_tfserving_with_attestation_ubuntu18_04:
   docker_image: tensorflow-serving tf-serving-base:latest
   create_local_image: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
-  distro: 1
 
 test_tfserving_with_test_attestation_ubuntu18_04:
   docker_image: tensorflow-serving tf-serving-base:latest
   attestation: test
   create_local_image: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
-  distro: 1
 
 test_tfserving_with_attestation_ubuntu20_04:
   docker_image: tensorflow-serving tf-serving-base:latest
   create_local_image: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
-  distro: 2
 
 test_tfserving_with_test_attestation_ubuntu20_04:
   docker_image: tensorflow-serving tf-serving-base:latest
   attestation: test
   create_local_image: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
-  distro: 2
 
 test_pytorch_default_with_debug:
   docker_image: pytorch pytorch-encrypted:latest
@@ -189,7 +163,6 @@ test_pytorch_default_with_debug:
   debug_mode: y
   encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
-  distro: 2
 
 test_mysql_with_attestation:
   docker_image: mysql mysql:8.0.32-debian
@@ -198,7 +171,6 @@ test_mysql_with_attestation:
   encryption_key: workloads/mysql/base_image_helper/encryption_key
   encrypted_files_path: /var/run/test_db_encrypted
   pre_workload_setup: y
-  distro: 4
 
 test_mysql_with_test_attestation:
   docker_image: mysql mysql:8.0.32-debian
@@ -208,7 +180,6 @@ test_mysql_with_test_attestation:
   encrypted_files_path: /var/run/test_db_encrypted
   pre_workload_setup: y
   attestation: test
-  distro: 4
 
 test_mariadb_with_attestation:
   docker_image: mariadb mariadb:10.7
@@ -217,7 +188,6 @@ test_mariadb_with_attestation:
   encryption_key: workloads/mariadb/base_image_helper/encryption_key
   encrypted_files_path: /var/run/test_db_encrypted
   pre_workload_setup: y
-  distro: 2
 
 test_mariadb_with_test_attestation:
   docker_image: mariadb mariadb:10.7
@@ -227,21 +197,17 @@ test_mariadb_with_test_attestation:
   encrypted_files_path: /var/run/test_db_encrypted
   pre_workload_setup: y
   attestation: test
-  distro: 2
 
 test_memcached_with_attestation:
   docker_image: memcached ubuntu/memcached:1.5-20.04_beta
-  distro: 2
 
 test_memcached_with_test_attestation:
   docker_image: memcached ubuntu/memcached:1.5-20.04_beta
   attestation: test
-  distro: 2
 
 test_memcached_attestation_with_debug:
   docker_image: memcached ubuntu/memcached:1.5-20.04_beta
   debug_mode: y
-  distro: 2
 
 test_ovms_with_attestation:
   docker_image: openvino-model-server openvino/model_server
@@ -250,7 +216,6 @@ test_ovms_with_attestation:
   encryption_key: workloads/openvino-model-server/base_image_helper/encryption_key
   encrypted_files_path: /var/run/model_encrypted
   pre_workload_setup: y
-  distro: 2
 
 test_ovms_with_test_attestation:
   docker_image: openvino-model-server openvino/model_server
@@ -260,7 +225,6 @@ test_ovms_with_test_attestation:
   encrypted_files_path: /var/run/model_encrypted
   pre_workload_setup: y
   attestation: test
-  distro: 2
 
 test_ovms_attestation_with_debug:
   docker_image: openvino-model-server openvino/model_server
@@ -270,4 +234,3 @@ test_ovms_attestation_with_debug:
   encrypted_files_path: /var/run/model_encrypted
   pre_workload_setup: y
   debug_mode: y
-  distro: 2

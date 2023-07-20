@@ -31,16 +31,16 @@ SKLEARN_HELPER_CMD     = f"bash {SKLEARN_HELPER_PATH}/helper.sh"
 TFSERVING_HELPER_PATH    = os.path.join(WORKLOADS_PATH, "tensorflow-serving", "base_image_helper")
 TFSERVING_HELPER_CMD     = f"bash {TFSERVING_HELPER_PATH}/helper.sh"
 BASH_PATH              = os.path.join(WORKLOADS_PATH, "bash")
-SCREEN_LIST            = ["home_page", "distro_page", "runtime_page", "environment_page", "flags_page", "encrypted_page", "encryption_key_page",
+SCREEN_LIST            = ["home_page", "runtime_page", "environment_page", "flags_page", "encrypted_page", "encryption_key_page",
                             "attestation_page", "signing_page", "signing_key_password", "verifier_page", "final_page"]
 BASH_DOCKERFILE        = os.path.join(WORKLOADS_PATH, "bash", "Dockerfile")
 BASH_GSC_DOCKERFILE    = os.path.join(WORKLOADS_PATH, "bash", "bash-gsc.dockerfile.template")
 ENV_PROXY_STRING       = 'ENV http_proxy "http://proxy-dmz.intel.com:911"\nENV https_proxy "http://proxy-dmz.intel.com:912"\n'
 AZURE_DCAP             = "RUN env DEBIAN_FRONTEND=noninteractive apt-get install -y az-dcap-client\n"
 DCAP_LIBRARY           = "\nRUN apt install -y libsgx-dcap-default-qpl libsgx-dcap-default-qpl-dev\nCOPY verifier/sgx_default_qcnl.conf  /etc/sgx_default_qcnl.conf\n"
-DCAP_ORD_LIST          = ['start', 'azure_warning', 'distro', 'runtime_args_text', 'runtime_variable_list', 'docker_flags', 'encrypted_files_path', 'encryption_key', 
+DCAP_ORD_LIST          = ['start', 'azure_warning', 'runtime_args_text', 'runtime_variable_list', 'docker_flags', 'encrypted_files_path', 'encryption_key',
                             'attestation', 'signing_key_path', 'signing_key_password', 'end']
-AZURE_ORD_LIST         = ['start', 'distro', 'runtime_args_text', 'runtime_variable_list', 'docker_flags', 'encrypted_files_path', 'encryption_key', 
+AZURE_ORD_LIST         = ['start', 'runtime_args_text', 'runtime_variable_list', 'docker_flags', 'encrypted_files_path', 'encryption_key',
                             'attestation', 'signing_key_path', 'signing_key_password', 'end']
 UBUNTU_18_04           = "From ubuntu:18.04"
 UBUNTU_20_04           = "From ubuntu:20.04"

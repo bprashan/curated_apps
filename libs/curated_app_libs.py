@@ -236,7 +236,7 @@ def run_workload_client(test_config_dict):
     elif "tensorflow-serving" in d_image:
         out = workload.run_tensorflow_serving_client(test_config_dict)
     elif "mysql" in d_image or "mariadb" in d_image:
-        out = workload.run_mysql_client()
+        out = workload.run_mysql_client(d_image)
     elif "openvino-model-server" in d_image:
         out = workload.run_ovms_client()
     return out

@@ -129,13 +129,14 @@ def init_db(workload_name):
     init_result = False
     timeout = time.time() + 60*2
     try:
-        mkdir_output = run_subprocess(eval(workload_name.upper()+"_CREATE_TESTDB_CMD"), CURATED_APPS_PATH)
+        create_test_db = "mkdir -p " + eval(workload_name.upper() + "_TESTDB_PATH")
+        mkdir_output = run_subprocess(create_test_db, CURATED_APPS_PATH)
         print(mkdir_output)
         process = subprocess.Popen(eval(workload_name.upper()+"_INIT_DB_CMD"), cwd=CURATED_APPS_PATH, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
         print(f"Initializing {workload_name.upper()} DB")
         while True:
             if process.poll() is not None and output == '':
-                if "ovms" in workload_name:
+                if "openvino" in workload_name:
                     time.sleep(30)
                     if os.path.exists(os.path.join(CURATED_APPS_PATH, \
                         "workloads/openvino-model-server/test_model/1/face-detection-retail-0004.bin")) and \
@@ -169,16 +170,26 @@ def init_db(workload_name):
     return init_result
 
 def encrypt_db(workload_name):
-    output = run_subprocess(eval(workload_name.upper()+"_TEST_ENCRYPTION_KEY"), CURATED_APPS_PATH)
-    output = run_subprocess(CLEANUP_ENCRYPTED_DB, CURATED_APPS_PATH)
-    encryption_output = run_subprocess(eval(workload_name.upper()+"_ENCRYPT_DB_CMD"), CURATED_APPS_PATH)
+    if (workload_name in ["mariadb", "openvino-model-server"]):
+        run_subprocess(DB_MOUNT + eval(workload_name.upper()+"_ENC_PATH"), CURATED_APPS_PATH)
+    enc_key_path = "workloads/" + workload_name + "/base_image_helper/encryption_key"
+    enc_key = "dd if=/dev/urandom bs=16 count=1 > " + enc_key_path
+    encrypt_db_cmd = "gramine-sgx-pf-crypt encrypt -w " + enc_key_path + " -i " + \
+                        eval(workload_name.upper()+"_TESTDB_PATH") + " -o " + \
+                        eval(workload_name.upper()+"_ENC_PATH")
+    cleanup_db = "rm -rf " + eval(workload_name.upper()+"_ENC_PATH") + "/*"
+
+    if workload_name == "mysql":
+        encrypt_db_cmd = "sudo " + encrypt_db_cmd
+        cleanup_db = "sudo " + cleanup_db
+
+    run_subprocess(enc_key, CURATED_APPS_PATH)
+    run_subprocess(cleanup_db, CURATED_APPS_PATH)
+    run_subprocess(encrypt_db_cmd, CURATED_APPS_PATH)
 
 def execute_pre_workload_setup(test_config_dict):
     workload_name = get_workload_name(test_config_dict["docker_image"])
-    if "mysql" in workload_name or "mariadb" in workload_name \
-        or "openvino-model-server" in workload_name:
-        if "openvino-model-server" in workload_name:
-            workload_name = "ovms"
+    if workload_name in ["mysql", "mariadb", "openvino-model-server"]:
         init_result = init_db(workload_name)
         if init_result == False:
             sys.exit("DB initialization failed")

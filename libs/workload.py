@@ -42,13 +42,19 @@ def run_tensorflow_serving_client(test_config_dict):
     print(response)
     return result
 
-def run_mysql_client():
+def run_mysql_client(workload):
     result = False
     install_my_sql_client = utils.run_subprocess(MYSQL_CLIENT_INSTALL_CMD)
     if os.path.isfile(MYSQL_INPUT_FILE):
         utils.run_subprocess(f"rm -rf {MYSQL_INPUT_FILE}")
     utils.run_subprocess(MYSQL_INPUT_TXT)
-    mysql_output = utils.run_subprocess(MYSQL_CLIENT_CMD)
+    client_cmd = MYSQL_CLIENT_CMD
+    if "mariadb" in workload:
+        with open(os.path.join(CURATED_APPS_PATH, MARIADB_LOGS)) as fd:
+            gen_pwd = re.search("GENERATED ROOT PASSWORD(.*)", fd.read()).group().split(": ")[1]
+            client_cmd += f"-p'{gen_pwd.strip()}'"
+    client_cmd += f" < {MYSQL_INPUT_FILE}"
+    mysql_output = utils.run_subprocess(client_cmd)
     print(mysql_output)
     if re.findall(r"^User(?s:.*?)^root*", mysql_output, re.M):
         result = True

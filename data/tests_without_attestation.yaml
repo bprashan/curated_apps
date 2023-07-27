@@ -211,36 +211,36 @@ test_mysql_default_with_debug:
 
 test_mariadb_default:
   docker_image: mariadb mariadb:10.7
-  runtime_args_text: --datadir /var/run/test_db_encrypted
-  docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
+  runtime_args_text: --datadir /mnt/tmpfs/test_db_encrypted
+  docker_flags: -v /mnt/tmpfs/test_db_encrypted:/mnt/tmpfs/test_db_encrypted
   encryption_key: workloads/mariadb/base_image_helper/encryption_key
-  encrypted_files_path: /var/run/test_db_encrypted
+  encrypted_files_path: /mnt/tmpfs/test_db_encrypted
   pre_workload_setup: y
 
 test_mariadb_test_option:
   docker_image: mariadb mariadb:10.7
-  runtime_args_text: --datadir /var/run/test_db_encrypted
-  docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
+  runtime_args_text: --datadir /mnt/tmpfs/test_db_encrypted
+  docker_flags: -v /mnt/tmpfs/test_db_encrypted:/mnt/tmpfs/test_db_encrypted
   encryption_key: workloads/mariadb/base_image_helper/encryption_key
-  encrypted_files_path: /var/run/test_db_encrypted
+  encrypted_files_path: /mnt/tmpfs/test_db_encrypted
   pre_workload_setup: y
   test_option: y
 
 test_mariadb_with_test_sign_key:
   docker_image: mariadb mariadb:10.7
-  runtime_args_text: --datadir /var/run/test_db_encrypted
-  docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
+  runtime_args_text: --datadir /mnt/tmpfs/test_db_encrypted
+  docker_flags: -v /mnt/tmpfs/test_db_encrypted:/mnt/tmpfs/test_db_encrypted
   encryption_key: workloads/mariadb/base_image_helper/encryption_key
-  encrypted_files_path: /var/run/test_db_encrypted
+  encrypted_files_path: /mnt/tmpfs/test_db_encrypted
   pre_workload_setup: y
   signing_key_path : test
 
 test_mariadb_default_with_debug:
   docker_image: mariadb mariadb:10.7
-  runtime_args_text: --datadir /var/run/test_db_encrypted
-  docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
+  runtime_args_text: --datadir /mnt/tmpfs/test_db_encrypted
+  docker_flags: -v /mnt/tmpfs/test_db_encrypted:/mnt/tmpfs/test_db_encrypted
   encryption_key: workloads/mariadb/base_image_helper/encryption_key
-  encrypted_files_path: /var/run/test_db_encrypted
+  encrypted_files_path: /mnt/tmpfs/test_db_encrypted
   pre_workload_setup: y
   debug_mode: y
 
@@ -266,45 +266,45 @@ test_memcached_default_with_debug:
 
 test_ovms_default:
   docker_image: openvino-model-server openvino/model_server
-  runtime_args_text: --model_path /var/run/model_encrypted --model_name face-detection --port 9000 --plugin_config \u0027{\u0022CPU_THROUGHPUT_STREAMS\u0022:\u0020\u00221\u0022}\u0027 --shape auto
-  docker_flags: -u 0:0 -p 9000:9000 -v /var/run/model_encrypted:/var/run/model_encrypted
+  runtime_args_text: --model_path /mnt/tmpfs/model_encrypted --model_name face-detection --port 9000 --plugin_config \u0027{\u0022CPU_THROUGHPUT_STREAMS\u0022:\u0020\u00221\u0022}\u0027 --shape auto
+  docker_flags: -u 0:0 -p 9000:9000 -v /mnt/tmpfs/model_encrypted:/mnt/tmpfs/model_encrypted
   encryption_key: workloads/openvino-model-server/base_image_helper/encryption_key
-  encrypted_files_path: /var/run/model_encrypted
+  encrypted_files_path: /mnt/tmpfs/model_encrypted
   pre_workload_setup: y
 
 test_ovms_with_test_sign_key:
   docker_image: openvino-model-server openvino/model_server
-  runtime_args_text: --model_path /var/run/model_encrypted --model_name face-detection --port 9000 --plugin_config \u0027{\u0022CPU_THROUGHPUT_STREAMS\u0022:\u0020\u00221\u0022}\u0027 --shape auto
-  docker_flags: -u 0:0 -p 9000:9000 -v /var/run/model_encrypted:/var/run/model_encrypted
+  runtime_args_text: --model_path /mnt/tmpfs/model_encrypted --model_name face-detection --port 9000 --plugin_config \u0027{\u0022CPU_THROUGHPUT_STREAMS\u0022:\u0020\u00221\u0022}\u0027 --shape auto
+  docker_flags: -u 0:0 -p 9000:9000 -v /mnt/tmpfs/model_encrypted:/mnt/tmpfs/model_encrypted
   encryption_key: workloads/openvino-model-server/base_image_helper/encryption_key
-  encrypted_files_path: /var/run/model_encrypted
+  encrypted_files_path: /mnt/tmpfs/model_encrypted
   pre_workload_setup: y
   signing_key_path : test
 
 test_ovms_with_test_sign_key_debug:
   docker_image: openvino-model-server openvino/model_server
-  runtime_args_text: --model_path /var/run/model_encrypted --model_name face-detection --port 9000 --plugin_config \u0027{\u0022CPU_THROUGHPUT_STREAMS\u0022:\u0020\u00221\u0022}\u0027 --shape auto
-  docker_flags: -u 0:0 -p 9000:9000 -v /var/run/model_encrypted:/var/run/model_encrypted
+  runtime_args_text: --model_path /mnt/tmpfs/model_encrypted --model_name face-detection --port 9000 --plugin_config \u0027{\u0022CPU_THROUGHPUT_STREAMS\u0022:\u0020\u00221\u0022}\u0027 --shape auto
+  docker_flags: -u 0:0 -p 9000:9000 -v /mnt/tmpfs/model_encrypted:/mnt/tmpfs/model_encrypted
   encryption_key: workloads/openvino-model-server/base_image_helper/encryption_key
-  encrypted_files_path: /var/run/model_encrypted
+  encrypted_files_path: /mnt/tmpfs/model_encrypted
   pre_workload_setup: y
   signing_key_path : test
   debug_mode: y
 
 test_ovms_with_test_option:
   docker_image: openvino-model-server openvino/model_server
-  runtime_args_text: --model_path /var/run/model_encrypted --model_name face-detection --port 9000 --plugin_config \u0027{\u0022CPU_THROUGHPUT_STREAMS\u0022:\u0020\u00221\u0022}\u0027 --shape auto
-  docker_flags: -u 0:0 -p 9000:9000 -v /var/run/model_encrypted:/var/run/model_encrypted
+  runtime_args_text: --model_path /mnt/tmpfs/model_encrypted --model_name face-detection --port 9000 --plugin_config \u0027{\u0022CPU_THROUGHPUT_STREAMS\u0022:\u0020\u00221\u0022}\u0027 --shape auto
+  docker_flags: -u 0:0 -p 9000:9000 -v /mnt/tmpfs/model_encrypted:/mnt/tmpfs/model_encrypted
   encryption_key: workloads/openvino-model-server/base_image_helper/encryption_key
-  encrypted_files_path: /var/run/model_encrypted
+  encrypted_files_path: /mnt/tmpfs/model_encrypted
   pre_workload_setup: y
   test_option: y
 
 test_ovms_default_with_debug:
   docker_image: openvino-model-server openvino/model_server
-  runtime_args_text: --model_path /var/run/model_encrypted --model_name face-detection --port 9000 --plugin_config \u0027{\u0022CPU_THROUGHPUT_STREAMS\u0022:\u0020\u00221\u0022}\u0027 --shape auto
-  docker_flags: -u 0:0 -p 9000:9000 -v /var/run/model_encrypted:/var/run/model_encrypted
+  runtime_args_text: --model_path /mnt/tmpfs/model_encrypted --model_name face-detection --port 9000 --plugin_config \u0027{\u0022CPU_THROUGHPUT_STREAMS\u0022:\u0020\u00221\u0022}\u0027 --shape auto
+  docker_flags: -u 0:0 -p 9000:9000 -v /mnt/tmpfs/model_encrypted:/mnt/tmpfs/model_encrypted
   encryption_key: workloads/openvino-model-server/base_image_helper/encryption_key
-  encrypted_files_path: /var/run/model_encrypted
+  encrypted_files_path: /mnt/tmpfs/model_encrypted
   pre_workload_setup: y
   debug_mode: y

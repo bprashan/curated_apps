@@ -11,10 +11,10 @@ default_input_args:
   docker_flags: --rm
 
 test_redis_default:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
 
 test_redis_default_with_debug:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   debug_mode: y
 
 test_redis_unknown_docker_image:
@@ -24,53 +24,53 @@ test_redis_unknown_docker_image:
   end_test: signing_key_path
 
 test_redis_test_option:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   test_option: y
 
 test_redis_with_test_sign_key:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   signing_key_path : test
 
 test_redis_with_test_sign_key_debug:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   signing_key_path : test
   debug_mode: y
 
 test_redis_with_runtime_variables:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   runtime_variable_list: -e name="curator_app" -e version="1.2"
 
 test_redis_empty_test_key:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   signing_key_path : test_config/empty-key
   expected_output_infile: "unable to load Private Key"
 
 test_redis_wrong_key_path:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   signing_key_path : no_test_key
   end_test: signing_key_path
   expected_screen: signing_page
   expected_output_console: "no_test_key file does not exist."
 
 test_redis_ra_wrong_option:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   attestation: k
   end_test: attestation
   expected_screen: attestation_page
   expected_output_console: "Invalid option specified"
 
 test_redis_ev_invalid_input_1:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   runtime_variable_list: -e name="Xyz" -e -e age="20"
 
 test_redis_ev_dict:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   runtime_variable_list: {name="Xyz",age="20"}
   expected_screen: docker_flags
   expected_output_console: 'Invalid string specified'
 
 test_redis_ev_invalid_input_2:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   runtime_variable_list: -e name="Xyz" -e age=
 
 test_bash_default:
@@ -85,25 +85,25 @@ test_bash_runtime_args:
   runtime_args_text: free
 
 test_commentary_sequence:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   expected_screen: signing_page
   expected_output_console: "1. Command-line arguments(.*)2. Environment variables(.*)3. Additional docker run flags(.*)4. Encrypted files and key provisioning(.*)5. Remote Attestation(.*)6. Enclave signing(.*)7. Generation of the final curated images(.*)8. Generation of docker run commands"
   end_test: signing_key_path
 
 test_redis_protected_signing_key:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   signing_key_path: test_config/protected-enclave-key.pem
   signing_key_password: test@123
 
 test_redis_signing_key_no_input:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   signing_key_path:
   expected_screen: signing_page
   expected_output_console: "Please provide a valid input"
   end_test: signing_key_path
 
 test_redis_with_sign_key_special_character:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   signing_key_path : .
   expected_screen: signing_page
   expected_output_console: "Error: . file does not exist"
@@ -151,12 +151,12 @@ test_tfserving_half_plus_two:
   runtime_args_text: --model_name="half_plus_two" --model_base_path="/models/half_plus_two"
 
 test_redis_docker_flags:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   docker_flags: --cidfile="container_id.log"
   flag_validation: --cidfile="container_id.log"
 
 test_redis_docker_invalid_flag_string:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   end_test: encrypted_files_path
   expected_screen: encryption_key_page
   docker_flags: "--name docker_container, --net=host"
@@ -174,7 +174,7 @@ test_pytorch_default:
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
 
 test_mysql_default:
-  docker_image: mysql mysql:8.0.32-debian
+  docker_image: mysql mysql:8.0.34-debian
   runtime_args_text: --datadir /var/run/test_db_encrypted
   docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
   encryption_key: workloads/mysql/base_image_helper/encryption_key
@@ -182,7 +182,7 @@ test_mysql_default:
   pre_workload_setup: y
 
 test_mysql_test_option:
-  docker_image: mysql mysql:8.0.32-debian
+  docker_image: mysql mysql:8.0.34-debian
   runtime_args_text: --datadir /var/run/test_db_encrypted
   docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
   encryption_key: workloads/mysql/base_image_helper/encryption_key
@@ -191,7 +191,7 @@ test_mysql_test_option:
   test_option: y
 
 test_mysql_with_test_sign_key:
-  docker_image: mysql mysql:8.0.32-debian
+  docker_image: mysql mysql:8.0.34-debian
   runtime_args_text: --datadir /var/run/test_db_encrypted
   docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
   encryption_key: workloads/mysql/base_image_helper/encryption_key
@@ -200,7 +200,7 @@ test_mysql_with_test_sign_key:
   signing_key_path : test
 
 test_mysql_default_with_debug:
-  docker_image: mysql mysql:8.0.32-debian
+  docker_image: mysql mysql:8.0.34-debian
   runtime_args_text: --datadir /var/run/test_db_encrypted
   docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
   encryption_key: workloads/mysql/base_image_helper/encryption_key
@@ -209,7 +209,7 @@ test_mysql_default_with_debug:
   debug_mode: y
 
 test_mariadb_default:
-  docker_image: mariadb mariadb:10.7
+  docker_image: mariadb mariadb:11.0.3-jammy
   runtime_args_text: --datadir /mnt/tmpfs/test_db_encrypted
   docker_flags: -v /mnt/tmpfs/test_db_encrypted:/mnt/tmpfs/test_db_encrypted
   encryption_key: workloads/mariadb/base_image_helper/encryption_key
@@ -217,7 +217,7 @@ test_mariadb_default:
   pre_workload_setup: y
 
 test_mariadb_test_option:
-  docker_image: mariadb mariadb:10.7
+  docker_image: mariadb mariadb:11.0.3-jammy
   runtime_args_text: --datadir /mnt/tmpfs/test_db_encrypted
   docker_flags: -v /mnt/tmpfs/test_db_encrypted:/mnt/tmpfs/test_db_encrypted
   encryption_key: workloads/mariadb/base_image_helper/encryption_key
@@ -226,7 +226,7 @@ test_mariadb_test_option:
   test_option: y
 
 test_mariadb_with_test_sign_key:
-  docker_image: mariadb mariadb:10.7
+  docker_image: mariadb mariadb:11.0.3-jammy
   runtime_args_text: --datadir /mnt/tmpfs/test_db_encrypted
   docker_flags: -v /mnt/tmpfs/test_db_encrypted:/mnt/tmpfs/test_db_encrypted
   encryption_key: workloads/mariadb/base_image_helper/encryption_key
@@ -235,7 +235,7 @@ test_mariadb_with_test_sign_key:
   signing_key_path : test
 
 test_mariadb_default_with_debug:
-  docker_image: mariadb mariadb:10.7
+  docker_image: mariadb mariadb:11.0.3-jammy
   runtime_args_text: --datadir /mnt/tmpfs/test_db_encrypted
   docker_flags: -v /mnt/tmpfs/test_db_encrypted:/mnt/tmpfs/test_db_encrypted
   encryption_key: workloads/mariadb/base_image_helper/encryption_key

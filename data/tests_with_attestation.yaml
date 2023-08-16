@@ -11,46 +11,46 @@ default_input_args:
   end:
 
 test_redis_with_attestation:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
 
 test_redis_latest_image_with_attestation:
   docker_image: redis redis:latest
 
 test_redis_with_test_attestation:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   attestation: test
 
 test_redis_with_attestation_local_image:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   create_local_image: y
 
 test_redis_with_attestation_runtime_variables:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   runtime_variable_list: -e name="curator_app" -e version="1.2"
 
 test_redis_with_attestation_end_test_ssl_path:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   ssl_path: test_config/empty_ssl_folder
   expected_output_console: "One or more files does not exist at verifier/ssl/"
   end_test: attestation
   expected_screen: attestation_page
 
 test_redis_with_attestation_ssl_server_crt:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   ssl_path: test_config/ca_cert_folder
   end_test: attestation
   expected_output_console: "One or more files does not exist at verifier/ssl/"
   expected_screen: attestation_page
 
 test_redis_with_attestation_ssl_server_key:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   ssl_path: test_config/wo_server_key
   end_test: ssl_path
   expected_output_console: "One or more files does not exist at verifier/ssl/"
   expected_screen: attestation_page
 
 test_redis_with_attestation_wo_ssl:
-  docker_image: redis redis:7.0.0
+  docker_image: redis redis:7.0.10
   ssl_path: ''
   end_test: attestation
   expected_output_console: "One or more files does not exist at verifier/ssl/"
@@ -164,7 +164,7 @@ test_pytorch_default_with_debug:
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
 
 test_mysql_with_attestation:
-  docker_image: mysql mysql:8.0.32-debian
+  docker_image: mysql mysql:8.0.34-debian
   runtime_args_text: --datadir /var/run/test_db_encrypted
   docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
   encryption_key: workloads/mysql/base_image_helper/encryption_key
@@ -172,7 +172,7 @@ test_mysql_with_attestation:
   pre_workload_setup: y
 
 test_mysql_with_test_attestation:
-  docker_image: mysql mysql:8.0.32-debian
+  docker_image: mysql mysql:8.0.34-debian
   runtime_args_text: --datadir /var/run/test_db_encrypted
   docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
   encryption_key: workloads/mysql/base_image_helper/encryption_key
@@ -181,7 +181,7 @@ test_mysql_with_test_attestation:
   attestation: test
 
 test_mariadb_with_attestation:
-  docker_image: mariadb mariadb:10.7
+  docker_image: mariadb mariadb:11.0.3-jammy
   runtime_args_text: --datadir /mnt/tmpfs/test_db_encrypted
   docker_flags: -v /mnt/tmpfs/test_db_encrypted:/mnt/tmpfs/test_db_encrypted
   encryption_key: workloads/mariadb/base_image_helper/encryption_key
@@ -189,7 +189,7 @@ test_mariadb_with_attestation:
   pre_workload_setup: y
 
 test_mariadb_with_test_attestation:
-  docker_image: mariadb mariadb:10.7
+  docker_image: mariadb mariadb:11.0.3-jammy
   runtime_args_text: --datadir /mnt/tmpfs/test_db_encrypted
   docker_flags: -v /mnt/tmpfs/test_db_encrypted:/mnt/tmpfs/test_db_encrypted
   encryption_key: workloads/mariadb/base_image_helper/encryption_key

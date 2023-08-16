@@ -55,7 +55,7 @@ MYSQL_TESTDB_PATH           = "workloads/mysql/test_db"
 MYSQL_ENC_PATH              = "/var/run/test_db_encrypted"
 MYSQL_INIT_DB_CMD           = f"docker run --rm --net=host --name init_test_db --user $(id -u):$(id -g) \
                             -v $PWD/workloads/mysql/test_db:/test_db \
-                            -e MYSQL_ALLOW_EMPTY_PASSWORD=true -e MYSQL_DATABASE=test_db mysql:8.0.32-debian \
+                            -e MYSQL_ALLOW_EMPTY_PASSWORD=true -e MYSQL_DATABASE=test_db mysql:8.0.34-debian \
                             --datadir /test_db"
 STOP_TEST_DB_CMD            = "docker stop init_test_db"
 MYSQL_CLIENT_INSTALL_CMD    = "sudo apt-get -y install mysql-client"

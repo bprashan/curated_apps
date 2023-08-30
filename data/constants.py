@@ -61,13 +61,15 @@ STOP_TEST_DB_CMD            = "docker stop init_test_db"
 MYSQL_CLIENT_INSTALL_CMD    = "sudo apt-get -y install mysql-client"
 MYSQL_INPUT_FILE            = "input.txt"
 MYSQL_INPUT_TXT             = f"echo \"SELECT User FROM mysql.user;\\nexit\" >> {MYSQL_INPUT_FILE}"
+MYSQL_CURR_VERSION          = "mysql:8.0.34-debian"
+MARIADB_CURR_VERSION        = "mariadb:11.0.3-jammy"
 MYSQL_CLIENT_CMD            = "mysql -h 127.0.0.1 -uroot "
 MARIADB_TESTDB_PATH         = "workloads/mariadb/test_db"
 MARIADB_ENC_PATH            = "/mnt/tmpfs/test_db_encrypted"
 MARIADB_LOGS                = "mariadb.log"
 MARIADB_INIT_DB_CMD         = f"docker run --rm --net=host --name init_test_db \
                             -v $PWD/workloads/mariadb/test_db:/test_db \
-                            -e MARIADB_RANDOM_ROOT_PASSWORD=yes -e MARIADB_DATABASE=test_db mariadb:10.7 \
+                            -e MARIADB_RANDOM_ROOT_PASSWORD=yes -e MARIADB_DATABASE=test_db mariadb:11.0.3-jammy \
                             --datadir /test_db | tee {MARIADB_LOGS}"
 MARIADB_CHMOD               = f"sudo chown -R $USER:$USER $PWD/workloads/mariadb/test_db"
 MYSQL_TESTDB_VERIFY         = "/usr/sbin/mysqld: ready for connections"

@@ -1,0 +1,48 @@
+default_input_args: 
+  start:
+  signing_key_path: test_config/enclave-key.pem
+  attestation: done
+  ssl_path: test_config/ssl
+  runtime_args_text:
+  runtime_variable_list:
+  encrypted_files_path:
+  signing_key_password:
+  docker_flags: --rm
+  end:
+
+test_redis_latest_with_attestation:
+  docker_image: redis redis:latest
+
+test_mysql_latest_with_attestation:
+  docker_image: mysql mysql:debian
+  runtime_args_text: --datadir /var/run/test_db_encrypted
+  docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
+  encryption_key: workloads/mysql/base_image_helper/encryption_key
+  encrypted_files_path: /var/run/test_db_encrypted
+  pre_workload_setup: y
+
+test_mariadb_latest_with_attestation:
+  docker_image: mariadb mariadb:jammy
+  runtime_args_text: --datadir /mnt/tmpfs/test_db_encrypted
+  docker_flags: -v /mnt/tmpfs/test_db_encrypted:/mnt/tmpfs/test_db_encrypted
+  encryption_key: workloads/mariadb/base_image_helper/encryption_key
+  encrypted_files_path: /mnt/tmpfs/test_db_encrypted
+  pre_workload_setup: y
+
+test_ovms_latest_with_attestation:
+  docker_image: openvino-model-server openvino/model_server:latest
+  runtime_args_text: --model_path /mnt/tmpfs/model_encrypted --model_name face-detection --port 9000 --shape auto
+  docker_flags: -u 0:0 -p 9000:9000 -v /mnt/tmpfs/model_encrypted:/mnt/tmpfs/model_encrypted
+  encryption_key: workloads/openvino-model-server/base_image_helper/encryption_key
+  encrypted_files_path: /mnt/tmpfs/model_encrypted
+  pre_workload_setup: y
+
+test_pytorch_latest_with_attestation:
+  docker_image: pytorch pytorch-encrypted:latest
+  create_local_image: y
+  encryption_key: workloads/pytorch/base_image_helper/encryption_key
+  encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
+
+test_sklearn_latest_with_attestation:
+  docker_image: sklearn sklearn-base:latest
+  create_local_image: y

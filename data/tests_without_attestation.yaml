@@ -74,13 +74,13 @@ test_redis_ev_invalid_input_2:
   runtime_variable_list: -e name="Xyz" -e age=
 
 test_bash_default:
-  docker_image: bash ubuntu_20_04-bash:latest
+  docker_image: bash ubuntu_20_04-bash
   create_local_image: y
   runtime_variable_list: -e APP_NAME="Curated Apps"
   workload_result: "Curated Apps"
 
 test_bash_runtime_args:
-  docker_image: bash ubuntu_20_04-bash:latest
+  docker_image: bash ubuntu_20_04-bash
   create_local_image: y
   runtime_args_text: free
 
@@ -110,43 +110,43 @@ test_redis_with_sign_key_special_character:
   end_test: signing_key_path
 
 test_sklearn_default:
-  docker_image: sklearn sklearn-base:latest
+  docker_image: sklearn sklearn-base
   create_local_image: y
 
 test_sklearn_default_with_debug:
-  docker_image: sklearn sklearn-base:latest
+  docker_image: sklearn sklearn-base
   debug_mode: y
   create_local_image: y
 
 test_sklearn_test_option:
-  docker_image: sklearn sklearn-base:latest
+  docker_image: sklearn sklearn-base
   create_local_image: y
   test_option: y
 
 test_tfserving_default:
-  docker_image: tensorflow-serving tf-serving-base:latest
+  docker_image: tensorflow-serving tf-serving-base
   create_local_image: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
 
 test_tfserving_default_with_debug:
-  docker_image: tensorflow-serving tf-serving-base:latest
+  docker_image: tensorflow-serving tf-serving-base
   debug_mode: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
   create_local_image: y
 
 test_tfserving_test_option:
-  docker_image: tensorflow-serving tf-serving-base:latest
+  docker_image: tensorflow-serving tf-serving-base
   create_local_image: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
   test_option: y
 
 test_tfserving_mnist:
-  docker_image: tensorflow-serving tf-serving-base:latest
+  docker_image: tensorflow-serving tf-serving-base
   create_local_image: y
   runtime_args_text: --model_name="mnist" --model_base_path="/models/mnist"
 
 test_tfserving_half_plus_two:
-  docker_image: tensorflow-serving tf-serving-base:latest
+  docker_image: tensorflow-serving tf-serving-base
   create_local_image: y
   runtime_args_text: --model_name="half_plus_two" --model_base_path="/models/half_plus_two"
 
@@ -163,12 +163,12 @@ test_redis_docker_invalid_flag_string:
   expected_output_console: 'Invalid string specified'
 
 test_pytorch_test_option:
-  docker_image: pytorch pytorch-encrypted:latest
+  docker_image: pytorch pytorch-encrypted
   create_local_image: y
   test_option: y
 
 test_pytorch_default:
-  docker_image: pytorch pytorch-encrypted:latest
+  docker_image: pytorch pytorch-encrypted
   create_local_image: y
   encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt

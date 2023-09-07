@@ -107,19 +107,22 @@ def create_docker_image(docker_path, docker_name):
     output = run_subprocess(docker_build_cmd, docker_path)
     print(output)
 
-def generate_local_image(workload_image):
-    if "pytorch" in workload_image:
+def generate_local_image(test_config_dict):
+    workload_name, image_name = test_config_dict["docker_image"].split(" ", 1)
+
+    if "pytorch" in workload_name:
+        if "latest" in test_config_dict["test_name"]:
+            run_subprocess(PYTORCH_UPDATE_APP_VERSION, PYTORCH_HELPER_PATH)
         output = run_subprocess(PYTORCH_HELPER_CMD, CURATED_APPS_PATH)
         print(output)
-    elif "bash" in workload_image:
-        image_name = workload_image.split(":")[0].split(" ")[1]
+    elif "bash" in workload_name:
         create_docker_image(BASH_PATH, image_name)
-    elif "redis" in workload_image:
-        run_subprocess("docker pull redis:7.0.10")
-    elif "sklearn" in workload_image:
+    elif "sklearn" in workload_name:
+        if "latest" in test_config_dict["test_name"]:
+            run_subprocess(SKLEARN_UPDATE_APP_VERSION, SKLEARN_HELPER_PATH)
         output = run_subprocess(SKLEARN_HELPER_CMD, CURATED_APPS_PATH)
         print(output)
-    elif "tensorflow-serving" in workload_image:
+    elif "tensorflow-serving" in workload_name:
         output = run_subprocess(TFSERVING_HELPER_CMD, CURATED_APPS_PATH)
         print(output)
 
@@ -208,7 +211,7 @@ def execute_pre_workload_setup(test_config_dict):
 
 def local_image_setup(test_config_dict):
     if test_config_dict.get("create_local_image") == "y":
-        generate_local_image(test_config_dict["docker_image"])
+        generate_local_image(test_config_dict)
 
 def test_setup(test_config_dict):
     if test_config_dict.get("test_option") == None:
@@ -246,3 +249,31 @@ def check_and_install_gramine():
     run_subprocess('echo "deb [arch=amd64 signed-by=/usr/share/keyrings/gramine-keyring.gpg] https://packages.gramineproject.io/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/gramine.list')
     run_subprocess("sudo apt-get update")
     run_subprocess("sudo apt-get install -y gramine")
+
+def check_app_version(test_config_dict):
+    app_image = test_config_dict['docker_image'].split(" ")[1]
+    app_name = test_config_dict['docker_image'].split(" ")[0]
+    if app_name == "openvino-model-server":
+        version_string = run_subprocess(f"docker inspect {app_image} | grep DRIVER_VERSION")
+        version = '.'.join(re.findall(r'\d+', version_string))
+    elif app_name == "sklearn":
+        app_image = "intel/intel-optimized-ml:latest"
+        version_string = run_subprocess(f"docker inspect {app_image} | grep intel/intel-optimized-ml@sha256:")
+        version = version_string.split(":")[1].strip('"')
+    elif app_name == "mariadb":
+        version_string = run_subprocess(f"docker inspect {app_image} | grep -m 1 {app_name.upper()}_VERSION")
+        version = version_string.split(":")[1].split("+")[0]
+    elif app_name == "mysql" or app_name == "redis":
+        version_string = run_subprocess(f"docker inspect {app_image} | grep -m 1 {app_name.upper()}_VERSION")
+        version = version_string.split("=")[1].strip('"')
+    elif app_name == "pytorch":
+        app_image = "pytorch/pytorch:latest"
+        version_string = run_subprocess(f"docker inspect {app_image} | grep {app_name.upper()}_VERSION")
+        version = version_string.split("=")[1].strip('"')
+    print(f"App name {app_name} Version is {version}")
+    if version == BASELINE_APP_VERSION[app_name]:
+        print("App version is still the same as baseline version")
+        return True
+    else:
+        print("App version has upgraded to a newer version")
+        return False

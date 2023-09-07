@@ -13,16 +13,9 @@ default_input_args:
 test_redis_with_attestation:
   docker_image: redis redis:7.0.10
 
-test_redis_latest_image_with_attestation:
-  docker_image: redis redis:latest
-
 test_redis_with_test_attestation:
   docker_image: redis redis:7.0.10
   attestation: test
-
-test_redis_with_attestation_local_image:
-  docker_image: redis redis:7.0.10
-  create_local_image: y
 
 test_redis_with_attestation_runtime_variables:
   docker_image: redis redis:7.0.10
@@ -57,7 +50,7 @@ test_redis_with_attestation_wo_ssl:
   expected_screen: attestation_page
 
 test_pytorch_with_attestation_no_encryption_key:
-  docker_image: pytorch pytorch-encrypted:latest
+  docker_image: pytorch pytorch-encrypted
   create_local_image: y
   encryption_key: ''
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
@@ -66,98 +59,98 @@ test_pytorch_with_attestation_no_encryption_key:
   expected_screen: encryption_key_page
 
 test_pytorch_with_attestation_encrypted_image:
-  docker_image: pytorch pytorch-encrypted:latest
+  docker_image: pytorch pytorch-encrypted
   create_local_image: y
   encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
 
 test_pytorch_with_test_attestation:
-  docker_image: pytorch pytorch-encrypted:latest
+  docker_image: pytorch pytorch-encrypted
   create_local_image: y
   attestation: test
   encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
 
 test_pytorch_with_attestation_wrong_encrypted_list:
-  docker_image: pytorch pytorch-encrypted:latest
+  docker_image: pytorch pytorch-encrypted
   create_local_image: y
   encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: input.jpg:alexnet-pretrained.pt:result.txt
   workload_result: "UnicodeDecodeError: 'utf-8' codec can't decode byte"
 
 test_pytorch_with_attestation_invalid_encrypted_files:
-  docker_image: pytorch pytorch-encrypted:latest
+  docker_image: pytorch pytorch-encrypted
   create_local_image: y
   encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: text-file
   workload_result: "_pickle.UnpicklingError: invalid load key, '\\x00'."
 
 test_pytorch_with_attestation_encrypted_file_invalid_format:
-  docker_image: pytorch pytorch-encrypted:latest
+  docker_image: pytorch pytorch-encrypted
   create_local_image: y
   encryption_key: workloads/pytorch/base_image_helper/encryption_key
   encrypted_files_path: classes.txt;input.jpg;alexnet-pretrained.pt;result.txt
   workload_result: "_pickle.UnpicklingError: invalid load key, '\\x00'."
 
 test_pytorch_with_attestation_invalid_encryption_key:
-  docker_image: pytorch pytorch-encrypted:latest
+  docker_image: pytorch pytorch-encrypted
   create_local_image: y
   encryption_key: test_config/invalid_wrap-key
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
   verifier_error: "[error] encryption key from /keys/invalid_wrap-key is not 16B in size"
 
 test_bash_with_test_attestation:
-  docker_image: bash ubuntu_20_04-bash:latest
+  docker_image: bash ubuntu_20_04-bash
   create_local_image: y
   runtime_variable_list: -e APP_NAME="Curated Apps"
   workload_result: "Curated Apps"
   attestation: test
 
 test_bash_with_attestation:
-  docker_image: bash ubuntu_20_04-bash:latest
+  docker_image: bash ubuntu_20_04-bash
   create_local_image: y
   runtime_variable_list: -e APP_NAME="Curated Apps"
   workload_result: "Curated Apps"
 
 test_bash_attestation_without_verifier_image:
-  docker_image: bash ubuntu_20_04-bash:latest
+  docker_image: bash ubuntu_20_04-bash
   create_local_image: y
   verifier_run: False
   workload_result: "secret_provision_start: Secret Provisioning could not connect to any of the servers specified in SECRET_PROVISION_SERVERS"
 
 test_sklearn_with_attestation:
-  docker_image: sklearn sklearn-base:latest
+  docker_image: sklearn sklearn-base
   create_local_image: y
 
 test_sklearn_with_test_attestation:
-  docker_image: sklearn sklearn-base:latest
+  docker_image: sklearn sklearn-base
   attestation: test
   create_local_image: y
 
 test_tfserving_with_attestation_ubuntu18_04:
-  docker_image: tensorflow-serving tf-serving-base:latest
+  docker_image: tensorflow-serving tf-serving-base
   create_local_image: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
 
 test_tfserving_with_test_attestation_ubuntu18_04:
-  docker_image: tensorflow-serving tf-serving-base:latest
+  docker_image: tensorflow-serving tf-serving-base
   attestation: test
   create_local_image: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
 
 test_tfserving_with_attestation_ubuntu20_04:
-  docker_image: tensorflow-serving tf-serving-base:latest
+  docker_image: tensorflow-serving tf-serving-base
   create_local_image: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
 
 test_tfserving_with_test_attestation_ubuntu20_04:
-  docker_image: tensorflow-serving tf-serving-base:latest
+  docker_image: tensorflow-serving tf-serving-base
   attestation: test
   create_local_image: y
   runtime_args_text: --model_name="resnet" --model_base_path="/models/resnet"
 
 test_pytorch_default_with_debug:
-  docker_image: pytorch pytorch-encrypted:latest
+  docker_image: pytorch pytorch-encrypted
   create_local_image: y
   debug_mode: y
   encryption_key: workloads/pytorch/base_image_helper/encryption_key
@@ -233,27 +226,3 @@ test_ovms_attestation_with_debug:
   encrypted_files_path: /mnt/tmpfs/model_encrypted
   pre_workload_setup: y
   debug_mode: y
-
-test_mysql_latest_with_attestation:
-  docker_image: mysql mysql:8.0.34-debian
-  runtime_args_text: --datadir /var/run/test_db_encrypted
-  docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
-  encryption_key: workloads/mysql/base_image_helper/encryption_key
-  encrypted_files_path: /var/run/test_db_encrypted
-  pre_workload_setup: y
-
-test_mariadb_latest_with_attestation:
-  docker_image: mariadb mariadb:jammy
-  runtime_args_text: --datadir /mnt/tmpfs/test_db_encrypted
-  docker_flags: -v /mnt/tmpfs/test_db_encrypted:/mnt/tmpfs/test_db_encrypted
-  encryption_key: workloads/mariadb/base_image_helper/encryption_key
-  encrypted_files_path: /mnt/tmpfs/test_db_encrypted
-  pre_workload_setup: y
-
-test_ovms_latest_with_attestation:
-  docker_image: openvino-model-server openvino/model_server:latest
-  runtime_args_text: --model_path /mnt/tmpfs/model_encrypted --model_name face-detection --port 9000 --shape auto
-  docker_flags: -u 0:0 -p 9000:9000 -v /mnt/tmpfs/model_encrypted:/mnt/tmpfs/model_encrypted
-  encryption_key: workloads/openvino-model-server/base_image_helper/encryption_key
-  encrypted_files_path: /mnt/tmpfs/model_encrypted
-  pre_workload_setup: y

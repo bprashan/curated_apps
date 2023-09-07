@@ -17,21 +17,7 @@ class TestClass:
     @pytest.mark.jenkins
     @pytest.mark.redis
     @pytest.mark.redis_attestation
-    def test_redis_latest_image_with_attestation(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
-    @pytest.mark.jenkins
-    @pytest.mark.redis
-    @pytest.mark.redis_attestation
     def test_redis_with_test_attestation(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
-    @pytest.mark.jenkins
-    @pytest.mark.redis
-    @pytest.mark.redis_attestation
-    def test_redis_with_attestation_local_image(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
@@ -256,29 +242,5 @@ class TestClass:
     @pytest.mark.ovms
     @pytest.mark.ovms_attestation
     def test_ovms_attestation_with_debug(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
-    @pytest.mark.latest_apps
-    @pytest.mark.jenkins
-    @pytest.mark.ovms
-    @pytest.mark.ovms_attestation
-    def test_ovms_latest_with_attestation(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
-    @pytest.mark.latest_apps
-    @pytest.mark.jenkins
-    @pytest.mark.mariadb
-    @pytest.mark.mariadb_attestation
-    def test_mariadb_latest_with_attestation(self):
-        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
-        assert test_result
-
-    @pytest.mark.latest_apps
-    @pytest.mark.jenkins
-    @pytest.mark.mysql
-    @pytest.mark.mysql_attestation
-    def test_mysql_latest_with_attestation(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result

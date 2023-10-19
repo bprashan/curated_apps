@@ -357,3 +357,9 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
+    @pytest.mark.jenkins
+    @pytest.mark.redis
+    @pytest.mark.redis_non_attestation
+    def test_redis_default_with_debugoptimized(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result

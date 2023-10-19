@@ -12,9 +12,13 @@ import re
 
 def get_curation_cmd(test_config_dict):
     workload_image = test_config_dict["docker_image"]
-    debug_mode = " debug " if test_config_dict.get("debug_mode") == 'y' else ''
+    debug_mode = ''
+    if test_config_dict.get("debug_mode") == 'y':
+        debug_mode = " -b debug "
+    elif test_config_dict.get("debugoptimized_mode") == 'y':
+        debug_mode = " -b debugoptimized "
     if test_config_dict.get("test_option"):
-        curation_cmd = 'python3 curate.py ' + workload_image + debug_mode + ' test'
+        curation_cmd = 'python3 curate.py ' + workload_image + debug_mode + ' -t'
     else:
         curation_cmd = 'python3 curate.py ' + workload_image + debug_mode + ' < input.txt'
     return curation_cmd

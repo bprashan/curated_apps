@@ -43,7 +43,7 @@ test_redis_with_runtime_variables:
 test_redis_empty_test_key:
   docker_image: redis redis:7.0.10
   signing_key_path : test_config/empty-key
-  expected_output_infile: "unable to load Private Key"
+  expected_output_infile: "Could not deserialize key data. The data may be in an incorrect format or it may be encrypted with an unsupported algorithm."
 
 test_redis_wrong_key_path:
   docker_image: redis redis:7.0.10

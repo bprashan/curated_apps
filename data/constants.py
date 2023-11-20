@@ -80,7 +80,7 @@ OVMS_ENC_PATH               = "/mnt/tmpfs/model_encrypted"
 OVMS_INIT_DB_CMD            = f"curl --create-dirs https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/face-detection-retail-0004/FP32/face-detection-retail-0004.xml https://storage.openvinotoolkit.org/repositories/open_model_zoo/2023.0/models_bin/1/face-detection-retail-0004/FP32/face-detection-retail-0004.bin \
                          -o {OVMS_TESTDB_PATH}/1/face-detection-retail-0004.xml -o {OVMS_TESTDB_PATH}/1/face-detection-retail-0004.bin"
 OVMS                        = "openvino-model-server"
-BASELINE_APP_VERSION        = {"redis": "7.0.10", "mysql": "8.0.34-1debian11", "mariadb": "11.1.2", "openvino-model-server": "2023.1.d789fb785", \
-                               "pytorch": "2.1.0", "sklearn": "f00a3b81ff0b35f7c3daa220a21ad799679ba60d9fe65918cb93c8b244e15bd4"}
+BASELINE_APP_VERSION        = {"redis": "7.0.10", "mysql": "8.0.34-1debian11", "mariadb": "11.1.3", "openvino-model-server": "2023.2.7f372bc9b", \
+                               "pytorch": "2.1.1", "sklearn": "f00a3b81ff0b35f7c3daa220a21ad799679ba60d9fe65918cb93c8b244e15bd4"}
 PYTORCH_UPDATE_APP_VERSION  = f"sed -i 's\\2.0.1-cuda11.7-cudnn8-runtime\\latest\\g' Dockerfile"
 SKLEARN_UPDATE_APP_VERSION  = f"sed -i 's\\scikit-learn-2023.1.1-xgboost-1.7.5-pip-base\\latest\\g' Dockerfile"

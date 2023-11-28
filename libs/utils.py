@@ -14,12 +14,15 @@ def run_subprocess(command, dest_dir=None):
     print("Starting Process %s from %s" %(command, os.getcwd()))
     process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                     universal_newlines=True, shell=True)
-    if process.returncode != 0:
+    try:
         if dest_dir: os.chdir(FRAMEWORK_PATH)
+    except:
+        print("Failed to change directory")
+
+    if process.returncode != 0:
         print(process.stderr.strip())
         raise Exception("Failed to run command {}".format(command))
     
-    if dest_dir: os.chdir(FRAMEWORK_PATH)
     return process.stdout.strip()
 
 def popen_subprocess(command, dest_dir=None):

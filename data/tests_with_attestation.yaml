@@ -157,7 +157,7 @@ test_pytorch_default_with_debug:
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
 
 test_mysql_with_attestation:
-  docker_image: mysql mysql:8.0.34-debian
+  docker_image: mysql mysql:8.0.35-debian
   runtime_args_text: --datadir /var/run/test_db_encrypted
   docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
   encryption_key: workloads/mysql/base_image_helper/encryption_key
@@ -165,7 +165,7 @@ test_mysql_with_attestation:
   pre_workload_setup: y
 
 test_mysql_with_test_attestation:
-  docker_image: mysql mysql:8.0.34-debian
+  docker_image: mysql mysql:8.0.35-debian
   runtime_args_text: --datadir /var/run/test_db_encrypted
   docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
   encryption_key: workloads/mysql/base_image_helper/encryption_key

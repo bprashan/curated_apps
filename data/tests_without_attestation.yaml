@@ -174,7 +174,7 @@ test_pytorch_default:
   encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
 
 test_mysql_default:
-  docker_image: mysql mysql:8.0.34-debian
+  docker_image: mysql mysql:8.0.35-debian
   runtime_args_text: --datadir /var/run/test_db_encrypted
   docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
   encryption_key: workloads/mysql/base_image_helper/encryption_key
@@ -182,7 +182,7 @@ test_mysql_default:
   pre_workload_setup: y
 
 test_mysql_test_option:
-  docker_image: mysql mysql:8.0.34-debian
+  docker_image: mysql mysql:8.0.35-debian
   runtime_args_text: --datadir /var/run/test_db_encrypted
   docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
   encryption_key: workloads/mysql/base_image_helper/encryption_key
@@ -191,7 +191,7 @@ test_mysql_test_option:
   test_option: y
 
 test_mysql_with_test_sign_key:
-  docker_image: mysql mysql:8.0.34-debian
+  docker_image: mysql mysql:8.0.35-debian
   runtime_args_text: --datadir /var/run/test_db_encrypted
   docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
   encryption_key: workloads/mysql/base_image_helper/encryption_key
@@ -200,7 +200,7 @@ test_mysql_with_test_sign_key:
   signing_key_path : test
 
 test_mysql_default_with_debug:
-  docker_image: mysql mysql:8.0.34-debian
+  docker_image: mysql mysql:8.0.35-debian
   runtime_args_text: --datadir /var/run/test_db_encrypted
   docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
   encryption_key: workloads/mysql/base_image_helper/encryption_key

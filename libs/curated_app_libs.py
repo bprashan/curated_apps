@@ -262,6 +262,7 @@ def run_test(test_instance, test_yaml_file):
     finally:
         if "_latest_" in test_name:
             version_update = utils.check_app_version(test_config_dict)
+            if result == None: result = False
             result = result & version_update
         print("Docker images cleanup")
         utils.cleanup_after_test(test_config_dict)

@@ -14,7 +14,7 @@ test_redis_latest_with_attestation:
   docker_image: redis redis:latest
 
 test_mysql_latest_with_attestation:
-  docker_image: mysql mysql:8.0-debian
+  docker_image: mysql mysql:latest
   runtime_args_text: --datadir /var/run/test_db_encrypted
   docker_flags: -v /var/run/test_db_encrypted:/var/run/test_db_encrypted
   encryption_key: workloads/mysql/base_image_helper/encryption_key
@@ -22,7 +22,7 @@ test_mysql_latest_with_attestation:
   pre_workload_setup: y
 
 test_mariadb_latest_with_attestation:
-  docker_image: mariadb mariadb:jammy
+  docker_image: mariadb mariadb:latest
   runtime_args_text: --datadir /mnt/tmpfs/test_db_encrypted
   docker_flags: -v /mnt/tmpfs/test_db_encrypted:/mnt/tmpfs/test_db_encrypted
   encryption_key: workloads/mariadb/base_image_helper/encryption_key
@@ -46,3 +46,6 @@ test_pytorch_latest_with_attestation:
 test_sklearn_latest_with_attestation:
   docker_image: sklearn sklearn-base:latest
   create_local_image: y
+
+test_memcached_latest_with_attestation:
+  docker_image: memcached ubuntu/memcached:latest

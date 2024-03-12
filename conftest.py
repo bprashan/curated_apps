@@ -52,27 +52,19 @@ def copy_repo():
     utils.run_subprocess("cp -rf {} {}".format(ORIG_CURATED_PATH, REPO_PATH))
 
 def update_gramine_branch(commit):
-    commit_str = f" && cd gramine && git checkout {commit} && cd .."
     copy_cmd = "cp -f config.yaml.template config.yaml"
-    gsc_tag = utils.run_subprocess(f"git ls-remote --sort='version:refname' --tags  {GSC_REPO} | tail --lines=1 | cut --delimiter=\"/\" --fields=3")
+    gsc_tag = utils.run_subprocess(f"git ls-remote --sort='version:refname' --tags  {GSC_MAIN_REPO} | tail --lines=1 | cut --delimiter=\"/\" --fields=3")
     if not "v1" in commit:
         utils.run_subprocess(f"cp -rf helper-files/{VERIFIER_TEMPLATE} {VERIFIER_DOCKERFILE}")
     sed_string = "sed -i \"s/Branch.*master.*\\|Branch.*{}.*/Branch: '{}'/\" config.yaml".format(gsc_tag, commit.replace('/', '\\/'))
     utils.update_file_contents(copy_cmd, (copy_cmd + "\n" + sed_string), CURATION_SCRIPT)
-    utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(GRAMINE_DEPTH_STR, "") + commit_str,
-            VERIFIER_DOCKERFILE)
-    utils.update_file_contents(GRAMINE_CLONE, GRAMINE_CLONE.replace(GRAMINE_DEPTH_STR, "") + commit_str,
-        os.path.join(ORIG_BASE_PATH, "verifier", "helper.sh"))
+    utils.update_file_contents("git checkout(.*)", f"git checkout {commit}", VERIFIER_DOCKERFILE)
 
 def update_gsc(gsc_commit='', gsc_repo=''):
-    if gsc_commit: checkout_str = f" && cd gsc && git checkout {gsc_commit} && cd .."
-    if gsc_repo: repo_str = f"git clone {gsc_repo}"
-    if gsc_repo and gsc_commit:
-        utils.update_file_contents(GSC_CLONE, repo_str + checkout_str, CURATION_SCRIPT)
-    elif gsc_repo and not gsc_commit:
-        utils.update_file_contents(GSC_CLONE, repo_str, CURATION_SCRIPT)
-    elif gsc_commit:
-        utils.update_file_contents(GSC_CLONE, GSC_CLONE.replace(GSC_DEPTH_STR, "") + checkout_str, CURATION_SCRIPT)
+    if gsc_repo:
+        utils.update_file_contents(GSC_MAIN_REPO, gsc_repo, CURATION_SCRIPT)
+    if gsc_commit:
+        utils.update_file_contents("git checkout(.*)", f"git checkout {gsc_commit}", CURATION_SCRIPT)
 
 @pytest.fixture(scope="class", autouse=True)
 def teardown():

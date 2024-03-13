@@ -249,10 +249,14 @@ def update_file_contents(old_contents, new_contents, filename, append=False):
     fd.close()
 
 def check_and_install_gramine():
-    run_subprocess("sudo curl -fsSLo /usr/share/keyrings/gramine-keyring.gpg https://packages.gramineproject.io/gramine-keyring.gpg")
-    run_subprocess('echo "deb [arch=amd64 signed-by=/usr/share/keyrings/gramine-keyring.gpg] https://packages.gramineproject.io/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/gramine.list')
-    run_subprocess("sudo apt-get update")
-    run_subprocess("sudo apt-get install -y gramine")
+    gramine_path = run_subprocess("which gramine-sgx")
+    if not gramine_path:
+        run_subprocess("sudo curl -fsSLo /usr/share/keyrings/gramine-keyring.gpg https://packages.gramineproject.io/gramine-keyring.gpg")
+        run_subprocess('echo "deb [arch=amd64 signed-by=/usr/share/keyrings/gramine-keyring.gpg] https://packages.gramineproject.io/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/gramine.list')
+        run_subprocess("sudo apt-get update")
+        run_subprocess("sudo apt-get install -y gramine")
+    else:
+        print("Gramine Installation Found at: ", gramine_path)
 
 def check_app_version(test_config_dict):
     app_image = test_config_dict['docker_image'].split(" ")[1]

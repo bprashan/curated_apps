@@ -13,6 +13,9 @@ default_input_args:
 test_redis_latest_with_attestation:
   docker_image: redis redis:latest
 
+test_memcached_latest_with_attestation:
+  docker_image: memcached ubuntu/memcached:1.6-22.04_beta
+
 test_mysql_latest_with_attestation:
   docker_image: mysql mysql:8.0-debian
   runtime_args_text: --datadir /var/run/test_db_encrypted

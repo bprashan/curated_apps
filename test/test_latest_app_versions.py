@@ -16,6 +16,10 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
     
+    def test_memcached_latest_with_attestation(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
     @pytest.mark.latest_apps
     @pytest.mark.ovms
     @pytest.mark.ovms_attestation

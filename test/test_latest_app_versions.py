@@ -8,8 +8,7 @@ tests_yaml_path = os.path.join(os.getcwd(), 'data', yaml_file_name)
 @pytest.mark.attestation
 class TestClass:
 
-    # Disabled until Debian12 is added as an official distro in contrib
-    # @pytest.mark.latest_apps 
+    @pytest.mark.latest_apps
     @pytest.mark.redis
     @pytest.mark.redis_attestation
     def test_redis_latest_with_attestation(self):
@@ -50,3 +49,11 @@ class TestClass:
     def test_sklearn_latest_with_attestation(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
+
+    @pytest.mark.latest_apps
+    @pytest.mark.memcached
+    @pytest.mark.memcached_attestation
+    def test_memcached_latest_with_attestation(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+

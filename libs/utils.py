@@ -274,10 +274,13 @@ def check_app_version(test_config_dict):
         version = version_string.split(":")[1].split("+")[0]
     elif app_name == "mysql" or app_name == "redis":
         version_string = run_subprocess(f"docker inspect {app_image} | grep -m 1 {app_name.upper()}_VERSION")
-        version = version_string.split("=")[1].strip('"')
+        version = version_string.split("=")[1].strip(",").strip('"')
     elif app_name == "pytorch":
         version_string = run_subprocess(f"docker inspect {app_image} | grep {app_name.upper()}_VERSION")
         version = version_string.split("=")[1].strip('"')
+    elif app_name == "memcached":
+        version_string = run_subprocess(f"docker run {app_image} --version | grep memcached")
+        version = version_string.split("memcached ")[1]
     print(f"App name {app_name} Version is {version}")
     if version == BASELINE_APP_VERSION[app_name]:
         print("App version is still the same as baseline version")

@@ -166,6 +166,7 @@ test_pytorch_test_option:
   docker_image: pytorch pytorch-encrypted
   create_local_image: y
   test_option: y
+  encrypted_files_path: classes.txt:input.jpg:alexnet-pretrained.pt:result.txt
 
 test_pytorch_default:
   docker_image: pytorch pytorch-encrypted

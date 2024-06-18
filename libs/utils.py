@@ -281,7 +281,7 @@ def check_app_version(test_config_dict):
         version = version_string.split("=")[1].strip(",").strip('"')
     elif app_name == "pytorch":
         version_string = run_subprocess(f"docker inspect {app_image} | grep {app_name.upper()}_VERSION")
-        version = version_string.split("=")[1].strip('"')
+        version = version_string.split("\n")[0].split("=")[1].strip('"')
     elif app_name == "memcached":
         version_string = run_subprocess(f"docker run {app_image} --version | grep memcached")
         version = version_string.split("memcached ")[1]

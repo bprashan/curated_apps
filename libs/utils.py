@@ -8,13 +8,13 @@ from data.constants import *
 import re
 import yaml
 
-def run_subprocess(command, dest_dir=None):
+def run_subprocess(command, dest_dir=None, timeout=None):
     if dest_dir:
         os.chdir(dest_dir)
 
     print("Starting Process %s from %s" %(command, os.getcwd()))
     process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                    universal_newlines=True, shell=True)
+                                    universal_newlines=True, shell=True, timeout=timeout)
     try:
         if dest_dir: os.chdir(FRAMEWORK_PATH)
     except:

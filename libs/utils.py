@@ -54,6 +54,19 @@ def kill_process_by_name(processName):
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
 
+def is_package_installed(package_name):
+    process = subprocess.run(f"apt list --installed | grep {package_name}", stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE, universal_newlines=True,
+                                shell=True)
+
+
+    if process.returncode != 0:
+        print(f"Package: {package_name} is not installed")
+        return False
+    print(f"Package: {package_name} installation found. Details {process.stdout.strip()}")
+
+    return True
+
 def stop_docker_process(keyword):
     container_id = run_subprocess(f"docker container ls  | grep {keyword}" +" | awk '{print $1}'")
     if container_id:
@@ -258,7 +271,7 @@ def check_and_install_gramine():
         run_subprocess("sudo curl -fsSLo /usr/share/keyrings/gramine-keyring.gpg https://packages.gramineproject.io/gramine-keyring.gpg")
         run_subprocess('echo "deb [arch=amd64 signed-by=/usr/share/keyrings/gramine-keyring.gpg] https://packages.gramineproject.io/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/gramine.list')
         run_subprocess("sudo apt-get update")
-        run_subprocess("sudo apt-get install -y gramine")
+        run_subprocess(f"{APT_INSTALL} {GRAMINE}")
     else:
         print("Gramine Installation Found at: ", gramine_path)
 

@@ -44,7 +44,10 @@ def run_tensorflow_serving_client(test_config_dict):
 
 def run_mysql_client(workload):
     result = False
-    install_my_sql_client = utils.run_subprocess(MYSQL_CLIENT_INSTALL_CMD)
+
+    if not utils.is_package_installed(MYSQL_CLIENT):
+        utils.run_subprocess(f"{APT_INSTALL} {MYSQL_CLIENT}", timeout=120)
+
     if os.path.isfile(MYSQL_INPUT_FILE):
         utils.run_subprocess(f"rm -rf {MYSQL_INPUT_FILE}")
     utils.run_subprocess(MYSQL_INPUT_TXT)
@@ -66,6 +69,10 @@ def run_ovms_client():
     client_utils_path = os.path.join(FRAMEWORK_PATH, "workload_files", "client_utils.py")
     image_path = os.path.join(FRAMEWORK_PATH, "workload_files", "images")
     face_detection_file_path = os.path.join(FRAMEWORK_PATH, "workload_files", "face_detection.py")
+
+    if not utils.is_package_installed(VENV_PACKAGE):
+        utils.run_subprocess(f"{APT_INSTALL} {VENV_PACKAGE}", timeout=120)
+
     utils.run_subprocess(f"cp -f {client_utils_path} .", OVMS_INIT_PATH)
     utils.run_subprocess(f"cp -f {face_detection_file_path} .", OVMS_INIT_PATH)
     utils.run_subprocess(f"cp -f {inference_script_path} .", OVMS_INIT_PATH)

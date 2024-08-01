@@ -57,7 +57,10 @@ MYSQL_INIT_DB_CMD           = f"docker run --rm --net=host --name init_test_db -
                             -e MYSQL_ALLOW_EMPTY_PASSWORD=true -e MYSQL_DATABASE=test_db mysql:8.0.35-debian \
                             --datadir /test_db"
 STOP_TEST_DB_CMD            = "docker stop init_test_db"
-MYSQL_CLIENT_INSTALL_CMD    = "sudo apt-get -y install mysql-client"
+VENV_PACKAGE                = "python3.8-venv"
+MYSQL_CLIENT                = "mysql-client"
+APT_INSTALL                 = "sudo apt-get install -y "
+GRAMINE                     = "gramine"
 MYSQL_INPUT_FILE            = "input.txt"
 MYSQL_INPUT_TXT             = f"echo \"SELECT User FROM mysql.user;\\nexit\" >> {MYSQL_INPUT_FILE}"
 MYSQL_CURR_VERSION          = "mysql:8.0.35-debian"

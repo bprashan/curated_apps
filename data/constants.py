@@ -87,3 +87,7 @@ BASELINE_APP_VERSION        = {"redis": "7.0.11", "mysql": "8.0.36-1debian11", "
                                "memcached": "1.6.14"}
 PYTORCH_UPDATE_APP_VERSION  = f"sed -i 's\\2.0.1-cuda11.7-cudnn8-runtime\\latest\\g' Dockerfile"
 SKLEARN_UPDATE_APP_VERSION  = f"sed -i 's\\scikit-learn-2023.1.1-xgboost-1.7.5-pip-base\\latest\\g' Dockerfile"
+MYSQL_PORT                  = 3306
+MARIADB_PORT                = 3306
+OVMS_PORT                   = 9000
+TFSERVING_PORT              = 8500

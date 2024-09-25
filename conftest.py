@@ -6,12 +6,8 @@ from libs import utils
 @pytest.fixture(scope="session", autouse=True)
 def curated_setup():
     print_env_variables()
-    utils.run_subprocess(f"rm -rf {LOGS}")
+    cleanup()
     os.mkdir(LOGS)
-    utils.run_subprocess("docker system prune -f --all")
-    utils.stop_docker_process("server_dcap")
-    print("Cleaning old contrib repo")
-    utils.run_subprocess("rm -rf {}".format(ORIG_CURATED_PATH))
     print("Cloning and checking out Contrib Git Repo")
     utils.run_subprocess(CONTRIB_GIT_CMD)
     utils.run_subprocess(GIT_CHECKOUT_CMD, ORIG_CURATED_PATH)
@@ -77,3 +73,21 @@ def test_gramine_gsc_version():
     yield
     test_result = utils.verify_build_env_details()
     assert test_result
+
+def cleanup_ports(ports=None):
+    if ports == None:
+        ports = [MYSQL_PORT, MARIADB_PORT, OVMS_PORT, TFSERVING_PORT]
+    for port in ports:
+        try:
+            pid = utils.run_subprocess(f"sudo lsof -P -i:{port}")
+            utils.kill(pid)
+        except:
+            pass
+
+def cleanup():
+    utils.run_subprocess(f"rm -rf {LOGS}")
+    utils.run_subprocess("docker system prune -f --all")
+    utils.stop_docker_process("server_dcap")
+    print("Cleaning old contrib repo")
+    utils.run_subprocess("rm -rf {}".format(ORIG_CURATED_PATH))
+    cleanup_ports()

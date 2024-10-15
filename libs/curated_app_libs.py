@@ -180,6 +180,7 @@ def verify_process(test_config_dict, process=None, verifier_process=None):
         debug_log_file = test_config_dict["log_file"].replace(".log", "_console.log")
         debug_log = open(debug_log_file, "w+")
 
+    start_time = time.time()
     while True:
         nextline = process.stdout.readline()
         if debug_log:
@@ -194,6 +195,10 @@ def verify_process(test_config_dict, process=None, verifier_process=None):
                 utils.kill(verifier_process.pid)
             sys.stdout.flush()
             result = True
+            break
+
+        if (time.time() - start_time) > 1800:
+            print("Timeout exceeded for workload")
             break
 
     if debug_log: debug_log.close()

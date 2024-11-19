@@ -7,6 +7,8 @@ import libs.config_parser as config_parser
 from data.constants import *
 import re
 import yaml
+from queue import Queue, Empty
+import threading
 
 def run_subprocess(command, dest_dir=None, timeout=1200):
     if dest_dir:
@@ -167,34 +169,45 @@ def init_db(workload_name, init_cmd):
         print(mkdir_output)
         process = subprocess.Popen(init_cmd, cwd=CURATED_APPS_PATH, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
         print(f"Initializing {workload_name.upper()} DB")
+
+        queue, thread = monitor_thread(process.stderr)
+
         while True:
-            if process.poll() is not None and output == '':
-                if "ovms" in workload_name:
-                    time.sleep(30)
-                    if os.path.exists(os.path.join(CURATED_APPS_PATH, OVMS_TESTDB_PATH, \
-                        "1/face-detection-retail-0004.bin")) and \
-                        os.path.exists(os.path.join(CURATED_APPS_PATH, OVMS_TESTDB_PATH, \
-                        "1/face-detection-retail-0004.xml")):
-                        print(f"{workload_name.upper()} DB is initialized\n")
-                        init_result = True
-                        break
-                else:
-                    break
-            output = process.stderr.readline()
-            print(output)
+            try:
+                output = queue.get_nowait()
+            except Empty:
+                output = ""
+
+            if process.poll() is not None and output == "":
+                break
+
             if output:
+                print(output.strip())
                 docker_output += output
-                if "mysql" in workload_name or "mariadb" in workload_name:
-                    if (docker_output.count(eval(workload_name.upper()+"_TESTDB_VERIFY")) == 2):
-                        print(f"{workload_name.upper()} DB is initialized\n")
-                        init_result = True
-                        break
-                    elif time.time() > timeout:
-                        break
+
+            if "mysql" in workload_name or "mariadb" in workload_name:
+                if (docker_output.count(eval(workload_name.upper()+"_TESTDB_VERIFY")) == 2):
+                    print(f"{workload_name.upper()} DB is initialized\n")
+                    init_result = True
+                    break
+            if "ovms" in workload_name:
+                time.sleep(30)
+                if os.path.exists(os.path.join(CURATED_APPS_PATH, OVMS_TESTDB_PATH, \
+                    "1/face-detection-retail-0004.bin")) and \
+                    os.path.exists(os.path.join(CURATED_APPS_PATH, OVMS_TESTDB_PATH, \
+                    "1/face-detection-retail-0004.xml")):
+                    print(f"{workload_name.upper()} DB is initialized\n")
+                    init_result = True
+                    break
+            if time.time() > timeout:
+                print("Timeout exceeded for workload")
+                break
+
     finally:
-        process.stdout.close()
-        process.stderr.close()
-        kill(process.pid)
+        queue.task_done()
+        thread.join(5)
+        terminate_process(process)
+
     if init_result:
         if "mysql" in workload_name or "mariadb" in workload_name:
             run_subprocess(STOP_TEST_DB_CMD, CURATED_APPS_PATH)
@@ -347,3 +360,22 @@ def verify_build_env_details():
         print("No environment variable specified")
         result = True
     return result
+
+def read_stdout(out, queue):
+    for line in iter(out.readline, ''):
+        queue.put(line)
+    out.close()
+
+def monitor_thread(stdout):
+    q = Queue()
+    thread = threading.Thread(target=read_stdout, args=(stdout, q))
+    thread.start()
+    return q, thread
+
+def terminate_process(process):
+    if process.poll() is None:
+        process.terminate()
+        try:
+            process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            process.kill()

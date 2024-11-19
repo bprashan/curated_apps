@@ -8,7 +8,7 @@ from libs import utils
 from libs import workload
 import time
 import re
-
+from queue import Empty
 
 def get_curation_cmd(test_config_dict):
     workload_image = test_config_dict["docker_image"]
@@ -63,15 +63,23 @@ def generate_curated_image(test_config_dict):
     curation_cmd = get_curation_cmd(test_config_dict)
     end_test = test_config_dict.get('expected_output_console')
     os.chdir(CURATED_APPS_PATH)
+    timeout = time.time() + 1800
     try:
         process = subprocess.Popen(curation_cmd, shell=True, stdout=subprocess.PIPE, encoding="utf-8")
         print("Process started ", curation_cmd)
         os.chdir(FRAMEWORK_PATH)
         screen_name = "home_page"
+
+        queue, thread = utils.monitor_thread(process.stdout)
         while True:
-            output = process.stdout.readline()
+            try:
+                output = queue.get_nowait()
+            except Empty:
+                output = ""
+
             if process.poll() is not None and output == '':
                 break
+
             if output:
                 curation_output += output
                 value = screen_verification(output)
@@ -80,9 +88,14 @@ def generate_curated_image(test_config_dict):
                     should_break = test_should_break(screen_name, test_config_dict.get('expected_screen'))
                     if end_test in output or should_break:
                         break
+            if time.time() > timeout:
+                print("Timeout exceeded for workload")
+                break
+
     finally:
-        process.stdout.close()
-        utils.kill(process.pid)
+        queue.task_done()
+        thread.join(5)
+        utils.terminate_process(process)
     write_to_log_file(test_config_dict, curation_output)
     return curation_output
 
@@ -180,26 +193,38 @@ def verify_process(test_config_dict, process=None, verifier_process=None):
         debug_log_file = test_config_dict["log_file"].replace(".log", "_console.log")
         debug_log = open(debug_log_file, "w+")
 
-    start_time = time.time()
+    queue, thread = utils.monitor_thread(process.stdout)
+    timeout = time.time() + 1800
+
     while True:
-        nextline = process.stdout.readline()
-        if debug_log:
-            debug_log.write(nextline)
-        else:
-            print(nextline.strip())
-        if nextline == '' and process.poll() is not None:
-            break
-        if all(x in nextline for x in workload_result):
-            process.stdout.close()
-            if verifier_process:
-                utils.kill(verifier_process.pid)
-            sys.stdout.flush()
-            result = True
+        try:
+            nextline = queue.get_nowait().strip()
+        except Empty:
+            nextline = ""
+
+        if process.poll() is not None and nextline == "":
             break
 
-        if (time.time() - start_time) > 1800:
+        if nextline:
+            if debug_log:
+                debug_log.write(nextline)
+            else:
+                print(nextline.strip())
+
+            if all(x in nextline for x in workload_result):
+                if verifier_process:
+                    utils.terminate_process(verifier_process)
+                sys.stdout.flush()
+                result = True
+                break
+
+        if time.time() > timeout:
             print("Timeout exceeded for workload")
             break
+
+    queue.task_done()
+    thread.join(5)
+    utils.terminate_process(process)
 
     if debug_log: debug_log.close()
     return result

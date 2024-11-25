@@ -202,7 +202,8 @@ def init_db(workload_name, init_cmd):
             if time.time() > timeout:
                 print("Timeout exceeded for workload")
                 break
-
+    except Exception as e:
+        pass
     finally:
         queue.task_done()
         thread.join(5)

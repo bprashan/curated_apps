@@ -91,7 +91,8 @@ def generate_curated_image(test_config_dict):
             if time.time() > timeout:
                 print("Timeout exceeded for workload")
                 break
-
+    except Exception as e:
+        pass
     finally:
         queue.task_done()
         thread.join(5)
@@ -195,36 +196,38 @@ def verify_process(test_config_dict, process=None, verifier_process=None):
 
     queue, thread = utils.monitor_thread(process.stdout)
     timeout = time.time() + 1800
+    try:
+        while True:
+            try:
+                nextline = queue.get_nowait().strip()
+            except Empty:
+                nextline = ""
 
-    while True:
-        try:
-            nextline = queue.get_nowait().strip()
-        except Empty:
-            nextline = ""
-
-        if process.poll() is not None and nextline == "":
-            break
-
-        if nextline:
-            if debug_log:
-                debug_log.write(nextline)
-            else:
-                print(nextline.strip())
-
-            if all(x in nextline for x in workload_result):
-                if verifier_process:
-                    utils.terminate_process(verifier_process)
-                sys.stdout.flush()
-                result = True
+            if process.poll() is not None and nextline == "":
                 break
 
-        if time.time() > timeout:
-            print("Timeout exceeded for workload")
-            break
+            if nextline:
+                if debug_log:
+                    debug_log.write(nextline)
+                else:
+                    print(nextline.strip())
 
-    queue.task_done()
-    thread.join(5)
-    utils.terminate_process(process)
+                if all(x in nextline for x in workload_result):
+                    if verifier_process:
+                        utils.terminate_process(verifier_process)
+                    sys.stdout.flush()
+                    result = True
+                    break
+
+            if time.time() > timeout:
+                print("Timeout exceeded for workload")
+                break
+    except Exception as e:
+        pass
+    finally:
+        queue.task_done()
+        thread.join(5)
+        utils.terminate_process(process)
 
     if debug_log: debug_log.close()
     return result

@@ -375,8 +375,8 @@ def monitor_thread(stdout):
 
 def terminate_process(process):
     if process.poll() is None:
-        process.terminate()
+        process.kill()
         try:
             process.wait(timeout=5)
         except subprocess.TimeoutExpired:
-            process.kill()
+            pass

@@ -181,14 +181,12 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    @pytest.mark.jenkins
     @pytest.mark.tfserving
     @pytest.mark.tfserving_attestation
     def test_tfserving_with_attestation_ubuntu20_04(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    @pytest.mark.jenkins
     @pytest.mark.tfserving
     @pytest.mark.tfserving_attestation
     def test_tfserving_with_test_attestation_ubuntu20_04(self):

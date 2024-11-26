@@ -159,36 +159,30 @@ class TestClass:
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
     
-    @pytest.mark.jenkins
     @pytest.mark.tfserving
     @pytest.mark.tfserving_non_attestation
     def test_tfserving_default(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
     
-    @pytest.mark.jenkins
     @pytest.mark.tfserving
     @pytest.mark.tfserving_non_attestation
     def test_tfserving_default_with_debug(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    @pytest.mark.jenkins
     @pytest.mark.tfserving
     @pytest.mark.tfserving_non_attestation
     def test_tfserving_test_option(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    @pytest.mark.sanity
-    @pytest.mark.jenkins
     @pytest.mark.tfserving
     @pytest.mark.tfserving_non_attestation
     def test_tfserving_mnist(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
 
-    @pytest.mark.jenkins
     @pytest.mark.tfserving
     @pytest.mark.tfserving_non_attestation
     def test_tfserving_half_plus_two(self):

@@ -66,7 +66,7 @@ def generate_curated_image(test_config_dict):
     timeout = time.time() + 1800
     try:
         process = subprocess.Popen(curation_cmd, shell=True, stdout=subprocess.PIPE, encoding="utf-8")
-        print("Process started ", curation_cmd)
+        print(f"Process started : {curation_cmd}, process.pid {process.pid}")
         os.chdir(FRAMEWORK_PATH)
         screen_name = "home_page"
 

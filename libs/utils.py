@@ -52,9 +52,9 @@ def popen_subprocess(command, dest_dir=None):
     if dest_dir: os.chdir(FRAMEWORK_PATH)
     return process
 
-def kill(proc_pid):
+def terminate_process(subprocess=None, pid=None):
     try:
-        process = psutil.Process(proc_pid)
+        process = psutil.Process(pid) if pid else psutil.Process(subprocess.pid)
         for proc in process.children(recursive=True):
             proc.terminate()
         process.terminate()
@@ -370,13 +370,6 @@ def read_stdout(out, queue):
 def monitor_thread(stdout):
     q = Queue()
     thread = threading.Thread(target=read_stdout, args=(stdout, q))
+    thread.daemon = True
     thread.start()
     return q, thread
-
-def terminate_process(process):
-    if process.poll() is None:
-        process.kill()
-        try:
-            process.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            pass

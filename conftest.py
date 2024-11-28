@@ -84,7 +84,7 @@ def cleanup_ports(ports=None):
             out = utils.run_subprocess(f"sudo lsof -P -i:{port}")
             if out:
                 proc_pid = re.sub("\s+", " ", out.split("\n")[1]).split(" ")[1]
-                utils.kill(int(proc_pid))
+                utils.terminate_process(pid=int(proc_pid))
         except:
             pass
 

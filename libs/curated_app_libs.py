@@ -199,7 +199,7 @@ def verify_process(test_config_dict, process=None, verifier_process=None):
     try:
         while True:
             try:
-                nextline = queue.get_nowait().strip()
+                nextline = queue.get_nowait()
             except Empty:
                 nextline = ""
 

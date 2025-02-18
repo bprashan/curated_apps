@@ -83,8 +83,11 @@ def cleanup_ports(ports=None):
         try:
             out = utils.run_subprocess(f"sudo lsof -P -i:{port}")
             if out:
-                proc_pid = re.sub("\s+", " ", out.split("\n")[1]).split(" ")[1]
-                utils.terminate_process(pid=int(proc_pid))
+                if(port in [ MYSQL_PORT, MARIADB_PORT] ):
+                     utils.run_subprocess("sudo systemctl stop mysql.service")
+                else:
+                     proc_pid = re.sub("\s+", " ", out.split("\n")[1]).split(" ")[1]
+                     utils.terminate_process(pid=int(proc_pid))
         except:
             pass
 

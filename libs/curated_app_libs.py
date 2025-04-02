@@ -111,6 +111,8 @@ def get_docker_run_command(test_config_dict, curation_output):
         if "docker run" in line:
             if "--net=host" not in line:
                 line = line.replace("docker run", "docker run --net=host")
+            if "--device=/dev/sgx/enclave" in line:
+                line = line.replace("--device=/dev/sgx/enclave","--device=/dev/sgx_enclave")
             if "RA_TLS_MRENCLAVE" in line and "RA_TLS_ALLOW_OUTDATED_TCB_INSECURE" not in line:
                 line = line.replace("-e RA_TLS_MRENCLAVE",
                         "-e RA_TLS_ALLOW_OUTDATED_TCB_INSECURE=1 -e RA_TLS_MRENCLAVE")

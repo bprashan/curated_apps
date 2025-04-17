@@ -13,6 +13,10 @@ default_input_args:
 test_redis_with_attestation:
   docker_image: redis redis:7.0.10
 
+test_redis_with_debug_attestation:
+  docker_image: redis redis:7.0.10
+  debug_mode: y
+
 test_redis_with_test_attestation:
   docker_image: redis redis:7.0.10
   attestation: test

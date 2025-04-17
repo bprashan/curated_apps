@@ -232,6 +232,14 @@ def verify_process(test_config_dict, process=None, verifier_process=None):
         utils.terminate_process(process)
 
     if debug_log: debug_log.close()
+    if verifier_process:
+        try:
+            container_name = utils.run_subprocess("docker ps -a | grep verifier:latest | awk '{print $NF}'")
+            container_output = utils.run_subprocess(f"docker logs {container_name}")
+            with open(test_config_dict["log_file"].replace(".log", "_verifier_console.log"), "w+") as file:
+                file.write(f"Docker Verifier logs\n: {container_output}\n")
+        except Exception as e:
+            print("Failed to write verifier console log")
     return result
 
 def run_verifier_process(test_config_dict, verifier_cmd):

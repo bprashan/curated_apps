@@ -8,7 +8,7 @@ import re
 def curated_setup():
     print_env_variables()
     cleanup()
-    os.mkdir(LOGS)
+    os.makedirs(LOGS, exist_ok=True)
     print("Cloning and checking out Contrib Git Repo")
     utils.run_subprocess(CONTRIB_GIT_CMD)
     utils.run_subprocess(GIT_CHECKOUT_CMD, ORIG_CURATED_PATH)

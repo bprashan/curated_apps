@@ -17,6 +17,13 @@ class TestClass:
     @pytest.mark.jenkins
     @pytest.mark.redis
     @pytest.mark.redis_attestation
+    def test_redis_with_debug_attestation(self):
+        test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
+        assert test_result
+
+    @pytest.mark.jenkins
+    @pytest.mark.redis
+    @pytest.mark.redis_attestation
     def test_redis_with_test_attestation(self):
         test_result = libs.curated_app_libs.run_test(self, tests_yaml_path)
         assert test_result
